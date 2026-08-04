@@ -12,7 +12,13 @@ export const contentType = "image/png";
  * chose que voit un nouvel utilisateur — donc elle compte.
  */
 export default async function Image() {
-  const cap = await readFile(join(process.cwd(), "public", "cap-512.png"));
+  // Satori n'hérite pas des polices du site : il faut les lui passer,
+  // sinon tout retombe sur une graisse normale et le titre perd sa force.
+  const [cap, black, medium] = await Promise.all([
+    readFile(join(process.cwd(), "public", "cap-512.png")),
+    readFile(join(process.cwd(), "assets", "Roboto-Black.ttf")),
+    readFile(join(process.cwd(), "assets", "Roboto-Medium.ttf")),
+  ]);
   const capSrc = `data:image/png;base64,${cap.toString("base64")}`;
 
   return new ImageResponse(
@@ -27,6 +33,7 @@ export default async function Image() {
           padding: "0 88px",
           background:
             "linear-gradient(140deg, #0b0716 0%, #120d24 38%, #1f1445 78%, #0f0a20 100%)",
+          fontFamily: "Roboto",
           position: "relative",
         }}
       >
@@ -111,10 +118,16 @@ export default async function Image() {
             letterSpacing: "-0.01em",
           }}
         >
-          Que du positif. Jamais l&apos;inverse. · stan-friends.com
+          Que du positif. Jamais l&apos;inverse. — stan-friends.com
         </span>
       </div>
     ),
-    size,
+    {
+      ...size,
+      fonts: [
+        { name: "Roboto", data: black, weight: 900, style: "normal" },
+        { name: "Roboto", data: medium, weight: 500, style: "normal" },
+      ],
+    },
   );
 }
