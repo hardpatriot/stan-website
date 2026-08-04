@@ -1,26 +1,254 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Nuit — repris de BackgroundViewStyle.standard dans l'app */
+  --color-night-950: #08050f;
+  --color-night-900: #0b0716;
+  --color-night-800: #120d24;
+  --color-night-700: #1f1445;
+  --color-night-600: #2a1b5c;
+
+  /* Le gradient du vote — BackgroundViewStyle.poll */
+  --color-magenta: #d91cbd;
+  --color-rose: #e6006e;
+
+  /* Aura — FriendsActionPalette */
+  --color-lavender: #a78bfa;
+  --color-violet: #818cf8;
+  --color-periwinkle: #6366f1;
+
+  /* Accents */
+  --color-cyan: #47dbff;
+  --color-gold: #ffd157;
+
+  --font-sans: var(--font-roboto), system-ui, sans-serif;
+
+  --animate-float: float 9s ease-in-out infinite;
+  --animate-drift: drift 22s ease-in-out infinite;
+  --animate-pulse-glow: pulse-glow 4s ease-in-out infinite;
+  --animate-rise: rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-marquee: marquee 40s linear infinite;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
   }
 }
 
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(6%, -8%, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-7%, 5%, 0) scale(0.94);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-night-950);
+  color: #fff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Titres : Roboto poussé au maximum, tracking très serré */
+.display {
+  font-weight: 900;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+/* Le gradient du vote, en texte */
+.text-vote {
+  background: linear-gradient(120deg, #ff5ad4 0%, #e6006e 55%, #ff9d4d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-aura {
+  background: linear-gradient(120deg, #c4b5fd 0%, #818cf8 60%, #47dbff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Verre — les cartes posées sur la nuit */
+.glass {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Le grain du film — même intention que le booster dans l'app */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Pages légales — typographie longue lecture sur fond nuit */
+.legal {
+  font-size: 16px;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.legal h2 {
+  margin-top: 3.25rem;
+  margin-bottom: 1rem;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: #fff;
+  scroll-margin-top: 6rem;
+}
+
+.legal h3 {
+  margin-top: 2.25rem;
+  margin-bottom: 0.65rem;
+  font-size: 1.125rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.legal p {
+  margin-bottom: 1.15rem;
+}
+
+.legal ul {
+  margin-bottom: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.legal li {
+  padding-left: 1.35rem;
+  position: relative;
+}
+
+/* Les puces emoji de l'app (📌 ✅ 🚫 …) portent déjà le marqueur :
+   on ne double pas avec un point. */
+.legal li[data-emoji]::before {
+  content: none;
+}
+
+.legal li::before {
+  content: "";
+  position: absolute;
+  left: 0.25rem;
+  top: 0.7em;
+  height: 5px;
+  width: 5px;
+  border-radius: 999px;
+  background: #e6006e;
+}
+
+.legal li[data-emoji] {
+  padding-left: 0;
+}
+
+.legal strong {
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
+}
+
+.legal a {
+  color: #f472b6;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.legal a:hover {
+  color: #fff;
+}
+
+/* Révélations au scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+::selection {
+  background: #e6006e;
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

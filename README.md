@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# stan-friends.com
 
-## Getting Started
+Le site vitrine de Stan. Une landing page + les 3 pages légales. Aucune base de
+données, aucun compte, aucun formulaire : tout est généré en statique.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router) — tout est prérendu en statique au build
+- **Tailwind CSS 4** — le thème est défini dans `app/globals.css`
+- **Hébergement** : Vercel, plan gratuit
+
+## Lancer en local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+→ http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Les pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| URL | Fichier |
+|---|---|
+| `/` | `app/page.tsx` |
+| `/conditions-dutilisation` | `app/conditions-dutilisation/page.tsx` |
+| `/centre-de-securite` | `app/centre-de-securite/page.tsx` |
+| `/politique-de-confidentialite` | `app/politique-de-confidentialite/page.tsx` |
 
-## Learn More
+⚠️ **Ne jamais renommer les 3 URLs légales.** Celle de la politique de
+confidentialité est déclarée dans App Store Connect : si elle casse, Apple le
+signale à la prochaine soumission.
 
-To learn more about Next.js, take a look at the following resources:
+## La charte
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Les couleurs viennent directement de l'app iOS, pour que le site et
+l'application soient raccord :
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Rôle | Valeur | Source dans l'app |
+|---|---|---|
+| Fond nuit | `#120D24` → `#1F1445` | `BackgroundViewStyle.standard` |
+| Gradient du vote | `#D91CBD` → `#E6006E` | `BackgroundViewStyle.poll` |
+| Violet Aura | `#A78BFA` → `#6366F1` | `FriendsActionPalette` |
+| Typo | Roboto 400/500/700/900 | `.custom("Roboto")` |
 
-## Deploy on Vercel
+## Déploiement
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Chaque `git push` sur `main` déclenche un déploiement automatique sur Vercel.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build   # vérifier que ça compile avant de pousser
+```
+
+## Modifier le contenu
+
+- **Les textes de la landing** : dans les composants de `components/`
+  (`Hero`, `HowItWorks`, `Rules`, `Safety`, `FinalCta`).
+- **Les questions de la démo** : constante `QUESTIONS` en haut de
+  `components/VoteDemo.tsx`.
+- **Les questions du bandeau défilant** : `ROW_A` / `ROW_B` dans
+  `components/QuestionMarquee.tsx`.
+- **L'image de partage** (aperçu WhatsApp / Snap) : `app/opengraph-image.tsx`.
