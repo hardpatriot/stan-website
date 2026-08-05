@@ -6,6 +6,9 @@ export const alt = "Stan — Quelqu'un a voté pour toi.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
+// Requis par `output: "export"` : l'image est rendue une fois au build.
+export const dynamic = "force-static";
+
 /**
  * L'aperçu qui s'affiche quand quelqu'un colle stan-friends.com
  * dans un groupe WhatsApp / Snap / Insta. C'est souvent la première
