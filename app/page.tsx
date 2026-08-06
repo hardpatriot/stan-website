@@ -1,11 +1,11 @@
 import { Backdrop } from "@/components/Backdrop";
+import { CustomQuestions } from "@/components/CustomQuestions";
 import { FinalCta } from "@/components/FinalCta";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Nav } from "@/components/Nav";
 import { QuestionMarquee } from "@/components/QuestionMarquee";
-import { Rules } from "@/components/Rules";
 import { Safety } from "@/components/Safety";
 
 // Balisage Schema.org : ce que Google affiche quand on cherche « Stan app ».
@@ -35,7 +35,7 @@ export default function Home() {
         <Hero />
         <QuestionMarquee />
         <HowItWorks />
-        <Rules />
+        <CustomQuestions />
         <Safety />
         <FinalCta />
       </main>
