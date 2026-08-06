@@ -237,12 +237,6 @@ export default function Page() {
         évolutions légales ou techniques. En cas de modifications majeures, vous
         serez informé via l&apos;application.
       </p>
-
-      <h2>Contact</h2>
-      <p>
-        Si vous avez des questions sur cette politique, contactez-nous à{" "}
-        <a href="mailto:admin@stan-friends.com">admin@stan-friends.com</a>.
-      </p>
     </LegalPage>
   );
 }
