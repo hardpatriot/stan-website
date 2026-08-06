@@ -45,19 +45,6 @@ export function LegalPage({
           ) : null}
 
           <div className="legal mt-4">{children}</div>
-
-          <div className="glass mt-16 rounded-3xl px-6 py-7 sm:px-8">
-            <p className="text-[15px] leading-relaxed font-medium text-white/60">
-              Une question sur ce document&nbsp;? Écris-nous à{" "}
-              <a
-                href="mailto:admin@stan-friends.com"
-                className="font-bold text-white underline decoration-rose underline-offset-4 transition hover:text-rose"
-              >
-                admin@stan-friends.com
-              </a>
-              . On répond.
-            </p>
-          </div>
         </div>
       </main>
       <Footer />
