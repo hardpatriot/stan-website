@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AppStoreButton } from "./AppStoreButton";
 
 /*
- * Tout ce fichier est dessiné en POINTS iOS, dans une carte de 393×774 —
- * exactement celle de l'app — que <Card> met à l'échelle. Les valeurs
+ * Tout ce fichier est dessiné en POINTS iOS, dans une carte de 393×774,
+ * exactement celle de l'app, que <Card> met à l'échelle. Les valeurs
  * viennent donc directement de PollView.swift, ProfileCard.swift et
  * PollsPageView.swift, sans reconversion.
  */
@@ -54,7 +54,7 @@ const QUESTIONS = [
 
 const DEFAULT_FRIENDS = ["Lana Chung", "Lucas Chevalier", "Léa Sacla", "Noha Kanté"];
 
-/** Les dégradés de carte de l'app — PollCardExperience.gradients. */
+/** Les dégradés de carte de l'app, PollCardExperience.gradients. */
 const CARD_GRADIENTS = [
   ["#F7A25B", "#F78C60", "#F67566", "#F65E6D", "#F64773", "#F53079", "#F5187F", "#F50384"],
   ["#6001FF", "#5601FF", "#4B01FF", "#4001FF", "#3501FF", "#2A01FF", "#1F01FF", "#1501FF"],
@@ -91,7 +91,7 @@ function shuffled<T>(list: T[]) {
   return copy;
 }
 
-/** Prénom sur une ligne, nom sur la suivante — comme ProfileCard. */
+/** Prénom sur une ligne, nom sur la suivante, comme ProfileCard. */
 function splitName(name: string) {
   const [first, ...rest] = name.split(/\s+/).filter(Boolean);
   return { first: first ?? name, last: rest.join(" ") };
@@ -276,7 +276,7 @@ function VoteScreen({
         </h3>
       </div>
 
-      {/* Ajouter ses potes — le seul ajout par rapport à l'app */}
+      {/* Ajouter ses potes : le seul ajout par rapport à l'app */}
       <div className="mt-[18px] w-[304px] shrink-0">
         {editing ? (
           <form onSubmit={onAdd} className="flex gap-2">
@@ -325,7 +325,7 @@ function VoteScreen({
 
       <div className="flex-1" />
 
-      {/* Shuffle / Skip — les boutons de l'app, espacement 30 */}
+      {/* Shuffle / Skip : les boutons de l'app, espacement 30 */}
       <div className="flex shrink-0 items-center gap-[30px]">
         <button
           onClick={onShuffle}

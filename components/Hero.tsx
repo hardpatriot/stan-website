@@ -12,20 +12,9 @@ export function Hero() {
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_auto] lg:gap-16">
         {/* Colonne texte */}
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-          <span
-            className="glass animate-rise inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-[13px] font-bold text-white/80"
-            style={{ animationDelay: "60ms" }}
-          >
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-rose" />
-            </span>
-            Que du positif, jamais l&apos;inverse
-          </span>
-
           {/* Le sous-titre de la fiche App Store, mot pour mot. */}
           <h1
-            className="display animate-rise mt-6 text-[clamp(2.9rem,9vw,5.6rem)] text-white text-balance"
+            className="display animate-rise text-[clamp(2.9rem,9vw,5.6rem)] text-white text-balance"
             style={{ animationDelay: "140ms" }}
           >
             Ils ont voté.{" "}
@@ -37,8 +26,8 @@ export function Hero() {
             style={{ animationDelay: "230ms" }}
           >
             Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
-            anonyme, ils diraient quoi&nbsp;? Tu croyais tout savoir —
-            c&apos;est le moment de vérifier.
+            anonyme, ils diraient quoi&nbsp;? Tu croyais tout savoir. C&apos;est
+            le moment de vérifier.
           </p>
 
           <div

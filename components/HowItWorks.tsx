@@ -24,7 +24,7 @@ const STEPS = [
   {
     icon: "/emoji/bell.svg",
     title: "Reçois la notif",
-    body: "Quelqu'un t'a choisi. Tu le sais tout de suite — mais tu sais pas qui.",
+    body: "Quelqu'un t'a choisi. Tu le sais tout de suite, mais tu sais pas qui.",
     tint: "from-[#d91cbd] to-[#e6006e]",
   },
 ];

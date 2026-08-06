@@ -52,7 +52,7 @@ export function CustomQuestions() {
             </h2>
             <p className="mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/55">
               Tu écris ta question, ton école vote. Les trois qui récoltent le
-              plus de 🔥 entrent dans les vrais sondages — et là, tout le monde y
+              plus de 🔥 entrent dans les vrais sondages, et là tout le monde y
               répond.
             </p>
             <p className="mt-4 max-w-lg text-[15px] leading-relaxed font-medium text-white/35">

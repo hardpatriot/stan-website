@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
-export const alt = "Stan — Quelqu'un a voté pour toi.";
+export const alt = "Stan : ils ont voté, tu vas savoir.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -12,7 +12,7 @@ export const dynamic = "force-static";
 /**
  * L'aperçu qui s'affiche quand quelqu'un colle stan-friends.com
  * dans un groupe WhatsApp / Snap / Insta. C'est souvent la première
- * chose que voit un nouvel utilisateur — donc elle compte.
+ * chose que voit un nouvel utilisateur, donc elle compte.
  */
 export default async function Image() {
   // Satori n'hérite pas des polices du site : il faut les lui passer,
@@ -121,7 +121,7 @@ export default async function Image() {
             letterSpacing: "-0.01em",
           }}
         >
-          Que du positif. Jamais l&apos;inverse. — stan-friends.com
+          Stan tes potes · stan-friends.com
         </span>
       </div>
     ),

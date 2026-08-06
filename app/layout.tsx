@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 
-// L'app utilise Roboto (.custom("Roboto")) — on garde exactement la même.
+// L'app utilise Roboto (.custom("Roboto")), on garde exactement la même.
 const roboto = Roboto({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
@@ -15,7 +15,7 @@ const SITE = "https://www.stan-friends.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Stan — Qui a voté pour toi ?",
+    default: "Stan · Qui a voté pour toi ?",
     template: "%s · Stan",
   },
   description:

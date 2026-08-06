@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* Nuit — repris de BackgroundViewStyle.standard dans l'app */
+  /* Nuit, repris de BackgroundViewStyle.standard dans l'app */
   --color-night-950: #08050f;
   --color-night-900: #0b0716;
   --color-night-800: #120d24;
   --color-night-700: #1f1445;
   --color-night-600: #2a1b5c;
 
-  /* Le gradient du vote — BackgroundViewStyle.poll */
+  /* Le gradient du vote, BackgroundViewStyle.poll */
   --color-magenta: #d91cbd;
   --color-rose: #e6006e;
 
-  /* Aura — FriendsActionPalette */
+  /* Aura, FriendsActionPalette */
   --color-lavender: #a78bfa;
   --color-violet: #818cf8;
   --color-periwinkle: #6366f1;
@@ -118,7 +118,7 @@ body {
   color: transparent;
 }
 
-/* Verre — les cartes posées sur la nuit */
+/* Verre, les cartes posées sur la nuit */
 .glass {
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -126,7 +126,7 @@ body {
   -webkit-backdrop-filter: blur(20px);
 }
 
-/* Le grain du film — même intention que le booster dans l'app */
+/* Le grain du film, même intention que le booster dans l'app */
 .grain::after {
   content: "";
   position: absolute;
@@ -137,7 +137,7 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Pages légales — typographie longue lecture sur fond nuit */
+/* Pages légales, typographie longue lecture sur fond nuit */
 .legal {
   font-size: 16px;
   line-height: 1.75;

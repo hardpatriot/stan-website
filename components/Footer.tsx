@@ -49,7 +49,7 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-2 border-t border-white/[0.07] pt-7 text-xs text-white/35 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Stan SAS — Fait en France 🇫🇷</p>
+          <p>© {new Date().getFullYear()} Stan SAS · Fait en France 🇫🇷</p>
           <p>Réservé aux 13 ans et plus.</p>
         </div>
       </div>
