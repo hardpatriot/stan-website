@@ -6,7 +6,6 @@ import { Hero } from "@/components/Hero";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Nav } from "@/components/Nav";
 import { QuestionMarquee } from "@/components/QuestionMarquee";
-import { Safety } from "@/components/Safety";
 
 // Balisage Schema.org : ce que Google affiche quand on cherche « Stan app ».
 const JSON_LD = {
@@ -36,7 +35,6 @@ export default function Home() {
         <QuestionMarquee />
         <HowItWorks />
         <CustomQuestions />
-        <Safety />
         <FinalCta />
       </main>
       <Footer />
