@@ -22,16 +22,20 @@ export function FinalCta() {
           </div>
         </Reveal>
 
+        {/* La phrase de fin de la fiche App Store. */}
         <Reveal delay={90}>
           <h2 className="display mt-10 text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
-            Là, quelqu&apos;un pense{" "}
-            <span className="text-vote">du bien de toi.</span>
+            Stan tes potes.{" "}
+            <span className="text-vote">
+              Découvre ce qu&apos;ils pensent de toi.
+            </span>
           </h2>
         </Reveal>
 
         <Reveal delay={170}>
           <p className="mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/55">
-            Il te l&apos;a juste jamais dit en face. Stan est là pour ça.
+            Là, quelqu&apos;un pense du bien de toi. Il te l&apos;a juste jamais
+            dit en face.
           </p>
         </Reveal>
 

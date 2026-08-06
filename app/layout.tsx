@@ -15,11 +15,11 @@ const SITE = "https://www.stan-friends.com";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
   title: {
-    default: "Stan — qui a voté pour toi ?",
+    default: "Stan — Qui a voté pour toi ?",
     template: "%s · Stan",
   },
   description:
-    "Tes potes répondent à des sondages sur toi. Anonymement, et toujours en bien. Aucun vote négatif, aucun message privé. Gratuit sur iPhone.",
+    "Si tes potes pouvaient dire ce qu'ils pensent de toi en anonyme, ils diraient quoi ? Rejoins ton école, ajoute tes amis, réponds aux questions. Gratuit sur iPhone.",
   applicationName: "Stan",
   keywords: [
     "Stan",
@@ -38,15 +38,15 @@ export const metadata: Metadata = {
     locale: "fr_FR",
     url: SITE,
     siteName: "Stan",
-    title: "Quelqu'un a voté pour toi.",
+    title: "Ils ont voté. Tu vas savoir.",
     description:
-      "Tes potes disent anonymement ce qu'ils kiffent chez toi. Que du positif — c'est la règle.",
+      "Si tes potes pouvaient dire ce qu'ils pensent de toi en anonyme, ils diraient quoi ?",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Quelqu'un a voté pour toi.",
+    title: "Ils ont voté. Tu vas savoir.",
     description:
-      "Tes potes disent anonymement ce qu'ils kiffent chez toi. Que du positif — c'est la règle.",
+      "Si tes potes pouvaient dire ce qu'ils pensent de toi en anonyme, ils diraient quoi ?",
   },
   appleWebApp: {
     title: "Stan",

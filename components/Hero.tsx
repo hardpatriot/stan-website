@@ -23,20 +23,22 @@ export function Hero() {
             Que du positif, jamais l&apos;inverse
           </span>
 
+          {/* Le sous-titre de la fiche App Store, mot pour mot. */}
           <h1
             className="display animate-rise mt-6 text-[clamp(2.9rem,9vw,5.6rem)] text-white text-balance"
             style={{ animationDelay: "140ms" }}
           >
-            Quelqu&apos;un a voté{" "}
-            <span className="text-vote">pour&nbsp;toi.</span>
+            Ils ont voté.{" "}
+            <span className="text-vote">Tu vas&nbsp;savoir.</span>
           </h1>
 
           <p
             className="animate-rise mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/60 sm:text-lg"
             style={{ animationDelay: "230ms" }}
           >
-            Tes potes votent pour toi sur des trucs bien. Anonymement. Toi, tu
-            reçois la notif — et ta journée est faite.
+            Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
+            anonyme, ils diraient quoi&nbsp;? Tu croyais tout savoir —
+            c&apos;est le moment de vérifier.
           </p>
 
           <div

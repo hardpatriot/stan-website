@@ -3,13 +3,43 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppStoreButton } from "./AppStoreButton";
-import { PhoneFrame } from "./PhoneFrame";
 
 /*
- * Tout ce fichier est dessiné en POINTS iOS, dans un écran de 393×852 que
- * PhoneFrame met à l'échelle. Les valeurs viennent donc directement de
- * PollView.swift, ProfileCard.swift et PollsPageView.swift.
+ * Tout ce fichier est dessiné en POINTS iOS, dans une carte de 393×774 —
+ * exactement celle de l'app — que <Card> met à l'échelle. Les valeurs
+ * viennent donc directement de PollView.swift, ProfileCard.swift et
+ * PollsPageView.swift, sans reconversion.
  */
+
+const CARD_W = 393;
+const CARD_H = 774;
+
+/** La carte de sondage, mise à l'échelle d'un bloc, posée sur la nuit. */
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative [--ps:0.78] sm:[--ps:0.88]">
+      {/* La lueur qui décolle la carte du fond */}
+      <div
+        aria-hidden
+        className="animate-pulse-glow absolute -inset-12 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(230,0,110,0.40)_0%,rgba(217,28,189,0.16)_40%,transparent_72%)] blur-2xl"
+      />
+      <div
+        className="relative"
+        style={{
+          width: `calc(${CARD_W}px * var(--ps))`,
+          height: `calc(${CARD_H}px * var(--ps))`,
+        }}
+      >
+        <div
+          className="absolute top-0 left-0 origin-top-left"
+          style={{ width: CARD_W, height: CARD_H, transform: "scale(var(--ps))" }}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /* --------------------------------------------------------------- données */
 
@@ -146,7 +176,7 @@ export function VoteDemo() {
 
   return (
     <div className="flex flex-col items-center gap-5">
-      <PhoneFrame>
+      <Card>
         {stage === "vote" ? (
           <VoteScreen
             question={question}
@@ -166,7 +196,7 @@ export function VoteDemo() {
         ) : (
           <RevealScreen notifIn={notifIn} onReplay={replay} />
         )}
-      </PhoneFrame>
+      </Card>
 
       <p className="text-center text-[13px] font-medium text-white/35">
         {stage === "vote" ? "Vas-y, vote." : "Voilà ce que ton pote reçoit."}
@@ -209,14 +239,14 @@ function VoteScreen({
   return (
     // La carte de sondage : rayon 47, ombre de fullScreenCard.
     <div
-      className="absolute inset-x-0 top-[52px] bottom-[26px] flex flex-col items-center rounded-[47px]"
+      className="absolute inset-0 flex flex-col items-center overflow-hidden rounded-[47px]"
       style={{
         background: gradientCss(gradient),
-        boxShadow: "0 8px 18px rgba(0,0,0,0.3)",
+        boxShadow: "0 24px 60px -12px rgba(0,0,0,0.55), 0 8px 18px rgba(0,0,0,0.3)",
       }}
     >
       {/* En-tête : « X sur Y » + PageControlView */}
-      <div className="flex flex-col items-center gap-2 pt-[22px]">
+      <div className="flex flex-col items-center gap-2 pt-[32px]">
         <p className="text-[18px] leading-none font-semibold text-white">
           {round + 1} sur {TOTAL_ROUNDS}
         </p>
@@ -410,7 +440,12 @@ function RevealScreen({
   onReplay: () => void;
 }) {
   return (
-    <div className="absolute inset-0 flex flex-col justify-between px-[22px] pt-[64px] pb-[44px]">
+    <div
+      className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-[47px] bg-[linear-gradient(165deg,#0e0920_0%,#1f1445_58%,#2a1b5c_100%)] px-[26px] pt-[38px] pb-[38px]"
+      style={{
+        boxShadow: "0 24px 60px -12px rgba(0,0,0,0.55), 0 8px 18px rgba(0,0,0,0.3)",
+      }}
+    >
       {/* La notification qui tombe */}
       <div
         className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${

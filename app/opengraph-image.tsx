@@ -97,7 +97,7 @@ export default async function Image() {
               lineHeight: 1,
             }}
           >
-            Quelqu&apos;un a voté
+            Ils ont voté.
           </span>
           <span
             style={{
@@ -108,7 +108,7 @@ export default async function Image() {
               lineHeight: 1.05,
             }}
           >
-            pour toi.
+            Tu vas savoir.
           </span>
         </div>
 
