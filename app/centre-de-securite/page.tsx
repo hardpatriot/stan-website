@@ -32,57 +32,57 @@ export default function Page() {
     >
       <h2>Comment Stan protège vos données</h2>
       <ul>
-        <li data-emoji>
-          🧢 Nous ne partagerons ni ne vendrons jamais vos données à des
+        <li>
+          Nous ne partagerons ni ne vendrons jamais vos données à des
           annonceurs ou courtiers en données.
         </li>
-        <li data-emoji>
-          🧢 Nous ne vous suivrons jamais sur d&apos;autres services en ligne.
+        <li>
+          Nous ne vous suivrons jamais sur d&apos;autres services en ligne.
         </li>
-        <li data-emoji>
-          🧢 Nous demandons uniquement votre position approximative lors de
+        <li>
+          Nous demandons uniquement votre position approximative lors de
           l&apos;inscription afin de suggérer des écoles proches.
         </li>
-        <li data-emoji>
-          🧢 Nous ne stockons aucune donnée de localisation sur nos serveurs.
+        <li>
+          Nous ne stockons aucune donnée de localisation sur nos serveurs.
         </li>
-        <li data-emoji>
-          🧢 Nous ne relions jamais vos données de localisation à votre compte.
+        <li>
+          Nous ne relions jamais vos données de localisation à votre compte.
         </li>
-        <li data-emoji>
-          🧢 Les demandes de suppression de compte sont généralement traitées sous
+        <li>
+          Les demandes de suppression de compte sont généralement traitées sous
           24 heures.
         </li>
       </ul>
 
       <h2>Comment Stan garantit votre sécurité</h2>
       <ul>
-        <li data-emoji>
-          🧢 Seuls vos amis, contacts et camarades de classe peuvent voter pour
+        <li>
+          Seuls vos amis, contacts et camarades de classe peuvent voter pour
           vous. Les étrangers ne peuvent pas interagir avec vous.
         </li>
-        <li data-emoji>
-          🧢 Nous n&apos;autorisons pas la messagerie directe entre utilisateurs,
+        <li>
+          Nous n&apos;autorisons pas la messagerie directe entre utilisateurs,
           même entre amis.
         </li>
-        <li data-emoji>
-          🧢 Les adultes qui ne sont plus au lycée ne peuvent pas rejoindre une
+        <li>
+          Les adultes qui ne sont plus au lycée ne peuvent pas rejoindre une
           école.
         </li>
-        <li data-emoji>
-          🧢 Stan ne peut pas et n&apos;a jamais été utilisé à des fins de
+        <li>
+          Stan ne peut pas et n&apos;a jamais été utilisé à des fins de
           «&nbsp;traite humaine&nbsp;».
         </li>
-        <li data-emoji>
-          🧢 Tous les sondages sont conçus pour être positifs et encourageants
+        <li>
+          Tous les sondages sont conçus pour être positifs et encourageants
           afin d&apos;éviter toute forme d&apos;intimidation.
         </li>
-        <li data-emoji>
-          🧢 Nous examinons régulièrement les signalements et supprimons les
+        <li>
+          Nous examinons régulièrement les signalements et supprimons les
           utilisateurs qui enfreignent les règles.
         </li>
-        <li data-emoji>
-          🧢 Nous offrons un support via chat en direct et par e-mail pour tous
+        <li>
+          Nous offrons un support via chat en direct et par e-mail pour tous
           les utilisateurs.
         </li>
       </ul>
