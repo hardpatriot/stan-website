@@ -20,7 +20,7 @@ export function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-rose opacity-75" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-rose" />
             </span>
-            100&nbsp;% positif — aucun vote négatif
+            Que du positif, jamais l&apos;inverse
           </span>
 
           <h1
@@ -35,19 +35,15 @@ export function Hero() {
             className="animate-rise mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/60 sm:text-lg"
             style={{ animationDelay: "230ms" }}
           >
-            Tes potes répondent à des sondages sur toi. Anonymement, et toujours
-            en bien. Toi, tu reçois juste la notif qui fait sourire toute la
-            journée.
+            Tes potes votent pour toi sur des trucs bien. Anonymement. Toi, tu
+            reçois la notif — et ta journée est faite.
           </p>
 
           <div
-            className="animate-rise mt-9 flex flex-col items-center gap-4 lg:items-start"
+            className="animate-rise mt-9"
             style={{ animationDelay: "320ms" }}
           >
             <AppStoreButton />
-            <p className="text-[13px] font-medium text-white/40">
-              Gratuit · 13 ans et + · Entre potes uniquement
-            </p>
           </div>
         </div>
 

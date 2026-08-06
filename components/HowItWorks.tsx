@@ -1,22 +1,23 @@
+import Image from "next/image";
 import { Reveal } from "./Reveal";
 
 const STEPS = [
   {
-    emoji: "🗳️",
-    title: "Tu votes pour tes potes",
-    body: "Des sondages courts, toujours positifs. Tu choisis simplement qui mérite le compliment.",
+    emoji: "sparkles",
+    title: "Tu votes",
+    body: "Des questions courtes, que des trucs bien. Tu choisis juste qui le mérite.",
     tint: "from-[#a78bfa] to-[#6366f1]",
   },
   {
-    emoji: "🔔",
-    title: "La personne reçoit la notif",
-    body: "« Quelqu'un a voté pour toi. » Sans savoir qui, sans savoir pourquoi. Pour l'instant.",
+    emoji: "bell",
+    title: "La notif tombe",
+    body: "« Quelqu'un a voté pour toi. » Sans savoir qui. Pour l'instant.",
     tint: "from-[#d91cbd] to-[#e6006e]",
   },
   {
-    emoji: "👀",
-    title: "Elle découvre qu'elle compte",
-    body: "Le moment où on comprend qu'on a marqué quelqu'un. C'est tout le point de Stan.",
+    emoji: "eyes",
+    title: "On capte qu'on compte",
+    body: "Le moment où tu réalises que quelqu'un pense du bien de toi. C'est tout Stan.",
     tint: "from-[#47dbff] to-[#6366f1]",
   },
 ];
@@ -27,12 +28,11 @@ export function HowItWorks() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="text-sm font-black tracking-[0.18em] text-rose uppercase">
-            Comment ça marche
+            Ça marche comment
           </p>
           <h2 className="display mt-4 max-w-2xl text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
-            Trois secondes pour voter.{" "}
-            <span className="text-aura">Toute la journée</span> pour s&apos;en
-            remettre.
+            3 secondes pour voter.{" "}
+            <span className="text-aura">Toute la journée</span> à sourire.
           </h2>
         </Reveal>
 
@@ -44,11 +44,13 @@ export function HowItWorks() {
                   aria-hidden
                   className={`absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gradient-to-br ${step.tint} opacity-15 blur-2xl transition-opacity duration-500 group-hover:opacity-30`}
                 />
-                <span
-                  className={`relative flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${step.tint} text-2xl shadow-[0_12px_30px_-10px_rgba(0,0,0,0.7)]`}
-                >
-                  {step.emoji}
-                </span>
+                <Image
+                  src={`/emoji/${step.emoji}.svg`}
+                  alt=""
+                  width={56}
+                  height={56}
+                  className="relative h-14 w-14 drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-110"
+                />
                 <p className="relative mt-6 text-xs font-black tracking-[0.2em] text-white/30">
                   0{i + 1}
                 </p>

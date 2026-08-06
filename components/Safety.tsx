@@ -24,15 +24,14 @@ export function Safety() {
                   Tes parents peuvent lire cette page.
                 </h2>
                 <p className="mt-4 text-[15px] leading-relaxed font-medium text-white/55">
-                  Stan est fait pour des ados, donc on s&apos;impose des règles
-                  qu&apos;on assume publiquement. Tout est détaillé, en clair,
-                  dans le centre de sécurité.
+                  Stan est fait pour des ados. Du coup on s&apos;impose des
+                  règles, et on les écrit noir sur blanc.
                 </p>
                 <Link
                   href="/centre-de-securite"
                   className="group mt-6 inline-flex items-center gap-2 text-[15px] font-black text-white transition hover:text-cyan"
                 >
-                  Lire le centre de sécurité
+                  Le centre de sécurité
                   <span className="transition-transform duration-300 group-hover:translate-x-1">
                     →
                   </span>

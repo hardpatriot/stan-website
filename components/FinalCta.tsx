@@ -31,16 +31,13 @@ export function FinalCta() {
 
         <Reveal delay={170}>
           <p className="mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/55">
-            Il ne te l&apos;a juste jamais dit en face. Stan existe pour ça.
+            Il te l&apos;a juste jamais dit en face. Stan est là pour ça.
           </p>
         </Reveal>
 
         <Reveal delay={250}>
-          <div className="mt-10 flex flex-col items-center gap-4">
+          <div className="mt-10">
             <AppStoreButton label="Télécharger Stan" />
-            <p className="text-[13px] font-medium text-white/40">
-              Gratuit · iPhone · 13 ans et plus
-            </p>
           </div>
         </Reveal>
       </div>

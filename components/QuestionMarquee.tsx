@@ -1,24 +1,27 @@
+import Image from "next/image";
 import { Reveal } from "./Reveal";
 
 const ROW_A = [
-  "😁 Qui a le plus beau sourire ?",
-  "😂 Qui te fait le plus rire ?",
-  "🔥 Qui a le plus de style ?",
-  "🫶 Sur qui on peut toujours compter ?",
-  "🧠 Qui a toujours la meilleure idée ?",
-  "☀️ Qui est toujours de bonne humeur ?",
+  { emoji: "grinning_face_with_smiling_eyes", text: "Qui a le plus beau sourire ?" },
+  { emoji: "face_with_tears_of_joy", text: "Qui te fait le plus rire ?" },
+  { emoji: "fire", text: "Qui a le plus de style ?" },
+  { emoji: "heart_hands", text: "Sur qui on peut toujours compter ?" },
+  { emoji: "brain", text: "Qui a toujours la meilleure idée ?" },
+  { emoji: "sun", text: "Qui est toujours de bonne humeur ?" },
 ];
 
 const ROW_B = [
-  "✨ Qui mérite plus d'attention ?",
-  "🎧 Qui a les meilleurs goûts en musique ?",
-  "💬 Qui sait le mieux écouter ?",
-  "🍿 Avec qui tu regarderais un film toute la nuit ?",
-  "🎨 Qui est le plus créatif ?",
-  "🏆 Qui va réussir sa vie ?",
+  { emoji: "sparkles", text: "Qui mérite plus d'attention ?" },
+  { emoji: "headphone", text: "Qui a les meilleurs sons ?" },
+  { emoji: "speech_balloon", text: "Qui sait le mieux écouter ?" },
+  { emoji: "popcorn", text: "Avec qui tu matterais un film toute la nuit ?" },
+  { emoji: "microphone", text: "Qui chante le mieux ?" },
+  { emoji: "trophy", text: "Qui va réussir sa vie ?" },
 ];
 
-function Row({ items, reverse = false }: { items: string[]; reverse?: boolean }) {
+type Item = { emoji: string; text: string };
+
+function Row({ items, reverse = false }: { items: Item[]; reverse?: boolean }) {
   const doubled = [...items, ...items];
   return (
     <div className="flex w-max gap-3.5">
@@ -29,12 +32,19 @@ function Row({ items, reverse = false }: { items: string[]; reverse?: boolean })
           animationDuration: reverse ? "52s" : "44s",
         }}
       >
-        {doubled.map((q, i) => (
+        {doubled.map((item, i) => (
           <span
-            key={`${q}-${i}`}
-            className="glass shrink-0 rounded-full px-5 py-3 text-[15px] font-bold whitespace-nowrap text-white/75"
+            key={`${item.text}-${i}`}
+            className="glass flex shrink-0 items-center gap-2.5 rounded-full py-2.5 pr-5 pl-3 text-[15px] font-bold whitespace-nowrap text-white/75"
           >
-            {q}
+            <Image
+              src={`/emoji/${item.emoji}.svg`}
+              alt=""
+              width={26}
+              height={26}
+              className="h-[26px] w-[26px]"
+            />
+            {item.text}
           </span>
         ))}
       </div>
@@ -48,7 +58,7 @@ export function QuestionMarquee() {
       <Reveal className="px-5 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <p className="text-center text-sm font-black tracking-[0.18em] text-lavender uppercase">
-            Un aperçu des sondages
+            Les questions
           </p>
         </div>
       </Reveal>
@@ -70,8 +80,8 @@ export function QuestionMarquee() {
 
       <Reveal className="mt-9 px-5 sm:px-8">
         <p className="mx-auto max-w-md text-center text-[15px] leading-relaxed font-medium text-white/45">
-          Des centaines de questions, écrites une par une. Aucune ne sert à
-          chambrer&nbsp;: elles servent toutes à valoriser quelqu&apos;un.
+          Des centaines de questions. Aucune pour chambrer, toutes pour dire du
+          bien de quelqu&apos;un.
         </p>
       </Reveal>
     </section>

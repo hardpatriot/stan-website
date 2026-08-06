@@ -1,25 +1,26 @@
+import Image from "next/image";
 import { Reveal } from "./Reveal";
 
 const RULES = [
   {
-    emoji: "🧢",
+    icon: "/cap-512.png",
     title: "Que du positif",
-    body: "Chaque question est écrite pour valoriser quelqu'un. Il n'existe aucun sondage négatif sur Stan, et il n'y en aura jamais.",
+    body: "Toutes les questions servent à dire du bien. Il y a zéro sondage négatif sur Stan, et il y en aura jamais.",
   },
   {
-    emoji: "🤫",
-    title: "Anonyme par défaut",
-    body: "Tu sais qu'on a voté pour toi. Pas qui. À toi de décider si tu veux débloquer un indice.",
+    icon: "/emoji/shushing_face.svg",
+    title: "Personne sait qui a voté",
+    body: "Tu sais qu'on a voté pour toi. Pas qui. Sauf si tu débloques un indice.",
   },
   {
-    emoji: "🚫",
-    title: "Zéro message privé",
-    body: "Personne ne peut t'écrire sur Stan. Ni tes potes, ni des inconnus. La messagerie n'existe tout simplement pas.",
+    icon: "/emoji/prohibited.svg",
+    title: "Personne peut t'écrire",
+    body: "Y a pas de messages sur Stan. Ni tes potes, ni des inconnus. Ça existe juste pas.",
   },
   {
-    emoji: "👥",
-    title: "Entre potes uniquement",
-    body: "Seuls tes amis, tes contacts et tes camarades de classe peuvent voter pour toi. Les inconnus n'ont aucun moyen de t'atteindre.",
+    icon: "/emoji/handshake.svg",
+    title: "Que tes potes",
+    body: "Seuls tes amis, tes contacts et ta classe peuvent voter pour toi. Les inconnus, aucune chance.",
   },
 ];
 
@@ -29,16 +30,15 @@ export function Rules() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="text-sm font-black tracking-[0.18em] text-cyan uppercase">
-            Les règles du jeu
+            Les règles
           </p>
           <h2 className="display mt-4 max-w-2xl text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
-            On a construit Stan pour qu&apos;il soit{" "}
-            <span className="text-vote">impossible</span> d&apos;y être méchant.
+            Sur Stan, être méchant,{" "}
+            <span className="text-vote">c&apos;est même pas possible.</span>
           </h2>
           <p className="mt-6 max-w-xl text-[17px] leading-relaxed font-medium text-white/55">
-            Ce ne sont pas des promesses de communication. C&apos;est comment
-            l&apos;app est faite&nbsp;: ce qui n&apos;existe pas dans le code ne
-            peut pas arriver.
+            C&apos;est pas une promesse, c&apos;est comment l&apos;app est
+            faite. Ce qui existe pas peut pas arriver.
           </p>
         </Reveal>
 
@@ -46,9 +46,13 @@ export function Rules() {
           {RULES.map((rule, i) => (
             <Reveal key={rule.title} delay={i * 90}>
               <article className="glass group flex h-full gap-5 rounded-3xl p-7 transition-colors duration-500 hover:border-white/20">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/[0.06] text-2xl transition-transform duration-500 group-hover:scale-110">
-                  {rule.emoji}
-                </span>
+                <Image
+                  src={rule.icon}
+                  alt=""
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 shrink-0 rounded-xl drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-110"
+                />
                 <div>
                   <h3 className="text-lg font-black tracking-tight text-white">
                     {rule.title}

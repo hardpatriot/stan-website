@@ -1,37 +1,47 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppStoreButton } from "./AppStoreButton";
 import { PhoneFrame } from "./PhoneFrame";
 
-/* ---------------------------------------------------------------- données */
+/*
+ * Tout ce fichier est dessiné en POINTS iOS, dans un écran de 393×852 que
+ * PhoneFrame met à l'échelle. Les valeurs viennent donc directement de
+ * PollView.swift, ProfileCard.swift et PollsPageView.swift.
+ */
+
+/* --------------------------------------------------------------- données */
 
 const QUESTIONS = [
-  { emoji: "😁", text: "Qui a le plus beau sourire ?" },
-  { emoji: "😂", text: "Qui te fait le plus rire ?" },
-  { emoji: "🫶", text: "Sur qui on peut toujours compter ?" },
-  { emoji: "🔥", text: "Qui a le plus de style ?" },
-  { emoji: "✨", text: "Qui mérite plus d'attention ?" },
-  { emoji: "🧠", text: "Qui a toujours la meilleure idée ?" },
+  { emoji: "grinning_face_with_smiling_eyes", text: "Qui a le plus beau sourire ?" },
+  { emoji: "face_with_tears_of_joy", text: "Qui te fait le plus rire ?" },
+  { emoji: "heart_hands", text: "Sur qui on peut toujours compter ?" },
+  { emoji: "fire", text: "Qui a le plus de style ?" },
+  { emoji: "sparkles", text: "Qui mérite plus d'attention ?" },
+  { emoji: "brain", text: "Qui a toujours la meilleure idée ?" },
 ];
 
-const DEFAULT_FRIENDS = [
-  "Lana Chung",
-  "Lucas Chevalier",
-  "Léa Sacla",
-  "Noha Kanté",
-];
+const DEFAULT_FRIENDS = ["Lana Chung", "Lucas Chevalier", "Léa Sacla", "Noha Kanté"];
 
-const AVATAR_TINTS = [
-  "from-[#f0abfc] to-[#c026d3]",
-  "from-[#a5b4fc] to-[#4f46e5]",
-  "from-[#fda4af] to-[#e11d48]",
-  "from-[#7dd3fc] to-[#0284c7]",
+/** Les dégradés de carte de l'app — PollCardExperience.gradients. */
+const CARD_GRADIENTS = [
+  ["#F7A25B", "#F78C60", "#F67566", "#F65E6D", "#F64773", "#F53079", "#F5187F", "#F50384"],
+  ["#6001FF", "#5601FF", "#4B01FF", "#4001FF", "#3501FF", "#2A01FF", "#1F01FF", "#1501FF"],
+  ["#45F9FD", "#49DCFD", "#4CBDFC", "#4F9FFC", "#5380FC", "#5662FB", "#5A43FB", "#5D26FB"],
+  ["#B35BE6", "#B153E7", "#AF4CE7", "#AD44E8", "#AB3CE9", "#A935E9", "#A72DEA", "#A526EB"],
 ];
 
 const TOTAL_ROUNDS = 3;
 
-/* --------------------------------------------------------------- utilitaires */
+/* ----------------------------------------------------------- utilitaires */
+
+function gradientCss(stops: string[]) {
+  const parts = stops.map(
+    (hex, i) => `${hex} ${((i / (stops.length - 1)) * 100).toFixed(1)}%`,
+  );
+  return `linear-gradient(180deg, ${parts.join(", ")})`;
+}
 
 function initials(name: string) {
   return name
@@ -51,16 +61,22 @@ function shuffled<T>(list: T[]) {
   return copy;
 }
 
-/* ------------------------------------------------------------------ écran */
+/** Prénom sur une ligne, nom sur la suivante — comme ProfileCard. */
+function splitName(name: string) {
+  const [first, ...rest] = name.split(/\s+/).filter(Boolean);
+  return { first: first ?? name, last: rest.join(" ") };
+}
+
+/* ------------------------------------------------------------------- vue */
 
 type Stage = "vote" | "reveal";
 
 export function VoteDemo() {
   const [friends, setFriends] = useState<string[]>(DEFAULT_FRIENDS);
-  // Trio fixe au premier chargement : le rendu serveur et le rendu client doivent
-  // être identiques, sinon React signale une erreur d'hydratation. Le mélange
-  // n'intervient qu'au rejeu, déclenché par un clic.
+  // Trio et dégradé figés au premier rendu : le HTML du serveur et celui du
+  // client doivent être identiques. Le tirage au sort n'arrive qu'au rejeu.
   const [deck, setDeck] = useState(() => QUESTIONS.slice(0, TOTAL_ROUNDS));
+  const [gradient, setGradient] = useState(0);
   const [round, setRound] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [stage, setStage] = useState<Stage>("vote");
@@ -69,28 +85,28 @@ export function VoteDemo() {
   const [notifIn, setNotifIn] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  // On nettoie tous les timers au démontage : sinon on setState sur un composant mort.
   const later = useCallback((fn: () => void, ms: number) => {
     timers.current.push(setTimeout(fn, ms));
   }, []);
 
   useEffect(() => {
     const pending = timers.current;
-    return () => {
-      pending.forEach(clearTimeout);
-    };
+    return () => pending.forEach(clearTimeout);
   }, []);
 
   const question = deck[round] ?? deck[0];
 
+  function finish() {
+    setStage("reveal");
+    later(() => setNotifIn(true), 550);
+  }
+
   function vote(index: number) {
     if (picked !== null || stage !== "vote") return;
     setPicked(index);
-
     later(() => {
       if (round + 1 >= TOTAL_ROUNDS) {
-        setStage("reveal");
-        later(() => setNotifIn(true), 550);
+        finish();
       } else {
         setRound((r) => r + 1);
         setPicked(null);
@@ -102,6 +118,7 @@ export function VoteDemo() {
     timers.current.forEach(clearTimeout);
     timers.current = [];
     setDeck(shuffled(QUESTIONS).slice(0, TOTAL_ROUNDS));
+    setGradient(Math.floor(Math.random() * CARD_GRADIENTS.length));
     setRound(0);
     setPicked(null);
     setNotifIn(false);
@@ -110,12 +127,8 @@ export function VoteDemo() {
 
   function skip() {
     if (stage !== "vote" || picked !== null) return;
-    if (round + 1 >= TOTAL_ROUNDS) {
-      setStage("reveal");
-      later(() => setNotifIn(true), 550);
-    } else {
-      setRound((r) => r + 1);
-    }
+    if (round + 1 >= TOTAL_ROUNDS) finish();
+    else setRound((r) => r + 1);
   }
 
   function shuffleNames() {
@@ -133,10 +146,11 @@ export function VoteDemo() {
 
   return (
     <div className="flex flex-col items-center gap-5">
-      <PhoneFrame className="w-[280px] sm:w-[310px]">
+      <PhoneFrame>
         {stage === "vote" ? (
           <VoteScreen
             question={question}
+            gradient={CARD_GRADIENTS[gradient]}
             friends={friends}
             picked={picked}
             round={round}
@@ -154,19 +168,18 @@ export function VoteDemo() {
         )}
       </PhoneFrame>
 
-      <p className="text-center text-xs font-medium text-white/35">
-        {stage === "vote"
-          ? "Vas-y, vote — c'est une vraie démo."
-          : "Voilà ce que ton pote reçoit."}
+      <p className="text-center text-[13px] font-medium text-white/35">
+        {stage === "vote" ? "Vas-y, vote." : "Voilà ce que ton pote reçoit."}
       </p>
     </div>
   );
 }
 
-/* ------------------------------------------------------------- écran vote */
+/* ------------------------------------------------------------ écran vote */
 
 function VoteScreen({
   question,
+  gradient,
   friends,
   picked,
   round,
@@ -180,6 +193,7 @@ function VoteScreen({
   onShuffle,
 }: {
   question: (typeof QUESTIONS)[number];
+  gradient: string[];
   friends: string[];
   picked: number | null;
   round: number;
@@ -193,122 +207,200 @@ function VoteScreen({
   onShuffle: () => void;
 }) {
   return (
-    <div className="absolute inset-0 flex flex-col bg-[linear-gradient(175deg,#d91cbd_0%,#e6006e_100%)] px-4 pt-12 pb-5">
-      {/* Progression */}
-      <div className="flex flex-col items-center gap-2">
-        <p className="text-[15px] font-black tracking-tight text-white">
+    // La carte de sondage : rayon 47, ombre de fullScreenCard.
+    <div
+      className="absolute inset-x-0 top-[52px] bottom-[26px] flex flex-col items-center rounded-[47px]"
+      style={{
+        background: gradientCss(gradient),
+        boxShadow: "0 8px 18px rgba(0,0,0,0.3)",
+      }}
+    >
+      {/* En-tête : « X sur Y » + PageControlView */}
+      <div className="flex flex-col items-center gap-2 pt-[22px]">
+        <p className="text-[18px] leading-none font-semibold text-white">
           {round + 1} sur {TOTAL_ROUNDS}
         </p>
-        <div className="flex w-full gap-1.5">
+        <div className="flex gap-1">
           {Array.from({ length: TOTAL_ROUNDS }).map((_, i) => (
             <span
               key={i}
-              className={`h-[3px] flex-1 rounded-full transition-colors duration-500 ${
-                i <= round ? "bg-white" : "bg-white/25"
-              }`}
+              className="h-[3.2px] w-[23.5px] rounded-[12px] transition-colors duration-500"
+              style={{ background: i <= round ? "#fff" : "#8E8E93" }}
             />
           ))}
         </div>
       </div>
 
-      {/* Question */}
-      <div
-        key={question.text}
-        className="animate-rise mt-5 flex flex-col items-center gap-3"
-      >
-        <span className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[linear-gradient(160deg,#a78bfa,#6366f1)] text-2xl shadow-[0_8px_20px_-6px_rgba(0,0,0,0.5)]">
-          {question.emoji}
-        </span>
-        <h3 className="text-center text-[17px] leading-tight font-black tracking-tight text-white text-balance">
+      {/* L'emoji 3D posé sans fond, comme QuestionEmojiIconView */}
+      <div key={question.emoji} className="animate-rise mt-[26px] flex flex-col items-center">
+        <Image
+          src={`/emoji/${question.emoji}.svg`}
+          alt=""
+          width={86}
+          height={86}
+          className="h-[86px] w-[86px] drop-shadow-[0_5px_5px_rgba(0,0,0,0.25)]"
+          priority
+        />
+        <h3 className="mt-[18px] max-w-[320px] text-center text-[18px] leading-[1.25] font-semibold text-white text-balance">
           {question.text}
         </h3>
       </div>
 
-      {/* Ajout de potes */}
-      {editing ? (
-        <form onSubmit={onAdd} className="mt-4 flex gap-2">
-          <input
-            autoFocus
-            value={draft}
-            onChange={(e) => onDraft(e.target.value)}
-            maxLength={22}
-            placeholder="Prénom d'un pote"
-            className="min-w-0 flex-1 rounded-full bg-white px-3.5 py-2 text-[13px] font-semibold text-night-900 outline-none placeholder:text-black/35"
-          />
-          <button
-            type="submit"
-            aria-label="Ajouter ce pote"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/25 text-lg font-black text-white backdrop-blur-sm transition active:scale-90"
-          >
-            +
-          </button>
-        </form>
-      ) : (
-        <button
-          onClick={onToggleEdit}
-          className="mt-4 self-center rounded-full bg-white/15 px-3.5 py-1.5 text-[11px] font-bold text-white/90 backdrop-blur-sm transition hover:bg-white/25"
-        >
-          ✏️ Mets les prénoms de tes potes
-        </button>
-      )}
-
-      {/* Les 4 choix */}
-      <div className="mt-4 grid flex-1 content-center grid-cols-2 gap-2.5">
-        {friends.slice(0, 4).map((name, i) => {
-          const isPicked = picked === i;
-          const dimmed = picked !== null && !isPicked;
-          return (
+      {/* Ajouter ses potes — le seul ajout par rapport à l'app */}
+      <div className="mt-[18px] w-[304px] shrink-0">
+        {editing ? (
+          <form onSubmit={onAdd} className="flex gap-2">
+            <input
+              autoFocus
+              value={draft}
+              onChange={(e) => onDraft(e.target.value)}
+              maxLength={22}
+              placeholder="Prénom d'un pote"
+              className="min-w-0 flex-1 rounded-full bg-white px-4 py-2 text-[15px] font-semibold text-night-900 outline-none placeholder:text-black/35"
+            />
             <button
-              key={`${name}-${i}`}
-              onClick={() => onVote(i)}
-              disabled={picked !== null}
-              className={`relative flex flex-col items-center justify-center gap-1.5 overflow-hidden rounded-2xl px-2 py-3.5 transition-all duration-500 ${
-                isPicked
-                  ? "scale-[1.04] bg-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)]"
-                  : "bg-white/92 hover:bg-white"
-              } ${dimmed ? "scale-95 opacity-35" : ""}`}
+              type="submit"
+              aria-label="Ajouter ce pote"
+              className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-black/20 text-[20px] leading-none font-semibold text-white transition active:scale-90"
             >
-              <span
-                className={`flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br ${AVATAR_TINTS[i % 4]} text-[11px] font-black text-white`}
-              >
-                {initials(name)}
-              </span>
-              <span className="text-center text-[12px] leading-tight font-black tracking-tight text-night-900">
-                {name}
-              </span>
-
-              {isPicked && (
-                <span className="absolute inset-0 flex items-center justify-center bg-[linear-gradient(150deg,rgba(217,28,189,0.94),rgba(230,0,110,0.94))]">
-                  <span className="animate-rise text-2xl">🧢</span>
-                </span>
-              )}
+              +
             </button>
-          );
-        })}
+          </form>
+        ) : (
+          <button
+            onClick={onToggleEdit}
+            className="mx-auto block rounded-full bg-black/15 px-4 py-1.5 text-[13px] font-semibold text-white/90 transition hover:bg-black/25"
+          >
+            ✏️ Mets les prénoms de tes potes
+          </button>
+        )}
       </div>
 
-      {/* Actions */}
-      <div className="mt-3 flex items-center justify-center gap-2">
+      {/* Spacer de PollView, avant la grille */}
+      <div className="flex-1" />
+
+      {/* La grille 2×2 : tuiles 147×147, espacement 10 */}
+      <div className="grid shrink-0 grid-cols-2 gap-[10px]">
+        {friends.slice(0, 4).map((name, i) => (
+          <ChoiceTile
+            key={`${name}-${i}`}
+            name={name}
+            picked={picked === i}
+            dimmed={picked !== null && picked !== i}
+            disabled={picked !== null}
+            onClick={() => onVote(i)}
+          />
+        ))}
+      </div>
+
+      <div className="flex-1" />
+
+      {/* Shuffle / Skip — les boutons de l'app, espacement 30 */}
+      <div className="flex shrink-0 items-center gap-[30px]">
         <button
           onClick={onShuffle}
           disabled={picked !== null}
-          className="rounded-full bg-white/15 px-3.5 py-1.5 text-[11px] font-bold text-white backdrop-blur-sm transition hover:bg-white/25 disabled:opacity-40"
+          aria-label="Mélanger les potes"
+          className="transition active:scale-95 disabled:opacity-50 disabled:grayscale"
         >
-          🔀 Mélanger
+          <Image src="/shuffle.png" alt="Shuffle" width={121} height={60} className="h-[60px] w-auto" />
         </button>
         <button
           onClick={onSkip}
           disabled={picked !== null}
-          className="rounded-full bg-white/15 px-3.5 py-1.5 text-[11px] font-bold text-white backdrop-blur-sm transition hover:bg-white/25 disabled:opacity-40"
+          aria-label="Passer la question"
+          className="transition active:scale-95 disabled:opacity-50 disabled:grayscale"
         >
-          ⏩ Passer
+          <Image src="/skip.png" alt="Skip" width={121} height={60} className="h-[60px] w-auto" />
         </button>
       </div>
+
+      <div className="flex-1" />
     </div>
   );
 }
 
-/* ----------------------------------------------------------- écran reveal */
+/* ----------------------------------------------------- carte d'un choix */
+
+/**
+ * Le verre blanc-lilas de PollChoiceLightGlassCard : nacre, halo radial,
+ * double liseré, et l'ombre violette qui décolle la carte du dégradé.
+ */
+function ChoiceTile({
+  name,
+  picked,
+  dimmed,
+  disabled,
+  onClick,
+}: {
+  name: string;
+  picked: boolean;
+  dimmed: boolean;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  const { first, last } = splitName(name);
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={`relative flex h-[147px] w-[147px] flex-col items-center justify-center overflow-hidden rounded-[16px] transition-all duration-500 active:scale-95 ${
+        picked ? "scale-[1.03]" : ""
+      } ${dimmed ? "scale-95 opacity-40" : ""}`}
+      style={{
+        background:
+          "radial-gradient(circle at 42% 28%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.34) 52%, rgba(255,255,255,0) 76%), linear-gradient(160deg, #ffffff 0%, #fefcff 46%, #f9f2fd 100%)",
+        boxShadow:
+          "0 8px 11px rgba(91,33,182,0.42), 0 4px 5px rgba(0,0,0,0.15), inset 0 0 0 1.55px rgba(255,255,255,0.92)",
+      }}
+    >
+      {/* Liseré intérieur, en retrait de 3,2 pt */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-[3.2px] rounded-[13px]"
+        style={{
+          border: "0.85px solid rgba(255,255,255,0.6)",
+          background:
+            "linear-gradient(135deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 46%, rgba(184,155,209,0.18) 100%)",
+        }}
+      />
+
+      <span
+        className="relative flex h-[67px] w-[67px] items-center justify-center rounded-full text-[17px] font-semibold text-white"
+        style={{ background: "#8E8E93", boxShadow: "0 2px 4px rgba(0,0,0,0.25)" }}
+      >
+        {initials(name)}
+      </span>
+
+      <span className="relative mt-[8px] px-2 text-center text-[18px] leading-[1.15] font-semibold text-black">
+        {first}
+        <br />
+        {last}
+      </span>
+
+      {picked && (
+        <span
+          className="absolute inset-0 flex items-center justify-center rounded-[16px]"
+          style={{
+            background:
+              "linear-gradient(150deg, rgba(167,139,250,0.95), rgba(129,140,248,0.95) 55%, rgba(244,114,182,0.95))",
+          }}
+        >
+          <Image
+            src="/cap-180.png"
+            alt=""
+            width={60}
+            height={60}
+            className="animate-rise h-[60px] w-[60px] rounded-[14px]"
+          />
+        </span>
+      )}
+    </button>
+  );
+}
+
+/* --------------------------------------------------------- écran reveal */
 
 function RevealScreen({
   notifIn,
@@ -318,26 +410,39 @@ function RevealScreen({
   onReplay: () => void;
 }) {
   return (
-    <div className="absolute inset-0 flex flex-col justify-between bg-[linear-gradient(165deg,#0b0716_0%,#1f1445_60%,#2a1b5c_100%)] px-4 pt-12 pb-6">
+    <div className="absolute inset-0 flex flex-col justify-between px-[22px] pt-[64px] pb-[44px]">
       {/* La notification qui tombe */}
       <div
         className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          notifIn ? "translate-y-0 opacity-100" : "-translate-y-8 opacity-0"
+          notifIn ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
         }`}
       >
-        <div className="glass flex items-start gap-2.5 rounded-2xl px-3 py-2.5">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[linear-gradient(150deg,#d91cbd,#e6006e)] text-base">
-            🧢
-          </span>
+        {/* Une vraie bannière iOS est bien plus lisible qu'un simple voile :
+            c'est le moment fort de la démo, il doit se lire d'un coup d'œil. */}
+        <div
+          className="flex items-start gap-3 rounded-[20px] px-[14px] py-[12px] backdrop-blur-xl"
+          style={{
+            background: "rgba(255,255,255,0.16)",
+            border: "1px solid rgba(255,255,255,0.22)",
+            boxShadow: "0 12px 30px -8px rgba(0,0,0,0.65)",
+          }}
+        >
+          <Image
+            src="/cap-180.png"
+            alt=""
+            width={38}
+            height={38}
+            className="h-[38px] w-[38px] shrink-0 rounded-[9px]"
+          />
           <div className="min-w-0 flex-1">
             <div className="flex items-baseline justify-between gap-2">
-              <p className="text-[10px] font-black tracking-wide text-white/70 uppercase">
+              <p className="text-[12px] font-bold tracking-wide text-white/70 uppercase">
                 Stan
               </p>
-              <p className="text-[9px] font-medium text-white/40">maintenant</p>
+              <p className="text-[11px] font-medium text-white/40">maintenant</p>
             </div>
-            <p className="mt-0.5 text-[12px] leading-snug font-bold text-white">
-              Quelqu&apos;un vient de voter pour&nbsp;toi&nbsp;👀
+            <p className="mt-[2px] text-[15px] leading-snug font-semibold text-white">
+              Quelqu&apos;un vient de voter pour&nbsp;toi
             </p>
           </div>
         </div>
@@ -345,34 +450,40 @@ function RevealScreen({
 
       {/* Le message */}
       <div
-        className={`flex flex-col items-center gap-3 text-center transition-all delay-300 duration-700 ${
+        className={`flex flex-col items-center gap-4 text-center transition-all delay-300 duration-700 ${
           notifIn ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >
-        <span className="text-4xl">👀</span>
-        <h3 className="display text-[26px] text-white text-balance">
+        <Image
+          src="/emoji/eyes.svg"
+          alt=""
+          width={86}
+          height={86}
+          className="h-[86px] w-[86px] drop-shadow-[0_5px_5px_rgba(0,0,0,0.25)]"
+        />
+        <h3 className="display text-[34px] text-white text-balance">
           Et toi, qui a voté pour toi&nbsp;?
         </h3>
-        <p className="max-w-[210px] text-[12px] leading-relaxed font-medium text-white/55">
-          Sur Stan, c&apos;est tes potes qui répondent. Et tu reçois la notif.
+        <p className="max-w-[270px] text-[16px] leading-relaxed font-medium text-white/55">
+          Sur Stan, c&apos;est tes potes qui répondent. Toi, tu reçois la notif.
         </p>
       </div>
 
       {/* Sortie */}
       <div
-        className={`flex flex-col items-center gap-2.5 transition-all delay-500 duration-700 ${
+        className={`flex flex-col items-center gap-4 transition-all delay-500 duration-700 ${
           notifIn ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >
         <AppStoreButton
-          className="w-full px-5! py-3! text-[13px]!"
+          className="w-full px-6! py-4! text-[17px]!"
           label="Découvrir qui"
         />
         <button
           onClick={onReplay}
-          className="text-[11px] font-bold text-white/40 transition hover:text-white/80"
+          className="text-[14px] font-semibold text-white/40 transition hover:text-white/80"
         >
-          ↻ Rejouer la démo
+          ↻ Rejouer
         </button>
       </div>
     </div>
