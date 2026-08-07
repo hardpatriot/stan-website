@@ -51,17 +51,27 @@ const ATTRIBUTS = {
   class: "className",
 };
 
-/** Les emojis cités quelque part dans les composants. */
+/**
+ * Les emojis cités quelque part dans les composants.
+ *
+ * On ratisse large : toute chaîne en minuscules qui correspond à un fichier
+ * existant est retenue. C'est volontairement naïf, mais ça évite d'oublier un
+ * emoji parce qu'il est déclaré sous une forme qu'on n'avait pas prévue —
+ * ce qui est déjà arrivé deux fois.
+ */
 function emojisUtilises() {
+  const disponibles = new Set(
+    readdirSync(DOSSIER_EMOJI)
+      .filter((f) => f.endsWith(".svg"))
+      .map((f) => f.replace(/\.svg$/, "")),
+  );
   const utilises = new Set();
   for (const f of readdirSync("components")) {
     if (!f.endsWith(".tsx") || f === "EmojiSprite.tsx") continue;
     const src = readFileSync(join("components", f), "utf8");
-    for (const m of src.matchAll(/(?:emoji|icon|name):\s*"([a-z0-9_]+)"/g)) {
-      utilises.add(m[1]);
+    for (const m of src.matchAll(/"([a-z][a-z0-9_]{2,})"/g)) {
+      if (disponibles.has(m[1])) utilises.add(m[1]);
     }
-    for (const m of src.matchAll(/name="([a-z0-9_]+)"/g)) utilises.add(m[1]);
-    for (const m of src.matchAll(/\/emoji\/([a-z0-9_]+)\.svg/g)) utilises.add(m[1]);
   }
   return [...utilises].sort();
 }

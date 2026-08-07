@@ -24,7 +24,7 @@ const STEPS = [
   {
     icon: "bell",
     title: "Reçois la notif",
-    body: "Quelqu'un t'a choisi. Tu le sais tout de suite, mais tu sais pas qui.",
+    body: "Quelqu'un t'a choisi. Tu le sais tout de suite. Tu ne sais pas qui.",
     teinte: "#e6006e",
   },
 ];
