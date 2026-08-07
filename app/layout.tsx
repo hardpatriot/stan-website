@@ -48,6 +48,11 @@ export const metadata: Metadata = {
     description:
       "Si tes potes pouvaient dire ce qu'ils pensent de toi en anonyme, ils diraient quoi ?",
   },
+  // La bannière native de Safari sur iPhone : elle apparaît en haut de la page
+  // avec l'icône de Stan et un bouton. Si l'app est déjà installée, le bouton
+  // l'ouvre directement au lieu de renvoyer vers l'App Store.
+  itunes: { appId: "6740286416" },
+
   appleWebApp: {
     title: "Stan",
     capable: true,
