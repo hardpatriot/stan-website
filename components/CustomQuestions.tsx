@@ -39,7 +39,7 @@ export function CustomQuestions() {
     <section className="relative px-5 py-14 sm:px-8 sm:py-24 lg:py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
         {/* Le discours */}
-        <div>
+        <div className="min-w-0">
           <Reveal>
             <p className="text-sm font-black tracking-[0.18em] text-cyan uppercase">
               Tes questions
@@ -63,7 +63,7 @@ export function CustomQuestions() {
         </div>
 
         {/* La maquette : champ de saisie + classement */}
-        <Reveal delay={120}>
+        <Reveal delay={120} className="min-w-0">
           <div className="flex flex-col gap-4">
             {/* Le champ */}
             <div className="glass rounded-3xl p-6">

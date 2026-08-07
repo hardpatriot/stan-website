@@ -11,7 +11,7 @@ export function Hero() {
     <section className="relative px-5 pt-24 pb-10 sm:px-8 sm:pt-36 sm:pb-24">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_auto] lg:gap-16">
         {/* Colonne texte */}
-        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
+        <div className="flex min-w-0 flex-col items-center text-center lg:items-start lg:text-left">
           {/* Le sous-titre de la fiche App Store, mot pour mot. */}
           <h1
             className="display animate-rise text-[clamp(2.9rem,9vw,5.6rem)] text-white text-balance"

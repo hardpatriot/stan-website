@@ -22,10 +22,10 @@ function Card({ children }: { children: React.ReactNode }) {
       {/* La lueur qui décolle la carte du fond */}
       <div
         aria-hidden
-        className="animate-pulse-glow absolute -inset-12 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(230,0,110,0.40)_0%,rgba(217,28,189,0.16)_40%,transparent_72%)] blur-2xl"
+        className="animate-pulse-glow pointer-events-none absolute -inset-6 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(230,0,110,0.40)_0%,rgba(217,28,189,0.16)_40%,transparent_72%)] blur-2xl"
       />
       <div
-        className="relative"
+        className="relative overflow-hidden"
         style={{
           width: `calc(${CARD_W}px * var(--ps))`,
           height: `calc(${CARD_H}px * var(--ps))`,

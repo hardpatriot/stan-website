@@ -86,6 +86,10 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  /* Filet de securite : aucun element decoratif ne doit pouvoir faire defiler
+     la page lateralement. `clip` plutot que `hidden`, qui creerait un
+     conteneur de defilement et casserait le `position: sticky`. */
+  overflow-x: clip;
 }
 
 body {
@@ -93,7 +97,7 @@ body {
   color: #fff;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Titres : Roboto poussé au maximum, tracking très serré */
