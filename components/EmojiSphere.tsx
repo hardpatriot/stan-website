@@ -213,7 +213,7 @@ export function EmojiSphere() {
       // F ≈ 2 × hauteur pour un rayon d'un peu moins d'une demi-hauteur.
       // Sans ça, les 110 emojis se tassaient en un amas cinq fois trop dense.
       const F = large
-        ? Math.min(1.92 * h, 1.6 * w)
+        ? Math.min(1.84 * h, 1.54 * w)
         : Math.min(1.95 * h, 1.62 * w);
 
       for (let i = 0; i < n; i++) {
@@ -267,12 +267,45 @@ export function EmojiSphere() {
       raf = requestAnimationFrame(boucle);
     };
 
-    raf = requestAnimationFrame(boucle);
+
+    let visible = true;
+    const demarrer = () => {
+      if (raf) return;
+      precedent = performance.now();
+      raf = requestAnimationFrame(boucle);
+    };
+    const arreter = () => {
+      if (!raf) return;
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
+
+    const observateur = new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        if (visible && !document.hidden) demarrer();
+        else arreter();
+      },
+      { rootMargin: "10% 0px" },
+    );
+    observateur.observe(sec);
+
+    // Un onglet en arrière-plan fige de toute façon l'animation ; on évite
+    // en plus de relancer une boucle au retour si la section est passée.
+    const surVisibilite = () => {
+      if (document.hidden || !visible) arreter();
+      else demarrer();
+    };
+    document.addEventListener("visibilitychange", surVisibilite);
+
+    demarrer();
     sc.addEventListener("pointermove", bouger, { passive: true });
     sc.addEventListener("pointerleave", relacher, { passive: true });
 
     return () => {
-      cancelAnimationFrame(raf);
+      arreter();
+      observateur.disconnect();
+      document.removeEventListener("visibilitychange", surVisibilite);
       window.removeEventListener("resize", remesurer);
       sc.removeEventListener("pointermove", bouger);
       sc.removeEventListener("pointerleave", relacher);

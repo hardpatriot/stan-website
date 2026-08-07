@@ -67,7 +67,7 @@ function emojisUtilises() {
   for (const f of readdirSync("components")) {
     if (!f.endsWith(".tsx") || f === "EmojiSprite.tsx") continue;
     const src = readFileSync(join("components", f), "utf8");
-    for (const m of src.matchAll(/"([a-z][a-z0-9_]{2,})"/g)) {
+    for (const m of src.matchAll(/"([a-z0-9][a-z0-9_]{2,})"/g)) {
       if (disponibles.has(m[1])) utilises.add(m[1]);
     }
   }
@@ -99,6 +99,51 @@ function enJsx(markup) {
   return out.replace(/\sstyle="[^"]*"/g, "");
 }
 
+/**
+ * Deux emojis exportés du même dessin partagent souvent un dégradé ou un
+ * filtre au contenu rigoureusement identique, sous des identifiants
+ * différents. On n'en garde qu'un et on réécrit les références : environ
+ * quinze pour cent des définitions sont dans ce cas, et elles sont trop
+ * éloignées les unes des autres dans le fichier pour que la compression les
+ * rattrape.
+ */
+function dedupliquer(definitions, formes) {
+  const vues = new Map(); // empreinte -> identifiant conservé
+  const remplacer = new Map(); // identifiant abandonné -> identifiant conservé
+  const gardees = [];
+
+  for (const def of definitions) {
+    const balise = def.match(/<(\w+)/)?.[1];
+    const ident = def.match(/id="([^"]+)"/)?.[1];
+    if (!balise || !ident) {
+      gardees.push(def);
+      continue;
+    }
+    const empreinte = balise + def.replace(/id="[^"]*"/, "");
+    const connu = vues.get(empreinte);
+    if (connu) {
+      remplacer.set(ident, connu);
+    } else {
+      vues.set(empreinte, ident);
+      gardees.push(def);
+    }
+  }
+
+  const reecrire = (txt) => {
+    let out = txt;
+    for (const [avant, apres] of remplacer) {
+      out = out.split(`url(#${avant})`).join(`url(#${apres})`);
+    }
+    return out;
+  };
+
+  return {
+    definitions: gardees.map(reecrire),
+    formes: formes.map(reecrire),
+    retirees: remplacer.size,
+  };
+}
+
 const noms = emojisUtilises();
 const definitions = [];
 const formes = [];
@@ -123,11 +168,19 @@ for (const nom of noms) {
 
   // Les définitions restent dans le document principal ; le symbole ne
   // contient que les formes, qui y font référence.
-  if (defs) definitions.push(`        {/* ${nom} */}\n        ${defs}`);
+  if (defs) {
+    // Une définition par entrée, pour pouvoir les comparer entre elles.
+    for (const m of defs.matchAll(/<(\w+)[^>]*id="[^"]*"[\s\S]*?<\/\1>/g)) {
+      definitions.push(m[0]);
+    }
+  }
   formes.push(
     `        <symbol id="e-${nom}" viewBox="0 0 32 32">${dessin}</symbol>`,
   );
 }
+
+const { definitions: defsFinales, formes: formesFinales, retirees } =
+  dedupliquer(definitions, formes);
 
 const contenu = `// FICHIER GÉNÉRÉ — ne pas modifier à la main.
 // Régénérer avec : node scripts/generer-sprite.mjs
@@ -148,9 +201,9 @@ export function EmojiSprite() {
       style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
     >
       <defs>
-${definitions.join("\n")}
+        ${defsFinales.join("\n        ")}
       </defs>
-${formes.join("\n")}
+${formesFinales.join("\n")}
     </svg>
   );
 }
@@ -184,5 +237,6 @@ export function Emoji({
 
 writeFileSync(SORTIE, contenu);
 console.log(
-  `${formes.length} emojis — ${Math.round(Buffer.byteLength(contenu) / 1024)} Ko`,
+  `${formes.length} emojis — ${Math.round(Buffer.byteLength(contenu) / 1024)} Ko` +
+    ` (${retirees} définitions en double retirées)`,
 );
