@@ -1,22 +1,29 @@
 /**
- * Fabrique la planche de symboles des emojis.
+ * Fabrique les emojis vectoriels de la page.
  *
- * Pourquoi : un <img src="…svg"> laisse le navigateur libre de rastériser le
- * fichier à la résolution de son choix. Safari iOS le fait, et les emojis
- * ressortent flous sur les écrans denses. Une géométrie posée directement
- * dans le DOM est retracée à chaque image à la résolution réelle : il n'y a
- * plus d'étape de rastérisation à rater.
+ * POURQUOI PAS UNE IMAGE
+ * Un <img src="…svg"> laisse le navigateur libre de rastériser le fichier à la
+ * résolution de son choix. Safari iOS le fait mal sur les écrans denses, et
+ * les emojis ressortent flous. Une géométrie posée dans le DOM est retracée à
+ * chaque image à la résolution réelle : il n'y a plus d'étape à rater.
  *
- * La planche définit chaque emoji UNE fois dans un <symbol>. Chaque usage
- * n'est ensuite qu'un <use> de quelques octets, quel que soit le nombre
- * d'occurrences dans la page.
+ * POURQUOI PAS <symbol> + <use>
+ * C'était la solution la plus économe, mais un <use> crée un arbre fantôme.
+ * Les filtres de ces emojis sont positionnés en coordonnées absolues
+ * (`filterUnits="userSpaceOnUse"`, tel que Figma les exporte) et leur zone
+ * atterrit à côté dans cet arbre : le dessin vire au noir. Constaté sur le
+ * point d'interrogation. Les retirer ne marche pas non plus : certains
+ * groupes SONT le flou, sans lui ils deviennent des aplats opaques, ce qui
+ * cassait les mains jointes et la tête qui parle.
  *
- * Deux précautions :
- * - les identifiants internes (dégradés, masques, filtres) sont préfixés par
- *   le nom de l'emoji, sinon deux emojis partageant un « clip0_31_1609 »
- *   s'écraseraient une fois réunis dans le même document ;
- * - la sortie est du vrai JSX, pas du HTML injecté, donc les noms d'attributs
- *   sont convertis à la convention React.
+ * CE QU'ON FAIT
+ * Les définitions lourdes et partageables — dégradés, filtres — sont posées
+ * UNE fois dans un bloc caché du document. Les formes, elles, sont écrites en
+ * ligne à chaque usage, dans l'arbre normal : les filtres y fonctionnent
+ * exactement comme dans le fichier d'origine.
+ *
+ * Les identifiants sont préfixés par le nom de l'emoji : sans ça, deux emojis
+ * partageant un « paint0_linear » s'écraseraient une fois réunis.
  *
  *   node scripts/generer-sprite.mjs
  */
@@ -50,11 +57,11 @@ function emojisUtilises() {
   for (const f of readdirSync("components")) {
     if (!f.endsWith(".tsx") || f === "EmojiSprite.tsx") continue;
     const src = readFileSync(join("components", f), "utf8");
-    for (const m of src.matchAll(/emoji:\s*"([a-z0-9_]+)"/g)) utilises.add(m[1]);
-    for (const m of src.matchAll(/\/emoji\/([a-z0-9_]+)\.svg/g)) utilises.add(m[1]);
-    for (const m of src.matchAll(/name="([a-z0-9_]+)"\s*(?:\/|className)/g)) {
+    for (const m of src.matchAll(/(?:emoji|icon|name):\s*"([a-z0-9_]+)"/g)) {
       utilises.add(m[1]);
     }
+    for (const m of src.matchAll(/name="([a-z0-9_]+)"/g)) utilises.add(m[1]);
+    for (const m of src.matchAll(/\/emoji\/([a-z0-9_]+)\.svg/g)) utilises.add(m[1]);
   }
   return [...utilises].sort();
 }
@@ -75,20 +82,18 @@ function isoler(nom, markup) {
   return out;
 }
 
-/** Traduit les noms d'attributs et ferme les balises à la mode JSX. */
+/** Traduit les noms d'attributs à la convention React. */
 function enJsx(markup) {
   let out = markup;
   for (const [svg, react] of Object.entries(ATTRIBUTS)) {
     out = out.replace(new RegExp(`\\s${svg}=`, "g"), ` ${react}=`);
   }
-  // `style="a:b"` deviendrait un objet en React : ces emojis n'en ont pas
-  // besoin, on le retire plutôt que de le traduire à moitié.
-  out = out.replace(/\sstyle="[^"]*"/g, "");
-  return out;
+  return out.replace(/\sstyle="[^"]*"/g, "");
 }
 
 const noms = emojisUtilises();
-const symboles = [];
+const definitions = [];
+const formes = [];
 
 for (const nom of noms) {
   let svg;
@@ -98,24 +103,38 @@ for (const nom of noms) {
     console.warn(`  ignoré, fichier absent : ${nom}`);
     continue;
   }
-  const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1] ?? "0 0 32 32";
-  const interieur = svg.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "");
-  symboles.push(
-    `      <symbol id="e-${nom}" viewBox="${viewBox}">${enJsx(isoler(nom, interieur))}</symbol>`,
+  const interieur = enJsx(
+    isoler(nom, svg.replace(/^[\s\S]*?<svg[^>]*>/, "").replace(/<\/svg>\s*$/, "")),
   );
+
+  // On sépare ce qui se partage (le bloc <defs>) de ce qui se dessine.
+  const defs = [...interieur.matchAll(/<defs>([\s\S]*?)<\/defs>/g)]
+    .map((m) => m[1])
+    .join("");
+  const dessin = interieur.replace(/<defs>[\s\S]*?<\/defs>/g, "");
+
+  if (defs) definitions.push(`        {/* ${nom} */}\n        ${defs}`);
+  formes.push(`  ${JSON.stringify(nom)}: (\n    <>${dessin}</>\n  ),`);
 }
 
 const contenu = `// FICHIER GÉNÉRÉ — ne pas modifier à la main.
 // Régénérer avec : node scripts/generer-sprite.mjs
 //
-// Chaque emoji est défini une seule fois ici, puis référencé par <Emoji />.
-// Voir scripts/generer-sprite.mjs pour la raison de ce détour.
+// Voir scripts/generer-sprite.mjs pour la raison de cette construction.
+
+import type { ReactNode } from "react";
 
 export const EMOJIS = ${JSON.stringify(noms)} as const;
 
-export type NomEmoji = (typeof EMOJIS)[number];
+/** Les formes de chaque emoji, écrites en ligne à chaque usage. */
+const FORMES: Record<string, ReactNode> = {
+${formes.join("\n")}
+};
 
-/** Posée une fois dans la page, invisible. */
+/**
+ * Les dégradés et filtres partagés, posés une seule fois dans le document.
+ * À placer une fois dans la page, avant les emojis.
+ */
 export function EmojiSprite() {
   return (
     <svg
@@ -123,12 +142,19 @@ export function EmojiSprite() {
       focusable="false"
       style={{ position: "absolute", width: 0, height: 0, overflow: "hidden" }}
     >
-${symboles.join("\n")}
+      <defs>
+${definitions.join("\n")}
+      </defs>
     </svg>
   );
 }
 
-/** Un emoji, tracé en vectoriel à la résolution réelle de l'écran. */
+/**
+ * Un emoji, tracé en vectoriel à la résolution réelle de l'écran.
+ *
+ * Le viewBox est indispensable : les filtres de ces emojis sont positionnés
+ * en coordonnées absolues dans un repère de 32 unités.
+ */
 export function Emoji({
   name,
   className = "",
@@ -137,8 +163,14 @@ export function Emoji({
   className?: string;
 }) {
   return (
-    <svg aria-hidden focusable="false" className={className}>
-      <use href={\`#e-\${name}\`} />
+    <svg
+      aria-hidden
+      focusable="false"
+      viewBox="0 0 32 32"
+      fill="none"
+      className={className}
+    >
+      {FORMES[name]}
     </svg>
   );
 }
@@ -146,6 +178,5 @@ export function Emoji({
 
 writeFileSync(SORTIE, contenu);
 console.log(
-  `${symboles.length} emojis — ${Math.round(Buffer.byteLength(contenu) / 1024)} Ko`,
+  `${formes.length} emojis — ${Math.round(Buffer.byteLength(contenu) / 1024)} Ko`,
 );
-console.log(noms.join(", "));

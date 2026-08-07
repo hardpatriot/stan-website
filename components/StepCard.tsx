@@ -63,11 +63,16 @@ export function StepCard({
         }}
       />
 
-      {/* Le reflet fixe, seul visible au doigt */}
+      {/* Le reflet fixe, seul visible au doigt.
+          Un dégradé radial plutôt qu'un disque flouté : Safari ne découpe pas
+          un enfant portant un filtre aux angles arrondis de son parent, et le
+          flou ressortait en angle droit dans le carrousel. */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -top-14 -right-14 h-32 w-32 rounded-full opacity-20 blur-2xl transition-opacity duration-500 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-0"
-        style={{ background: teinte }}
+        className="pointer-events-none absolute inset-0 rounded-3xl transition-opacity duration-500 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-0"
+        style={{
+          background: `radial-gradient(150px circle at 100% 0%, color-mix(in srgb, ${teinte} 20%, transparent), transparent 70%)`,
+        }}
       />
 
       <div className="relative flex items-start justify-between">
