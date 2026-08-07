@@ -78,8 +78,14 @@ const TAU_SCROLL = 120;
  * un dixième d'écran avant que le héros ne prenne la suite, juste de quoi
  * ne pas enchaîner brutalement.
  */
-const HAUTEUR_SECTION = "160svh";
-const S_FIN = 0.5;
+const HAUTEUR_SECTION = "140svh";
+/**
+ * L'écran reste épinglé pendant (hauteur de section − 1 écran), soit 0,40 ici.
+ * On règle la fin de traversée sur exactement cette valeur : la sphère finit
+ * de se dissoudre au moment précis où l'épinglage lâche, donc il n'y a jamais
+ * d'écran épinglé qui ne montre plus rien.
+ */
+const S_FIN = 0.4;
 
 function combien(): number {
   if (typeof window === "undefined") return ELEMENTS_MAX;
@@ -235,7 +241,7 @@ export function EmojiSphere() {
         el.style.transform = `translate3d(${X.toFixed(1)}px,${Y.toFixed(1)}px,0) translate(-50%,-50%) scale(${k.toFixed(3)})`;
       }
 
-      const entree = 1 - palier(0.08, 0.5, sc01);
+      const entree = 1 - palier(0.45, 0.95, sc01);
       if (avant.current) avant.current.style.opacity = String(entree);
       if (bouton.current) bouton.current.style.opacity = String(entree);
       raf = requestAnimationFrame(boucle);
