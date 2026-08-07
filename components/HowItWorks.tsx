@@ -4,25 +4,25 @@ import { StepCard } from "./StepCard";
 /** Les quatre étapes sont celles de la fiche App Store, dans le même ordre. */
 const STEPS = [
   {
-    icon: "/emoji/school.svg",
+    icon: "school",
     title: "Rejoins ton école",
     body: "Tu retrouves ta classe et les potes qui sont déjà sur Stan.",
     teinte: "#a78bfa",
   },
   {
-    icon: "/emoji/handshake.svg",
+    icon: "handshake",
     title: "Ajoute tes amis",
     body: "Tes contacts, tes camarades. Que des gens que tu connais en vrai.",
     teinte: "#47dbff",
   },
   {
-    icon: "/emoji/red_question_mark.svg",
+    icon: "red_question_mark",
     title: "Réponds aux questions",
     body: "Des sondages courts sur tes potes. Que des trucs bien, jamais l'inverse.",
     teinte: "#f50384",
   },
   {
-    icon: "/emoji/bell.svg",
+    icon: "bell",
     title: "Reçois la notif",
     body: "Quelqu'un t'a choisi. Tu le sais tout de suite, mais tu sais pas qui.",
     teinte: "#e6006e",

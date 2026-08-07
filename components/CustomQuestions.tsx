@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Emoji } from "./EmojiSprite";
 import { Reveal } from "./Reveal";
 
 /**
@@ -106,13 +106,7 @@ export function CustomQuestions() {
                     <span className="w-5 shrink-0 text-center text-[14px] font-black text-white/85">
                       {i + 1}
                     </span>
-                    <Image
-                      src={`/emoji/${item.emoji}.svg`}
-                      alt=""
-                      width={30}
-                      height={30}
-                      className="h-[30px] w-[30px] shrink-0"
-                    />
+                    <Emoji name={item.emoji} className="h-[30px] w-[30px] shrink-0" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-[14px] font-semibold text-white/90">
                         {item.text}
@@ -124,13 +118,7 @@ export function CustomQuestions() {
                       )}
                     </div>
                     <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1.5">
-                      <Image
-                        src="/emoji/fire.svg"
-                        alt=""
-                        width={15}
-                        height={15}
-                        className="h-[15px] w-[15px]"
-                      />
+                      <Emoji name="fire" className="h-[15px] w-[15px] shrink-0" />
                       <span className="text-[13px] font-black text-white/70">
                         {item.votes}
                       </span>

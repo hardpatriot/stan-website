@@ -1,5 +1,6 @@
 import { Backdrop } from "@/components/Backdrop";
 import { CustomQuestions } from "@/components/CustomQuestions";
+import { EmojiSprite } from "@/components/EmojiSprite";
 import { FinalCta } from "@/components/FinalCta";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
@@ -28,6 +29,7 @@ export default function Home() {
   return (
     <>
       <script type="application/ld+json">{JSON.stringify(JSON_LD)}</script>
+      <EmojiSprite />
       <Backdrop />
       <Nav />
       <main className="flex-1">

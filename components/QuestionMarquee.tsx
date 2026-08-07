@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { Emoji } from "./EmojiSprite";
 import { Reveal } from "./Reveal";
 
 /*
@@ -98,13 +98,7 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
           key={`${item.text}-${i}`}
           className="pill flex shrink-0 items-center gap-2.5 rounded-full py-2.5 pr-5 pl-3 text-[15px] font-bold whitespace-nowrap text-white/75"
         >
-          <Image
-            src={`/emoji/${item.emoji}.svg`}
-            alt=""
-            width={26}
-            height={26}
-            className="h-[26px] w-[26px]"
-          />
+          <Emoji name={item.emoji} className="h-[26px] w-[26px] shrink-0" />
           {item.text}
         </span>
       ))}

@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useRef } from "react";
+import { Emoji } from "./EmojiSprite";
 
 /**
  * Une carte d'étape.
@@ -21,6 +21,7 @@ export function StepCard({
   corps,
   teinte,
 }: {
+  /** Nom de l'emoji dans la planche. */
   icon: string;
   numero: number;
   titre: string;
@@ -55,7 +56,7 @@ export function StepCard({
       {/* Le halo qui suit le curseur */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100"
         style={{
           background:
             "radial-gradient(340px circle at var(--mx) var(--my), color-mix(in srgb, var(--teinte) 26%, transparent), transparent 68%)",
@@ -65,17 +66,14 @@ export function StepCard({
       {/* Le reflet fixe, seul visible au doigt */}
       <span
         aria-hidden
-        className="pointer-events-none absolute -top-14 -right-14 h-32 w-32 rounded-full opacity-20 blur-2xl transition-opacity duration-500 group-hover:opacity-0"
+        className="pointer-events-none absolute -top-14 -right-14 h-32 w-32 rounded-full opacity-20 blur-2xl transition-opacity duration-500 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-0"
         style={{ background: teinte }}
       />
 
       <div className="relative flex items-start justify-between">
-        <Image
-          src={icon}
-          alt=""
-          width={48}
-          height={48}
-          className="h-12 w-12 rounded-xl drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-110"
+        <Emoji
+          name={icon}
+          className="h-12 w-12 drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-110"
         />
         <span className="text-xs font-black tracking-[0.2em] text-white/25">
           0{numero}

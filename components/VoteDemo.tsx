@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppStoreButton } from "./AppStoreButton";
+import { Emoji } from "./EmojiSprite";
 import { WaveFill } from "./WaveFill";
 
 /*
@@ -302,13 +303,9 @@ function VoteScreen({
 
       {/* L'emoji 3D posé sans fond, comme QuestionEmojiIconView */}
       <div key={question.emoji} className="animate-rise mt-[26px] flex flex-col items-center">
-        <Image
-          src={`/emoji/${question.emoji}.svg`}
-          alt=""
-          width={86}
-          height={86}
+        <Emoji
+          name={question.emoji}
           className="h-[86px] w-[86px] drop-shadow-[0_5px_5px_rgba(0,0,0,0.25)]"
-          priority
         />
         <h3 className="mt-[18px] max-w-[320px] text-center text-[18px] leading-[1.25] font-semibold text-white text-balance">
           {question.text}
@@ -543,11 +540,8 @@ function RevealScreen({
           notifIn ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >
-        <Image
-          src="/emoji/eyes.svg"
-          alt=""
-          width={86}
-          height={86}
+        <Emoji
+          name="eyes"
           className="h-[86px] w-[86px] drop-shadow-[0_5px_5px_rgba(0,0,0,0.25)]"
         />
         <h3 className="display text-[34px] text-white text-balance">
