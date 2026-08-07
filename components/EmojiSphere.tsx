@@ -96,7 +96,6 @@ export function EmojiSphere() {
   const scene = useRef<HTMLDivElement>(null);
   const avant = useRef<HTMLDivElement>(null);
   const bouton = useRef<HTMLDivElement>(null);
-  const apres = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
@@ -204,12 +203,6 @@ export function EmojiSphere() {
       const entree = 1 - palier(0.05, 0.45, s);
       if (avant.current) avant.current.style.opacity = String(entree);
       if (bouton.current) bouton.current.style.opacity = String(entree);
-      if (apres.current) {
-        apres.current.style.opacity = String(
-          palier(0.85, 1.15, s) * (1 - palier(1.7, 2, s)),
-        );
-      }
-
       raf = requestAnimationFrame(boucle);
     };
 
@@ -232,9 +225,11 @@ export function EmojiSphere() {
           ref={avant}
           className="relative z-[3000] shrink-0 px-5 pt-20 text-center sm:pt-24"
         >
-          <h1 className="display mx-auto max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white text-balance">
-            Ils ont voté.{" "}
-            <span className="text-vote">Tu vas&nbsp;savoir.</span>
+          {/* Deux lignes imposées : sans ça, l'équilibrage automatique
+              regroupe tout sur une seule ligne dès que l'écran est large. */}
+          <h1 className="display mx-auto max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white">
+            <span className="block">Ils ont voté.</span>
+            <span className="text-vote block">Tu vas savoir.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
             Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
@@ -275,17 +270,6 @@ export function EmojiSphere() {
               <AppStoreButton label="Télécharger l'app" />
             </div>
           </div>
-        </div>
-
-        {/* Le texte une fois la sphère traversée */}
-        <div
-          ref={apres}
-          className="pointer-events-none absolute inset-0 z-[3000] flex items-center justify-center px-6 text-center opacity-0"
-        >
-          <p className="display max-w-3xl text-[clamp(2.2rem,7vw,4.2rem)] text-white text-balance">
-            Il en suffit d&apos;une{" "}
-            <span className="text-vote">pour faire ta journée.</span>
-          </p>
         </div>
       </div>
     </section>
