@@ -12,14 +12,16 @@ export function Hero() {
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_auto] lg:gap-16">
         {/* Colonne texte */}
         <div className="flex min-w-0 flex-col items-center text-center lg:items-start lg:text-left">
-          {/* Le sous-titre de la fiche App Store, mot pour mot. */}
-          <h1
-            className="display animate-rise text-[clamp(2.9rem,9vw,5.6rem)] text-white text-balance"
+          {/* Le titre du site est porté par la sphère, juste au-dessus.
+              Ici on enchaîne sur la démo plutôt que de répéter la même
+              phrase à un écran d'intervalle. */}
+          <h2
+            className="display animate-rise text-[clamp(2.6rem,8vw,4.8rem)] text-white text-balance"
             style={{ animationDelay: "140ms" }}
           >
-            Ils ont voté.{" "}
-            <span className="text-vote">Tu vas&nbsp;savoir.</span>
-          </h1>
+            Essaie.{" "}
+            <span className="text-vote">C&apos;est une vraie démo.</span>
+          </h2>
 
           <p
             className="animate-rise mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/60 sm:text-lg"

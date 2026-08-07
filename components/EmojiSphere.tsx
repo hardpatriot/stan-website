@@ -95,6 +95,7 @@ export function EmojiSphere() {
   const section = useRef<HTMLElement>(null);
   const scene = useRef<HTMLDivElement>(null);
   const avant = useRef<HTMLDivElement>(null);
+  const bouton = useRef<HTMLDivElement>(null);
   const apres = useRef<HTMLDivElement>(null);
   const items = useRef<(HTMLSpanElement | null)[]>([]);
 
@@ -200,9 +201,9 @@ export function EmojiSphere() {
         el.style.zIndex = String(1000 + Math.round(z2 * 500));
       }
 
-      if (avant.current) {
-        avant.current.style.opacity = String(1 - palier(0.05, 0.45, s));
-      }
+      const entree = 1 - palier(0.05, 0.45, s);
+      if (avant.current) avant.current.style.opacity = String(entree);
+      if (bouton.current) bouton.current.style.opacity = String(entree);
       if (apres.current) {
         apres.current.style.opacity = String(
           palier(0.85, 1.15, s) * (1 - palier(1.7, 2, s)),
@@ -225,9 +226,24 @@ export function EmojiSphere() {
 
   return (
     <section ref={section} className="relative h-[220svh]">
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
-        {/* La scène : origine au centre, tout est positionné par rapport à elle */}
-        <div ref={scene} className="absolute inset-0">
+      <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
+        {/* L'accroche, au-dessus de la sphère */}
+        <div
+          ref={avant}
+          className="relative z-[3000] shrink-0 px-5 pt-24 text-center sm:pt-28"
+        >
+          <p className="text-[13px] font-bold tracking-[0.18em] text-white/45 uppercase">
+            Des centaines de questions
+          </p>
+          <h1 className="display mx-auto mt-4 max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white text-balance">
+            Ils ont voté.{" "}
+            <span className="text-vote">Tu vas&nbsp;savoir.</span>
+          </h1>
+        </div>
+
+        {/* La sphère occupe tout l'espace restant : son centre se place donc
+            naturellement sous le texte, quelle que soit la hauteur d'écran. */}
+        <div ref={scene} className="relative flex-1">
           {Array.from({ length: ELEMENTS_MAX }, (_, i) => (
             <span
               key={i}
@@ -238,38 +254,31 @@ export function EmojiSphere() {
               className="absolute top-1/2 left-1/2 origin-center will-change-transform"
               style={{ width: TAILLE, height: TAILLE, opacity: 0 }}
             >
-              <Emoji name={PALETTE[i % PALETTE.length]} className="h-full w-full" />
+              <Emoji
+                name={PALETTE[i % PALETTE.length]}
+                className="h-full w-full"
+              />
             </span>
           ))}
-        </div>
 
-        {/* Le cœur de la sphère : l'accroche et le bouton.
-            `pointer-events-none` sur le bloc, réactivé sur le seul bouton :
-            le reste laisse passer le curseur vers la sphère, qui doit
-            continuer à réagir au survol tout autour. */}
-        <div
-          ref={avant}
-          className="pointer-events-none absolute inset-0 z-[3000] flex flex-col items-center justify-center px-6 text-center"
-        >
-          <p className="text-[13px] font-bold tracking-[0.18em] text-white/45 uppercase">
-            Des centaines de questions
-          </p>
-          <p className="display mt-4 max-w-2xl text-[clamp(2.2rem,7vw,4.4rem)] text-white text-balance">
-            Ils ont voté.{" "}
-            <span className="text-vote">Tu vas&nbsp;savoir.</span>
-          </p>
-          <div className="pointer-events-auto mt-8">
-            <AppStoreButton label="Télécharger l'app" />
+          {/* Le bouton, au cœur de la sphère.
+              `pointer-events-none` sur le bloc et réactivé sur le seul bouton :
+              sans ça, le centre deviendrait un trou mort et la sphère
+              cesserait de répondre au survol là où on la regarde. */}
+          <div
+            ref={bouton}
+            className="pointer-events-none absolute inset-0 z-[3000] flex items-center justify-center"
+          >
+            <div className="pointer-events-auto">
+              <AppStoreButton label="Télécharger l'app" />
+            </div>
           </div>
-          <p className="mt-6 text-[13px] font-medium text-white/30">
-            ↓ Descends pour traverser
-          </p>
         </div>
 
         {/* Le texte une fois la sphère traversée */}
         <div
           ref={apres}
-          className="pointer-events-none absolute inset-0 flex items-center justify-center px-6 text-center opacity-0"
+          className="pointer-events-none absolute inset-0 z-[3000] flex items-center justify-center px-6 text-center opacity-0"
         >
           <p className="display max-w-3xl text-[clamp(2.2rem,7vw,4.2rem)] text-white text-balance">
             Il en suffit d&apos;une{" "}
