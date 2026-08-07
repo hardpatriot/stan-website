@@ -126,6 +126,17 @@ body {
   -webkit-backdrop-filter: blur(20px);
 }
 
+/* Même allure que .glass, mais SANS backdrop-filter.
+   À l'intérieur d'un conteneur qui se déplace en continu (le bandeau des
+   questions), le flou d'arrière-plan force le navigateur à recalculer une
+   couche à chaque image : il la rastérise une fois puis la déplace, et tout
+   ce qu'elle contient, emojis compris, ressort flou. Sur fond sombre la
+   différence visuelle est nulle, on s'en passe. */
+.pill {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
 /* Le grain du film, même intention que le booster dans l'app */
 .grain::after {
   content: "";

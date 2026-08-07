@@ -43,9 +43,18 @@ export function HowItWorks() {
           </h2>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Sur mobile : un carrousel qu'on fait défiler au doigt, avec un
+            calage sur chaque carte. Quatre cartes empilées demandaient un
+            scroll interminable. À partir de `sm`, on retrouve une grille. */}
+        <div
+          className="-mx-5 mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden"
+        >
           {STEPS.map((step, i) => (
-            <Reveal key={step.title} delay={i * 100}>
+            <Reveal
+              key={step.title}
+              delay={i * 100}
+              className="w-[78vw] max-w-[300px] shrink-0 snap-center sm:w-auto sm:max-w-none"
+            >
               <article className="glass group relative h-full overflow-hidden rounded-3xl p-7 transition-colors duration-500 hover:border-white/20">
                 <span
                   aria-hidden

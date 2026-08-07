@@ -35,7 +35,7 @@ function Row({ items, reverse = false }: { items: Item[]; reverse?: boolean }) {
         {doubled.map((item, i) => (
           <span
             key={`${item.text}-${i}`}
-            className="glass flex shrink-0 items-center gap-2.5 rounded-full py-2.5 pr-5 pl-3 text-[15px] font-bold whitespace-nowrap text-white/75"
+            className="pill flex shrink-0 items-center gap-2.5 rounded-full py-2.5 pr-5 pl-3 text-[15px] font-bold whitespace-nowrap text-white/75"
           >
             <Image
               src={`/emoji/${item.emoji}.svg`}
@@ -78,12 +78,6 @@ export function QuestionMarquee() {
         />
       </div>
 
-      <Reveal className="mt-9 px-5 sm:px-8">
-        <p className="mx-auto max-w-md text-center text-[15px] leading-relaxed font-medium text-white/45">
-          Des centaines de questions. Aucune pour chambrer, toutes pour dire du
-          bien de quelqu&apos;un.
-        </p>
-      </Reveal>
     </section>
   );
 }

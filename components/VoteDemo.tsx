@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AppStoreButton } from "./AppStoreButton";
+import { WaveFill } from "./WaveFill";
 
 /*
  * Tout ce fichier est dessiné en POINTS iOS, dans une carte de 393×774,
@@ -113,6 +114,11 @@ export function VoteDemo() {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const [notifIn, setNotifIn] = useState(false);
+  /** Résultats affichés après le vote, un pourcentage par carte. */
+  const [results, setResults] = useState<number[] | null>(null);
+  /** 0 = tuiles en place, 1 = rassemblées en pile au centre (shuffle). */
+  const [gather, setGather] = useState(0);
+  const [isShuffling, setIsShuffling] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const later = useCallback((fn: () => void, ms: number) => {
@@ -132,16 +138,28 @@ export function VoteDemo() {
   }
 
   function vote(index: number) {
-    if (picked !== null || stage !== "vote") return;
+    if (picked !== null || stage !== "vote" || isShuffling) return;
     setPicked(index);
+
+    // Le choix récolte toujours la plus grosse part ; le reste se répartit de
+    // façon plausible, comme un vrai dépouillement.
+    const autres = shuffled([0.26, 0.14, 0.05]);
+    setResults(
+      Array.from({ length: 4 }, (_, i) =>
+        i === index ? 0.55 : (autres.pop() ?? 0.1),
+      ),
+    );
+
+    // On laisse la vague monter (1 s) et respirer avant d'enchaîner.
     later(() => {
       if (round + 1 >= TOTAL_ROUNDS) {
         finish();
       } else {
         setRound((r) => r + 1);
         setPicked(null);
+        setResults(null);
       }
-    }, 720);
+    }, 2100);
   }
 
   function replay() {
@@ -151,19 +169,31 @@ export function VoteDemo() {
     setGradient(Math.floor(Math.random() * CARD_GRADIENTS.length));
     setRound(0);
     setPicked(null);
+    setResults(null);
+    setGather(0);
+    setIsShuffling(false);
     setNotifIn(false);
     setStage("vote");
   }
 
   function skip() {
-    if (stage !== "vote" || picked !== null) return;
+    if (stage !== "vote" || picked !== null || isShuffling) return;
     if (round + 1 >= TOTAL_ROUNDS) finish();
     else setRound((r) => r + 1);
   }
 
+  /**
+   * Le mélange de l'app : les quatre tuiles se rassemblent en pile au centre,
+   * les nouveaux noms sont révélés DANS la pile, puis elle se redistribue.
+   * Mêmes durées que playShuffleGatherAnimation.
+   */
   function shuffleNames() {
-    if (picked !== null) return;
-    setFriends((f) => shuffled(f));
+    if (picked !== null || isShuffling) return;
+    setIsShuffling(true);
+    setGather(1);
+    later(() => setFriends((f) => shuffled(f)), 450);
+    later(() => setGather(0), 650);
+    later(() => setIsShuffling(false), 1010);
   }
 
   function addFriend(e: React.FormEvent) {
@@ -183,6 +213,9 @@ export function VoteDemo() {
             gradient={CARD_GRADIENTS[gradient]}
             friends={friends}
             picked={picked}
+            results={results}
+            gather={gather}
+            isShuffling={isShuffling}
             round={round}
             editing={editing}
             draft={draft}
@@ -212,6 +245,9 @@ function VoteScreen({
   gradient,
   friends,
   picked,
+  results,
+  gather,
+  isShuffling,
   round,
   editing,
   draft,
@@ -226,6 +262,9 @@ function VoteScreen({
   gradient: string[];
   friends: string[];
   picked: number | null;
+  results: number[] | null;
+  gather: number;
+  isShuffling: boolean;
   round: number;
   editing: boolean;
   draft: string;
@@ -313,11 +352,15 @@ function VoteScreen({
       <div className="grid shrink-0 grid-cols-2 gap-[10px]">
         {friends.slice(0, 4).map((name, i) => (
           <ChoiceTile
-            key={`${name}-${i}`}
+            key={i}
             name={name}
             picked={picked === i}
             dimmed={picked !== null && picked !== i}
-            disabled={picked !== null}
+            disabled={picked !== null || isShuffling}
+            percentage={results?.[i] ?? 0}
+            showResult={results !== null}
+            gather={gather}
+            index={i}
             onClick={() => onVote(i)}
           />
         ))}
@@ -329,7 +372,7 @@ function VoteScreen({
       <div className="flex shrink-0 items-center gap-[30px]">
         <button
           onClick={onShuffle}
-          disabled={picked !== null}
+          disabled={picked !== null || isShuffling}
           aria-label="Mélanger les potes"
           className="transition active:scale-95 disabled:opacity-50 disabled:grayscale"
         >
@@ -337,7 +380,7 @@ function VoteScreen({
         </button>
         <button
           onClick={onSkip}
-          disabled={picked !== null}
+          disabled={picked !== null || isShuffling}
           aria-label="Passer la question"
           className="transition active:scale-95 disabled:opacity-50 disabled:grayscale"
         >
@@ -356,29 +399,53 @@ function VoteScreen({
  * Le verre blanc-lilas de PollChoiceLightGlassCard : nacre, halo radial,
  * double liseré, et l'ombre violette qui décolle la carte du dégradé.
  */
+/** Décalage vers le centre de la grille, comme gatherOffset dans l'app. */
+const HALF_STEP = 78.5;
+const GATHER_ANGLES = [-9, 7, -4, 11];
+
 function ChoiceTile({
   name,
   picked,
   dimmed,
   disabled,
+  percentage,
+  showResult,
+  gather,
+  index,
   onClick,
 }: {
   name: string;
   picked: boolean;
   dimmed: boolean;
   disabled: boolean;
+  percentage: number;
+  showResult: boolean;
+  gather: number;
+  index: number;
   onClick: () => void;
 }) {
   const { first, last } = splitName(name);
+
+  const x = (index % 2 === 0 ? HALF_STEP : -HALF_STEP) * gather;
+  const y = (index < 2 ? HALF_STEP : -HALF_STEP) * gather;
+  const rot = GATHER_ANGLES[index % 4] * gather;
+  const echelle = (1 - 0.06 * gather) * (picked ? 1.03 : dimmed ? 0.95 : 1);
 
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`relative flex h-[147px] w-[147px] flex-col items-center justify-center overflow-hidden rounded-[16px] transition-all duration-500 active:scale-95 ${
-        picked ? "scale-[1.03]" : ""
-      } ${dimmed ? "scale-95 opacity-40" : ""}`}
+      className="relative flex h-[147px] w-[147px] flex-col items-center justify-center overflow-hidden rounded-[16px] active:scale-95"
       style={{
+        transform: `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${echelle})`,
+        opacity: dimmed ? 0.4 : 1,
+        // Rassemblement en 0,2 s, redistribution en ressort : mêmes durées que
+        // playShuffleGatherAnimation.
+        transition:
+          gather === 1
+            ? "transform 0.2s ease-in-out, opacity 0.5s ease"
+            : "transform 0.32s cubic-bezier(0.34, 1.42, 0.64, 1), opacity 0.5s ease",
+        zIndex: gather > 0 ? 4 - index : undefined,
         background:
           "radial-gradient(circle at 42% 28%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.34) 52%, rgba(255,255,255,0) 76%), linear-gradient(160deg, #ffffff 0%, #fefcff 46%, #f9f2fd 100%)",
         boxShadow:
@@ -409,22 +476,18 @@ function ChoiceTile({
         {last}
       </span>
 
+      {/* La nappe de résultat qui monte, comme après un vrai vote */}
+      {showResult && <WaveFill percentage={percentage} width={147} height={147} />}
+
+      {/* La casquette se pose sur le choix retenu */}
       {picked && (
-        <span
-          className="absolute inset-0 flex items-center justify-center rounded-[16px]"
-          style={{
-            background:
-              "linear-gradient(150deg, rgba(167,139,250,0.95), rgba(129,140,248,0.95) 55%, rgba(244,114,182,0.95))",
-          }}
-        >
-          <Image
-            src="/cap-180.png"
-            alt=""
-            width={60}
-            height={60}
-            className="animate-rise h-[60px] w-[60px] rounded-[14px]"
-          />
-        </span>
+        <Image
+          src="/cap-180.png"
+          alt=""
+          width={44}
+          height={44}
+          className="animate-rise absolute top-[6px] right-[6px] h-[44px] w-[44px] drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]"
+        />
       )}
     </button>
   );
