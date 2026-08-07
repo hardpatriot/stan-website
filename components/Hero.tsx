@@ -8,7 +8,12 @@ import { VoteDemo } from "./VoteDemo";
  */
 export function Hero() {
   return (
-    <section className="relative px-5 pt-14 pb-10 sm:px-8 sm:pt-24 sm:pb-24">
+    // La marge négative fait remonter le héros de 12 % d'écran : une fois
+    // l'épinglage de la sphère libéré, l'écran épinglé doit défiler sur toute
+    // sa hauteur avant que le héros n'arrive, et ce trajet se voit comme du
+    // vide. On le raccourcit en le faisant démarrer plus tôt, la sphère étant
+    // déjà dissoute à ce moment-là.
+    <section className="relative z-10 -mt-[12svh] px-5 pt-14 pb-10 sm:px-8 sm:pt-24 sm:pb-24">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_auto] lg:gap-16">
         {/* Colonne texte */}
         <div className="flex min-w-0 flex-col items-center text-center lg:items-start lg:text-left">

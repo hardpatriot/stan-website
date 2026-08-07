@@ -94,14 +94,14 @@ const TAU_SCROLL = 120;
  * un dixième d'écran avant que le héros ne prenne la suite, juste de quoi
  * ne pas enchaîner brutalement.
  */
-const HAUTEUR_SECTION = "140svh";
+const HAUTEUR_SECTION = "125svh";
 /**
  * L'écran reste épinglé pendant (hauteur de section − 1 écran), soit 0,40 ici.
  * On règle la fin de traversée sur exactement cette valeur : la sphère finit
  * de se dissoudre au moment précis où l'épinglage lâche, donc il n'y a jamais
  * d'écran épinglé qui ne montre plus rien.
  */
-const S_FIN = 0.4;
+const S_FIN = 0.25;
 
 function combien(): number {
   if (typeof window === "undefined") return ELEMENTS_MAX;
