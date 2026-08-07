@@ -27,9 +27,8 @@ export function Hero() {
             className="animate-rise mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/60 sm:text-lg"
             style={{ animationDelay: "230ms" }}
           >
-            Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
-            anonyme, ils diraient quoi&nbsp;? Tu croyais tout savoir. C&apos;est
-            le moment de vérifier.
+            Trois questions, quatre potes. Vote comme tu le ferais dans
+            l&apos;app, et regarde ce que ton pote reçoit.
           </p>
 
           <div

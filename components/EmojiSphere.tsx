@@ -230,15 +230,17 @@ export function EmojiSphere() {
         {/* L'accroche, au-dessus de la sphère */}
         <div
           ref={avant}
-          className="relative z-[3000] shrink-0 px-5 pt-24 text-center sm:pt-28"
+          className="relative z-[3000] shrink-0 px-5 pt-20 text-center sm:pt-24"
         >
-          <p className="text-[13px] font-bold tracking-[0.18em] text-white/45 uppercase">
-            Des centaines de questions
-          </p>
-          <h1 className="display mx-auto mt-4 max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white text-balance">
+          <h1 className="display mx-auto max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white text-balance">
             Ils ont voté.{" "}
             <span className="text-vote">Tu vas&nbsp;savoir.</span>
           </h1>
+          <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
+            Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
+            anonyme, ils diraient quoi&nbsp;? Tu croyais tout savoir.
+            C&apos;est le moment de vérifier.
+          </p>
         </div>
 
         {/* La sphère occupe tout l'espace restant : son centre se place donc
