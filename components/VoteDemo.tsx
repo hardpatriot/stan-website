@@ -476,19 +476,10 @@ function ChoiceTile({
         {last}
       </span>
 
-      {/* La nappe de résultat qui monte, comme après un vrai vote */}
+      {/* La nappe de résultat qui monte, comme après un vrai vote.
+          Elle se suffit à elle-même : la hauteur dit qui a gagné. */}
       {showResult && <WaveFill percentage={percentage} width={147} height={147} />}
 
-      {/* La casquette se pose sur le choix retenu */}
-      {picked && (
-        <Image
-          src="/cap-180.png"
-          alt=""
-          width={44}
-          height={44}
-          className="animate-rise absolute top-[6px] right-[6px] h-[44px] w-[44px] drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]"
-        />
-      )}
     </button>
   );
 }
