@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { AppStoreButton } from "./AppStoreButton";
 import { Emoji } from "./EmojiSprite";
 
 /*
@@ -23,16 +24,29 @@ import { Emoji } from "./EmojiSprite";
  * projection est calculée ici et sortie en transformation 2D.
  */
 
-/** Les emojis qui peuplent la sphère. Les répétitions sont assumées. */
-const PEUPLE = [
+/**
+ * La palette de la sphère.
+ *
+ * Chaque emoji n'est défini qu'une fois dans le document ; les copies à
+ * l'écran ne coûtent que quelques octets. C'est donc la VARIÉTÉ qui pèse, pas
+ * le nombre d'éléments — d'où une palette resserrée et beaucoup de copies.
+ * Dans une sphère qui tourne, deux exemplaires du même emoji à des
+ * profondeurs différentes ne se remarquent pas.
+ */
+const PALETTE = [
   "man_zombie", "squid", "desert_island", "popcorn", "clown_face", "nerd_face",
   "flashlight", "money_bag", "folded_hands", "robot", "alarm_clock", "school",
   "handshake", "red_question_mark", "bell", "fire", "hourglass_not_done",
   "flushed_face", "face_with_tears_of_joy", "eyes", "speaking_head",
-  "partying_face", "star", "sun", "trophy", "heart_hands", "sparkles", "brain",
-  "headphone", "speech_balloon", "microphone", "smiling_face_with_sunglasses",
-  "flexed_biceps", "four_leaf_clover", "ghost", "grinning_face_with_smiling_eyes",
+  "partying_face", "star", "sun", "trophy", "heart_hands", "sparkles", "skull",
+  "battery", "speech_balloon", "microphone", "smiling_face_with_sunglasses",
+  "flexed_biceps", "high_voltage", "ghost", "grinning_face_with_smiling_eyes",
+  "skateboard", "sleeping_face", "zany_face", "warning", "loudspeaker",
+  "grinning_face", "smirking_face", "baguette_bread",
 ];
+
+/** Nombre d'éléments affichés, copies comprises. */
+const ELEMENTS_MAX = 110;
 
 const OR = Math.PI * (3 - Math.sqrt(5)); // angle d'or, 137,5°
 
@@ -53,14 +67,9 @@ const TAU_ROT = 140;
 const TAU_SCROLL = 120;
 
 function combien(): number {
-  if (typeof window === "undefined") return PEUPLE.length;
-  const voulu = window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ? 20
-    : window.innerWidth <= 640
-      ? 28
-      : 44;
-  // Jamais plus d'éléments que la liste n'en fournit.
-  return Math.min(voulu, PEUPLE.length);
+  if (typeof window === "undefined") return ELEMENTS_MAX;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return 40;
+  return window.innerWidth <= 640 ? 64 : ELEMENTS_MAX;
 }
 
 /** Répartition en spirale de Fibonacci : la seule qui espace régulièrement. */
@@ -192,7 +201,7 @@ export function EmojiSphere() {
       }
 
       if (avant.current) {
-        avant.current.style.opacity = String(1 - palier(0, 0.35, s));
+        avant.current.style.opacity = String(1 - palier(0.05, 0.45, s));
       }
       if (apres.current) {
         apres.current.style.opacity = String(
@@ -219,7 +228,7 @@ export function EmojiSphere() {
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         {/* La scène : origine au centre, tout est positionné par rapport à elle */}
         <div ref={scene} className="absolute inset-0">
-          {PEUPLE.map((nom, i) => (
+          {Array.from({ length: ELEMENTS_MAX }, (_, i) => (
             <span
               key={i}
               ref={(el) => {
@@ -229,21 +238,31 @@ export function EmojiSphere() {
               className="absolute top-1/2 left-1/2 origin-center will-change-transform"
               style={{ width: TAILLE, height: TAILLE, opacity: 0 }}
             >
-              <Emoji name={nom} className="h-full w-full" />
+              <Emoji name={PALETTE[i % PALETTE.length]} className="h-full w-full" />
             </span>
           ))}
         </div>
 
-        {/* Le texte d'entrée */}
+        {/* Le cœur de la sphère : l'accroche et le bouton.
+            `pointer-events-none` sur le bloc, réactivé sur le seul bouton :
+            le reste laisse passer le curseur vers la sphère, qui doit
+            continuer à réagir au survol tout autour. */}
         <div
           ref={avant}
-          className="pointer-events-none absolute inset-x-0 bottom-[14svh] px-6 text-center"
+          className="pointer-events-none absolute inset-0 z-[3000] flex flex-col items-center justify-center px-6 text-center"
         >
-          <p className="display text-[clamp(2rem,6vw,3.4rem)] text-white text-balance">
-            Des centaines de questions.
+          <p className="text-[13px] font-bold tracking-[0.18em] text-white/45 uppercase">
+            Des centaines de questions
           </p>
-          <p className="mt-3 text-[15px] font-medium text-white/45">
-            Continue de descendre.
+          <p className="display mt-4 max-w-2xl text-[clamp(2.2rem,7vw,4.4rem)] text-white text-balance">
+            Ils ont voté.{" "}
+            <span className="text-vote">Tu vas&nbsp;savoir.</span>
+          </p>
+          <div className="pointer-events-auto mt-8">
+            <AppStoreButton label="Télécharger l'app" />
+          </div>
+          <p className="mt-6 text-[13px] font-medium text-white/30">
+            ↓ Descends pour traverser
           </p>
         </div>
 

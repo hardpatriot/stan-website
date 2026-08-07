@@ -34,8 +34,8 @@ export default function Home() {
       <Backdrop />
       <Nav />
       <main className="flex-1">
-        <Hero />
         <EmojiSphere />
+        <Hero />
         <QuestionMarquee />
         <HowItWorks />
         <CustomQuestions />

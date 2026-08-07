@@ -7,20 +7,18 @@
  * les emojis ressortent flous. Une géométrie posée dans le DOM est retracée à
  * chaque image à la résolution réelle : il n'y a plus d'étape à rater.
  *
- * POURQUOI PAS <symbol> + <use>
- * C'était la solution la plus économe, mais un <use> crée un arbre fantôme.
- * Les filtres de ces emojis sont positionnés en coordonnées absolues
- * (`filterUnits="userSpaceOnUse"`, tel que Figma les exporte) et leur zone
- * atterrit à côté dans cet arbre : le dessin vire au noir. Constaté sur le
- * point d'interrogation. Les retirer ne marche pas non plus : certains
- * groupes SONT le flou, sans lui ils deviennent des aplats opaques, ce qui
- * cassait les mains jointes et la tête qui parle.
+ * LE PIÈGE DU <use>, ET SA SORTIE
+ * Un <use> crée un arbre fantôme. Si les <defs> sont DANS le symbole, les
+ * filtres, positionnés en coordonnées absolues tel que Figma les exporte,
+ * voient leur zone atterrir à côté et le dessin vire au noir : constaté sur
+ * le point d'interrogation.
  *
- * CE QU'ON FAIT
- * Les définitions lourdes et partageables — dégradés, filtres — sont posées
- * UNE fois dans un bloc caché du document. Les formes, elles, sont écrites en
- * ligne à chaque usage, dans l'arbre normal : les filtres y fonctionnent
- * exactement comme dans le fichier d'origine.
+ * Mais si les définitions restent dans le DOCUMENT PRINCIPAL et que le
+ * symbole ne contient que les formes, tout fonctionne — vérifié à l'écran en
+ * comparant les deux rendus côte à côte. C'est ce qu'on fait ici, et ça rend
+ * chaque emoji réutilisable pour quelques octets, quel que soit le nombre de
+ * copies à l'écran. Indispensable pour la sphère, qui en affiche plus de
+ * cent.
  *
  * Les identifiants sont préfixés par le nom de l'emoji : sans ça, deux emojis
  * partageant un « paint0_linear » s'écraseraient une fois réunis.
@@ -123,8 +121,12 @@ for (const nom of noms) {
     .join("");
   const dessin = interieur.replace(/<defs>[\s\S]*?<\/defs>/g, "");
 
+  // Les définitions restent dans le document principal ; le symbole ne
+  // contient que les formes, qui y font référence.
   if (defs) definitions.push(`        {/* ${nom} */}\n        ${defs}`);
-  formes.push(`  ${JSON.stringify(nom)}: (\n    <>${dessin}</>\n  ),`);
+  formes.push(
+    `        <symbol id="e-${nom}" viewBox="0 0 32 32">${dessin}</symbol>`,
+  );
 }
 
 const contenu = `// FICHIER GÉNÉRÉ — ne pas modifier à la main.
@@ -132,14 +134,7 @@ const contenu = `// FICHIER GÉNÉRÉ — ne pas modifier à la main.
 //
 // Voir scripts/generer-sprite.mjs pour la raison de cette construction.
 
-import type { ReactNode } from "react";
-
 export const EMOJIS = ${JSON.stringify(noms)} as const;
-
-/** Les formes de chaque emoji, écrites en ligne à chaque usage. */
-const FORMES: Record<string, ReactNode> = {
-${formes.join("\n")}
-};
 
 /**
  * Les dégradés et filtres partagés, posés une seule fois dans le document.
@@ -155,6 +150,7 @@ export function EmojiSprite() {
       <defs>
 ${definitions.join("\n")}
       </defs>
+${formes.join("\n")}
     </svg>
   );
 }
@@ -180,7 +176,7 @@ export function Emoji({
       fill="none"
       className={className}
     >
-      {FORMES[name]}
+      <use href={\`#e-\${name}\`} />
     </svg>
   );
 }
