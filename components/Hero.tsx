@@ -16,11 +16,13 @@ export function Hero() {
               Ici on enchaîne sur la démo plutôt que de répéter la même
               phrase à un écran d'intervalle. */}
           <h2
-            className="display animate-rise text-[clamp(2.6rem,8vw,4.8rem)] text-white text-balance"
+            className="display animate-rise text-[clamp(2.1rem,6vw,3.8rem)] text-white text-balance"
             style={{ animationDelay: "140ms" }}
           >
             Essaie.{" "}
-            <span className="text-vote">C&apos;est une vraie démo.</span>
+            <span className="text-vote">
+              Tes potes ou ton crush ont peut-être déjà voté pour toi.
+            </span>
           </h2>
 
           <p

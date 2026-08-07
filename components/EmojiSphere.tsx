@@ -50,8 +50,12 @@ const ELEMENTS_MAX = 110;
 
 const OR = Math.PI * (3 - Math.sqrt(5)); // angle d'or, 137,5°
 
-/** Taille de mise en page, donc taille MAXIMALE à l'écran. */
-const TAILLE = 76;
+/**
+ * Taille de mise en page, donc taille MAXIMALE à l'écran.
+ * Pilotée en CSS pour rester plus généreuse au bureau sans que le calcul
+ * change : l'échelle est un rapport, elle ne dépend pas de cette valeur.
+ */
+const TAILLE_CSS = "var(--taille-emoji)";
 /** Échelle de référence : garde l'échelle réelle bien en dessous de 1. */
 const K_REF = 0.52;
 
@@ -65,6 +69,17 @@ const AMPL_TANGAGE = (12 * Math.PI) / 180;
 
 const TAU_ROT = 140;
 const TAU_SCROLL = 120;
+
+/**
+ * Longueur de la section, et part de cette longueur consacrée à la traversée.
+ *
+ * L'écran reste épinglé pendant (hauteur de section − 1 écran), donc
+ * l'avancement va de 0 à 0,6 ici. La traversée se termine à 0,5 : il reste
+ * un dixième d'écran avant que le héros ne prenne la suite, juste de quoi
+ * ne pas enchaîner brutalement.
+ */
+const HAUTEUR_SECTION = "160svh";
+const S_FIN = 0.5;
 
 function combien(): number {
   if (typeof window === "undefined") return ELEMENTS_MAX;
@@ -106,6 +121,15 @@ export function EmojiSphere() {
     const n = combien();
     const base = positions(n);
     const doux = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ampleur = window.innerWidth > 640 ? 1.18 : 1;
+
+    // La position de la section ne change pas pendant l'animation : on la lit
+    // une fois plutôt que d'interroger la mise en page à chaque image.
+    let hautSection = sec.offsetTop;
+    const remesurer = () => {
+      hautSection = sec.offsetTop;
+    };
+    window.addEventListener("resize", remesurer, { passive: true });
 
     // Les éléments au-delà du compte retenu ne servent pas sur cet écran.
     items.current.forEach((el, i) => {
@@ -121,6 +145,9 @@ export function EmojiSphere() {
     let cibleS = 0;
     let precedent = performance.now();
     let raf = 0;
+
+    // Dernières valeurs écrites, pour ne pas répéter une écriture identique.
+    const vus = Array.from({ length: n }, () => ({ v: "", z: 0 }));
 
     const bouger = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
@@ -139,8 +166,7 @@ export function EmojiSphere() {
 
       // Avancement du défilement, compté en hauteurs d'écran.
       const hEcran = window.innerHeight || 1;
-      const r = sec.getBoundingClientRect();
-      cibleS = Math.min(2.2, Math.max(0, -r.top / hEcran));
+      cibleS = Math.min(1.5, Math.max(0, (window.scrollY - hautSection) / hEcran));
       s += (cibleS - s) * lissage(dt, TAU_SCROLL);
 
       if (!doux) lacetAuto += OMEGA * (dt / 1000);
@@ -148,7 +174,7 @@ export function EmojiSphere() {
       lacet += (cibleLacet - lacet) * a;
       tangage += (cibleTangage - tangage) * a;
 
-      const sc01 = Math.min(1, s);
+      const sc01 = Math.min(1, s / S_FIN);
       const D = D_DEBUT - (D_DEBUT - D_FIN) * sc01;
 
       // La parallaxe s'éteint à mesure qu'on entre dans la sphère.
@@ -160,7 +186,9 @@ export function EmojiSphere() {
 
       const w = sc.clientWidth || window.innerWidth;
       const h = sc.clientHeight || window.innerHeight;
-      const F = Math.min(1.0723 * h, 1.84 * w);
+      // Au bureau on écarte les emojis de 18 % : la sphère occupe mieux
+      // l'espace disponible, sans qu'aucun élément grossisse.
+      const F = Math.min(1.0723 * h, 1.84 * w) * ampleur;
 
       for (let i = 0; i < n; i++) {
         const el = items.current[i];
@@ -174,15 +202,13 @@ export function EmojiSphere() {
         const z2 = p.y * sp + z1 * cp;
 
         const den = D - z2;
-        if (den <= 0.05) {
-          el.style.visibility = "hidden";
-          continue;
-        }
-
         // L'échelle ne peut pas franchir 1 : au-delà, l'emoji est retiré.
-        const k = (K_REF * D_DEBUT) / den;
+        const k = den > 0.05 ? (K_REF * D_DEBUT) / den : 2;
         if (k >= 1) {
-          el.style.visibility = "hidden";
+          if (vus[i].v !== "hidden") {
+            el.style.visibility = "hidden";
+            vus[i].v = "hidden";
+          }
           continue;
         }
 
@@ -192,15 +218,24 @@ export function EmojiSphere() {
         // Fondu de sortie juste avant la limite, plus l'estompe de profondeur.
         const proche = 1 - palier(0.85, 1, k);
         const profondeur = 0.4 + 0.6 * ((z2 + 1) / 2);
-        const sortie = 1 - palier(1.6, 2, s);
+        const sortie = 1;
 
-        el.style.visibility = "visible";
+        if (vus[i].v !== "visible") {
+          el.style.visibility = "visible";
+          vus[i].v = "visible";
+        }
+        // Le plan de profondeur ne change que par paliers : inutile de
+        // réécrire l'empilement à chaque image.
+        const z = 1000 + Math.round(z2 * 40);
+        if (vus[i].z !== z) {
+          el.style.zIndex = String(z);
+          vus[i].z = z;
+        }
         el.style.opacity = String(proche * profondeur * sortie);
-        el.style.transform = `translate3d(${X.toFixed(1)}px, ${Y.toFixed(1)}px, 0) translate(-50%, -50%) scale(${k.toFixed(4)})`;
-        el.style.zIndex = String(1000 + Math.round(z2 * 500));
+        el.style.transform = `translate3d(${X.toFixed(1)}px,${Y.toFixed(1)}px,0) translate(-50%,-50%) scale(${k.toFixed(3)})`;
       }
 
-      const entree = 1 - palier(0.05, 0.45, s);
+      const entree = 1 - palier(0.08, 0.5, sc01);
       if (avant.current) avant.current.style.opacity = String(entree);
       if (bouton.current) bouton.current.style.opacity = String(entree);
       raf = requestAnimationFrame(boucle);
@@ -212,14 +247,21 @@ export function EmojiSphere() {
 
     return () => {
       cancelAnimationFrame(raf);
+      window.removeEventListener("resize", remesurer);
       sc.removeEventListener("pointermove", bouger);
       sc.removeEventListener("pointerleave", relacher);
     };
   }, []);
 
   return (
-    <section ref={section} className="relative h-[220svh]">
-      <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden">
+    <section
+      ref={section}
+      className="relative"
+      style={{ height: HAUTEUR_SECTION }}
+    >
+      <div
+        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:64px] sm:[--taille-emoji:84px]"
+      >
         {/* L'accroche, au-dessus de la sphère */}
         <div
           ref={avant}
@@ -248,8 +290,8 @@ export function EmojiSphere() {
                 items.current[i] = el;
               }}
               aria-hidden
-              className="absolute top-1/2 left-1/2 origin-center will-change-transform"
-              style={{ width: TAILLE, height: TAILLE, opacity: 0 }}
+              className="absolute top-1/2 left-1/2 origin-center"
+              style={{ width: TAILLE_CSS, height: TAILLE_CSS, opacity: 0 }}
             >
               <Emoji
                 name={PALETTE[i % PALETTE.length]}
