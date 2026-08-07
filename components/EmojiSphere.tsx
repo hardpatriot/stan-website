@@ -25,24 +25,40 @@ import { Emoji } from "./EmojiSprite";
  */
 
 /**
- * La palette de la sphère.
+ * La palette de la sphère : 110 emojis, un par élément, aucun doublon.
  *
- * Chaque emoji n'est défini qu'une fois dans le document ; les copies à
- * l'écran ne coûtent que quelques octets. C'est donc la VARIÉTÉ qui pèse, pas
- * le nombre d'éléments — d'où une palette resserrée et beaucoup de copies.
- * Dans une sphère qui tourne, deux exemplaires du même emoji à des
- * profondeurs différentes ne se remarquent pas.
+ * Ceux déjà utilisés ailleurs dans la page ouvrent la liste : ils sont déjà
+ * définis dans le document, donc ils ne coûtent rien de plus. Le reste est
+ * complété par les plus légers du pack, à l'exclusion des pictogrammes
+ * d'interface, qui ne ressemblent pas à des emojis.
  */
 const PALETTE = [
-  "man_zombie", "squid", "desert_island", "popcorn", "clown_face", "nerd_face",
-  "flashlight", "money_bag", "folded_hands", "robot", "alarm_clock", "school",
-  "handshake", "red_question_mark", "bell", "fire", "hourglass_not_done",
-  "flushed_face", "face_with_tears_of_joy", "eyes", "speaking_head",
-  "partying_face", "star", "sun", "trophy", "heart_hands", "sparkles", "skull",
-  "battery", "speech_balloon", "microphone", "smiling_face_with_sunglasses",
-  "flexed_biceps", "high_voltage", "ghost", "grinning_face_with_smiling_eyes",
-  "skateboard", "sleeping_face", "zany_face", "warning", "loudspeaker",
-  "grinning_face", "smirking_face", "baguette_bread",
+  "1st_place_medal", "alarm_clock", "alien", "baguette_bread", "battery",
+  "bed", "bell", "beverage_box", "biting_lip", "books", "bread", "briefcase",
+  "broken_heart", "clown_face", "cold_face", "cookie", "crescent_moon",
+  "crying_face", "desert_island", "drop_of_blood", "ear", "eye", "eyes",
+  "face_exhaling", "face_with_open_mouth", "face_with_raised_eyebrow",
+  "face_with_tears_of_joy", "face_without_mouth", "fearful_face", "fire",
+  "flashlight", "flexed_biceps", "flushed_face", "folded_hands", "foot",
+  "french_fries", "game_die", "ghost", "globe_showing_europe_africa",
+  "glowing_star", "graduation_cap", "grimacing_face", "grinning_face",
+  "grinning_face_with_big_eyes", "grinning_face_with_smiling_eyes",
+  "grinning_face_with_sweat", "grinning_squinting_face", "guitar",
+  "handshake", "high_voltage", "hourglass_done", "hourglass_not_done",
+  "jack_o_lantern", "jeans", "kiss_mark", "kissing_face_with_closed_eyes",
+  "light_bulb", "loudly_crying_face", "loudspeaker", "love_letter",
+  "low_battery", "lying_face", "magnifying_glass_tilted_left", "man_zombie",
+  "microphone", "mirror_ball", "money_bag", "musical_note", "nauseated_face",
+  "nerd_face", "old_key", "oncoming_fist", "open_book", "partying_face",
+  "pensive_face", "performing_arts", "pisces", "popcorn", "pouting_face",
+  "red_heart", "relieved_face", "ring", "robot",
+  "rolling_on_the_floor_laughing", "scarf", "school", "shushing_face",
+  "skateboard", "skull", "sleeping_face", "smiling_face_with_hearts",
+  "smiling_face_with_smiling_eyes", "smirking_face", "sneezing_face",
+  "sparkles", "speaking_head", "speech_balloon", "squid", "star",
+  "telephone_receiver", "tent", "thong_sandal", "top_hat", "train", "trophy",
+  "watch", "weary_face", "winking_face_with_tongue", "wrapped_gift",
+  "zany_face",
 ];
 
 /** Nombre d'éléments affichés, copies comprises. */
@@ -127,7 +143,7 @@ export function EmojiSphere() {
     const n = combien();
     const base = positions(n);
     const doux = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const ampleur = window.innerWidth > 640 ? 1.18 : 1;
+    const large = window.innerWidth > 640;
 
     // La position de la section ne change pas pendant l'animation : on la lit
     // une fois plutôt que d'interroger la mise en page à chaque image.
@@ -192,9 +208,13 @@ export function EmojiSphere() {
 
       const w = sc.clientWidth || window.innerWidth;
       const h = sc.clientHeight || window.innerHeight;
-      // Au bureau on écarte les emojis de 18 % : la sphère occupe mieux
-      // l'espace disponible, sans qu'aucun élément grossisse.
-      const F = Math.min(1.0723 * h, 1.84 * w) * ampleur;
+      // La focale est choisie pour que la sphère REMPLISSE la hauteur
+      // disponible : son rayon apparent vaut F / D0, on veut donc
+      // F ≈ 2 × hauteur pour un rayon d'un peu moins d'une demi-hauteur.
+      // Sans ça, les 110 emojis se tassaient en un amas cinq fois trop dense.
+      const F = large
+        ? Math.min(2.05 * h, 1.7 * w)
+        : Math.min(1.95 * h, 1.62 * w);
 
       for (let i = 0; i < n; i++) {
         const el = items.current[i];
@@ -266,7 +286,7 @@ export function EmojiSphere() {
       style={{ height: HAUTEUR_SECTION }}
     >
       <div
-        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:64px] sm:[--taille-emoji:84px]"
+        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:56px] sm:[--taille-emoji:62px]"
       >
         {/* L'accroche, au-dessus de la sphère */}
         <div
