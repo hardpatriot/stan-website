@@ -45,12 +45,12 @@ function Card({ children }: { children: React.ReactNode }) {
 /* --------------------------------------------------------------- données */
 
 const QUESTIONS = [
-  { emoji: "grinning_face_with_smiling_eyes", text: "Qui a le plus beau sourire ?" },
-  { emoji: "face_with_tears_of_joy", text: "Qui te fait le plus rire ?" },
-  { emoji: "heart_hands", text: "Sur qui on peut toujours compter ?" },
-  { emoji: "fire", text: "Qui a le plus de style ?" },
-  { emoji: "sparkles", text: "Qui mérite plus d'attention ?" },
-  { emoji: "brain", text: "Qui a toujours la meilleure idée ?" },
+  { emoji: "man_zombie", text: "Qui survivrait dans un film d'horreur ?" },
+  { emoji: "squid", text: "Qui survit à Squid Game ?" },
+  { emoji: "desert_island", text: "Avec qui t'aimerais être perdu sur une île déserte ?" },
+  { emoji: "popcorn", text: "Qui mérite une série Netflix inspirée de sa vie ?" },
+  { emoji: "clown_face", text: "Qui fait toujours les meilleures pranks ?" },
+  { emoji: "folded_hands", text: "Qui dit « merci » à l'IA au cas où elle prendrait le pouvoir un jour ?" },
 ];
 
 const DEFAULT_FRIENDS = ["Lana Chung", "Lucas Chevalier", "Léa Sacla", "Noha Kanté"];
@@ -205,7 +205,7 @@ export function VoteDemo() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-5">
+    <div className="flex flex-col items-center gap-4">
       <Card>
         {stage === "vote" ? (
           <VoteScreen

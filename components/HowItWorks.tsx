@@ -31,7 +31,7 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="relative px-5 py-24 sm:px-8 sm:py-32">
+    <section className="relative px-5 py-14 sm:px-8 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="text-sm font-black tracking-[0.18em] text-rose uppercase">
@@ -47,7 +47,7 @@ export function HowItWorks() {
             calage sur chaque carte. Quatre cartes empilées demandaient un
             scroll interminable. À partir de `sm`, on retrouve une grille. */}
         <div
-          className="-mx-5 mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden"
+          className="-mx-5 mt-10 flex snap-x sm:mt-14 snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden"
         >
           {STEPS.map((step, i) => (
             <Reveal

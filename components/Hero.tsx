@@ -8,7 +8,7 @@ import { VoteDemo } from "./VoteDemo";
  */
 export function Hero() {
   return (
-    <section className="relative px-5 pt-28 pb-20 sm:px-8 sm:pt-36 sm:pb-28">
+    <section className="relative px-5 pt-24 pb-10 sm:px-8 sm:pt-36 sm:pb-24">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_auto] lg:gap-16">
         {/* Colonne texte */}
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">

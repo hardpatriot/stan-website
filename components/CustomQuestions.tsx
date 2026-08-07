@@ -9,26 +9,26 @@ import { Reveal } from "./Reveal";
 
 const RANKING = [
   {
-    emoji: "face_with_tears_of_joy",
-    text: "Qui ferait le meilleur prof ?",
+    emoji: "robot",
+    text: "Qui sort toujours « non mais c'est plus rapide par là » ?",
     votes: 14,
     live: true,
   },
   {
-    emoji: "sparkles",
-    text: "Qui a le plus changé cette année ?",
+    emoji: "hourglass_not_done",
+    text: "Qui arrive toujours en retard avec une excuse improbable ?",
     votes: 9,
     live: true,
   },
   {
-    emoji: "heart_hands",
-    text: "Avec qui je partirais en vacances demain ?",
+    emoji: "flushed_face",
+    text: "Qui met toujours les stories les plus improbables",
     votes: 6,
     live: true,
   },
   {
-    emoji: "microphone",
-    text: "Qui chante le mieux sous la douche ?",
+    emoji: "face_with_tears_of_joy",
+    text: "À qui il arrive toujours des galères improbables",
     votes: 3,
     live: false,
   },
@@ -36,7 +36,7 @@ const RANKING = [
 
 export function CustomQuestions() {
   return (
-    <section className="relative px-5 py-24 sm:px-8 sm:py-32">
+    <section className="relative px-5 py-14 sm:px-8 sm:py-24 lg:py-28">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
         {/* Le discours */}
         <div>
@@ -76,13 +76,13 @@ export function CustomQuestions() {
               </p>
               <div className="mt-5 rounded-2xl bg-white/[0.06] px-4 py-3.5">
                 <p className="text-[15px] font-medium text-white/80">
-                  Qui ferait le meilleur prof&nbsp;?
+                  Qui survivrait dans un film d&apos;horreur&nbsp;?
                   <span className="ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] animate-pulse bg-rose" />
                 </p>
               </div>
               <div className="mt-2.5 flex items-center justify-between">
                 <span className="text-[12px] font-bold text-white/30">
-                  29/120
+                  39/120
                 </span>
                 <span className="rounded-full bg-[linear-gradient(105deg,#d91cbd,#e6006e)] px-4 py-1.5 text-[13px] font-black text-white">
                   Publier
