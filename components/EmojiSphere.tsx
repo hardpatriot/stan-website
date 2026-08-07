@@ -213,7 +213,7 @@ export function EmojiSphere() {
       // F ≈ 2 × hauteur pour un rayon d'un peu moins d'une demi-hauteur.
       // Sans ça, les 110 emojis se tassaient en un amas cinq fois trop dense.
       const F = large
-        ? Math.min(2.05 * h, 1.7 * w)
+        ? Math.min(1.92 * h, 1.6 * w)
         : Math.min(1.95 * h, 1.62 * w);
 
       for (let i = 0; i < n; i++) {
@@ -286,7 +286,7 @@ export function EmojiSphere() {
       style={{ height: HAUTEUR_SECTION }}
     >
       <div
-        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:56px] sm:[--taille-emoji:62px]"
+        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:56px] sm:[--taille-emoji:70px]"
       >
         {/* L'accroche, au-dessus de la sphère */}
         <div
