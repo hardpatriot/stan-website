@@ -1,5 +1,5 @@
-import Image from "next/image";
 import { Reveal } from "./Reveal";
+import { StepCard } from "./StepCard";
 
 /** Les quatre étapes sont celles de la fiche App Store, dans le même ordre. */
 const STEPS = [
@@ -7,25 +7,25 @@ const STEPS = [
     icon: "/emoji/school.svg",
     title: "Rejoins ton école",
     body: "Tu retrouves ta classe et les potes qui sont déjà sur Stan.",
-    tint: "from-[#a78bfa] to-[#6366f1]",
+    teinte: "#a78bfa",
   },
   {
     icon: "/emoji/handshake.svg",
     title: "Ajoute tes amis",
     body: "Tes contacts, tes camarades. Que des gens que tu connais en vrai.",
-    tint: "from-[#47dbff] to-[#6366f1]",
+    teinte: "#47dbff",
   },
   {
     icon: "/emoji/red_question_mark.svg",
     title: "Réponds aux questions",
     body: "Des sondages courts sur tes potes. Que des trucs bien, jamais l'inverse.",
-    tint: "from-[#f7a25b] to-[#f50384]",
+    teinte: "#f50384",
   },
   {
     icon: "/emoji/bell.svg",
     title: "Reçois la notif",
     body: "Quelqu'un t'a choisi. Tu le sais tout de suite, mais tu sais pas qui.",
-    tint: "from-[#d91cbd] to-[#e6006e]",
+    teinte: "#e6006e",
   },
 ];
 
@@ -46,37 +46,20 @@ export function HowItWorks() {
         {/* Sur mobile : un carrousel qu'on fait défiler au doigt, avec un
             calage sur chaque carte. Quatre cartes empilées demandaient un
             scroll interminable. À partir de `sm`, on retrouve une grille. */}
-        <div
-          className="-mx-5 mt-10 flex snap-x sm:mt-14 snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden"
-        >
+        <div className="-mx-5 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:mt-14 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
           {STEPS.map((step, i) => (
             <Reveal
               key={step.title}
               delay={i * 100}
-              className="w-[78vw] max-w-[300px] shrink-0 snap-center sm:w-auto sm:max-w-none"
+              className="w-[74vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none"
             >
-              <article className="glass group relative h-full overflow-hidden rounded-3xl p-7 transition-colors duration-500 hover:border-white/20">
-                <span
-                  aria-hidden
-                  className={`absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gradient-to-br ${step.tint} opacity-15 blur-2xl transition-opacity duration-500 group-hover:opacity-30`}
-                />
-                <Image
-                  src={step.icon}
-                  alt=""
-                  width={56}
-                  height={56}
-                  className="relative h-14 w-14 rounded-xl drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-110"
-                />
-                <p className="relative mt-6 text-xs font-black tracking-[0.2em] text-white/30">
-                  0{i + 1}
-                </p>
-                <h3 className="relative mt-2 text-xl font-black tracking-tight text-white">
-                  {step.title}
-                </h3>
-                <p className="relative mt-3 text-[15px] leading-relaxed font-medium text-white/55">
-                  {step.body}
-                </p>
-              </article>
+              <StepCard
+                icon={step.icon}
+                numero={i + 1}
+                titre={step.title}
+                corps={step.body}
+                teinte={step.teinte}
+              />
             </Reveal>
           ))}
         </div>
