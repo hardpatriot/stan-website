@@ -39,51 +39,90 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const doubled = [...items, ...items];
 
-  // Défilement automatique, interrompu dès que l'utilisateur touche le bandeau.
+  // Défilement automatique, interrompu dès que le pointeur se pose dessus.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
-    let dernier = performance.now();
+    let dernier = 0;
     let enPause = false;
+    let visible = true;
+    // On tient la position en nombre à virgule de notre côté : à 26 px par
+    // seconde, un pas vaut 0,4 px, et `scrollLeft` arrondit à la lecture.
+    // En le relisant à chaque image, on perdait le pas et le bandeau restait
+    // immobile.
+    let position = 0;
+
+    const avancer = (t: number) => {
+      if (!dernier) dernier = t;
+      const dt = Math.min(50, t - dernier);
+      dernier = t;
+
+      if (!enPause) {
+        position += (vitesse * dt) / 1000;
+        // La liste est doublée : à mi-course on revient au début, sans que
+        // le raccord se voie.
+        const moitie = el.scrollWidth / 2;
+        if (moitie > 0 && position >= moitie) position -= moitie;
+        el.scrollLeft = position;
+      }
+      raf = requestAnimationFrame(avancer);
+    };
+
+    const demarrer = () => {
+      if (raf || !visible || document.hidden) return;
+      dernier = 0;
+      raf = requestAnimationFrame(avancer);
+    };
+    const arreter = () => {
+      if (!raf) return;
+      cancelAnimationFrame(raf);
+      raf = 0;
+    };
 
     const pause = () => {
       enPause = true;
     };
     const reprise = () => {
       enPause = false;
-      dernier = performance.now();
+      // L'utilisateur a pu faire défiler à la main : on repart d'où il a
+      // laissé le bandeau, sans saut.
+      position = el.scrollLeft;
     };
 
-    const avancer = (t: number) => {
-      const dt = t - dernier;
-      dernier = t;
-      if (!enPause) {
-        el.scrollLeft += (vitesse * dt) / 1000;
-        // La liste est doublée : à mi-course, on revient au début sans that
-        // ça se voie.
-        const moitie = el.scrollWidth / 2;
-        if (el.scrollLeft >= moitie) el.scrollLeft -= moitie;
-      }
-      raf = requestAnimationFrame(avancer);
-    };
-    raf = requestAnimationFrame(avancer);
+    // Inutile de faire tourner une boucle pour un bandeau hors de l'écran.
+    const observateur = new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        if (visible) demarrer();
+        else arreter();
+      },
+      { rootMargin: "20% 0px" },
+    );
+    observateur.observe(el);
 
+    const surVisibilite = () => (document.hidden ? arreter() : demarrer());
+    document.addEventListener("visibilitychange", surVisibilite);
+
+    el.addEventListener("pointerenter", pause);
+    el.addEventListener("pointerleave", reprise);
     el.addEventListener("pointerdown", pause);
     el.addEventListener("pointerup", reprise);
     el.addEventListener("pointercancel", reprise);
-    el.addEventListener("mouseenter", pause);
-    el.addEventListener("mouseleave", reprise);
+
+    demarrer();
 
     return () => {
-      cancelAnimationFrame(raf);
+      arreter();
+      observateur.disconnect();
+      document.removeEventListener("visibilitychange", surVisibilite);
+      el.removeEventListener("pointerenter", pause);
+      el.removeEventListener("pointerleave", reprise);
       el.removeEventListener("pointerdown", pause);
       el.removeEventListener("pointerup", reprise);
       el.removeEventListener("pointercancel", reprise);
-      el.removeEventListener("mouseenter", pause);
-      el.removeEventListener("mouseleave", reprise);
     };
   }, [vitesse]);
 
