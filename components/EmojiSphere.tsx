@@ -87,6 +87,20 @@ const TAU_ROT = 140;
 const TAU_SCROLL = 120;
 
 /**
+ * Déformation au pointeur, au bureau uniquement.
+ *
+ * Les emojis proches du curseur sont repoussés vers l'extérieur, avec une
+ * force qui décroît doucement jusqu'au bord du champ. Chaque emoji rejoint
+ * sa position cible avec son propre amortissement, si bien que la sphère se
+ * creuse et se referme au lieu de sauter d'un état à l'autre.
+ *
+ * L'échelle n'est jamais touchée : elle est déjà à la limite du non-flou.
+ */
+const RAYON_EFFET = 210;
+const POUSSEE_MAX = 46;
+const TAU_DEFORME = 180;
+
+/**
  * Longueur de la section, et part de cette longueur consacrée à la traversée.
  *
  * L'écran reste épinglé pendant (hauteur de section − 1 écran), donc
@@ -169,17 +183,29 @@ export function EmojiSphere() {
     let raf = 0;
 
     // Dernières valeurs écrites, pour ne pas répéter une écriture identique.
-    const vus = Array.from({ length: n }, () => ({ v: "", z: 0 }));
+    const vus = Array.from({ length: n }, () => ({ v: "", z: 0, o: -1 }));
+    // Déplacement courant de chaque emoji sous l'effet du pointeur.
+    const dx = new Float32Array(n);
+    const dy = new Float32Array(n);
+
+    // Position du pointeur dans le repère de la scène, centre à l'origine.
+    let px = 0;
+    let py = 0;
+    let survole = false;
 
     const bouger = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
       const r = sc.getBoundingClientRect();
       cibleLacet = ((e.clientX - r.left) / r.width - 0.5) * 2 * AMPL_LACET;
       cibleTangage = ((e.clientY - r.top) / r.height - 0.5) * 2 * AMPL_TANGAGE;
+      px = e.clientX - r.left - r.width / 2;
+      py = e.clientY - r.top - r.height / 2;
+      survole = large;
     };
     const relacher = () => {
       cibleLacet = 0;
       cibleTangage = 0;
+      survole = false;
     };
 
     const boucle = (t: number) => {
@@ -241,6 +267,26 @@ export function EmojiSphere() {
         const X = (F * x1) / den;
         const Y = (-F * y2) / den;
 
+        // Répulsion : plus l'emoji est près du curseur, plus il s'écarte.
+        let cx = 0;
+        let cy2 = 0;
+        if (survole) {
+          const ex = X - px;
+          const ey = Y - py;
+          const d2 = ex * ex + ey * ey;
+          if (d2 < RAYON_EFFET * RAYON_EFFET) {
+            const d = Math.sqrt(d2) || 0.001;
+            // Décroissance douce : pleine poussée au contact, nulle au bord.
+            const f = 1 - d / RAYON_EFFET;
+            const pousse = (POUSSEE_MAX * f * f) / d;
+            cx = ex * pousse;
+            cy2 = ey * pousse;
+          }
+        }
+        const ad = lissage(dt, TAU_DEFORME);
+        dx[i] += (cx - dx[i]) * ad;
+        dy[i] += (cy2 - dy[i]) * ad;
+
         // Fondu de sortie juste avant la limite, plus l'estompe de profondeur.
         const proche = 1 - palier(0.85, 1, k);
         const profondeur = 0.4 + 0.6 * ((z2 + 1) / 2);
@@ -257,8 +303,23 @@ export function EmojiSphere() {
           el.style.zIndex = String(z);
           vus[i].z = z;
         }
-        el.style.opacity = String(proche * profondeur * sortie);
-        el.style.transform = `translate3d(${X.toFixed(1)}px,${Y.toFixed(1)}px,0) translate(-50%,-50%) scale(${k.toFixed(3)})`;
+        // L'opacité ne bouge que par petits paliers : on évite d'écrire une
+        // valeur que l'œil ne distingue pas de la précédente.
+        const o = Math.round(proche * profondeur * sortie * 50) / 50;
+        if (vus[i].o !== o) {
+          el.style.opacity = String(o);
+          vus[i].o = o;
+        }
+        // `translate: -50% -50%` est posé une fois en CSS : la chaîne écrite
+        // ici est d'autant plus courte à analyser, soixante fois par seconde.
+        el.style.transform =
+          "translate3d(" +
+          (((X + dx[i]) * 10) | 0) / 10 +
+          "px," +
+          (((Y + dy[i]) * 10) | 0) / 10 +
+          "px,0) scale(" +
+          ((k * 1000) | 0) / 1000 +
+          ")";
       }
 
       const entree = 1 - palier(0.45, 0.95, sc01);
@@ -349,7 +410,7 @@ export function EmojiSphere() {
                 items.current[i] = el;
               }}
               aria-hidden
-              className="absolute top-1/2 left-1/2 origin-center"
+              className="absolute top-1/2 left-1/2 origin-center [contain:layout_style_paint] [translate:-50%_-50%]"
               style={{ width: TAILLE_CSS, height: TAILLE_CSS, opacity: 0 }}
             >
               <Emoji
