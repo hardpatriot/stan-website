@@ -16,7 +16,7 @@ export default function Page() {
           Conditions <span className="text-vote">d&apos;utilisation</span>
         </>
       }
-      updated="28 janvier 2026"
+      updated="2 septembre 2026"
       intro={
         <>
           <p className="mb-3 text-lg font-black tracking-tight text-white">
@@ -82,14 +82,72 @@ export default function Page() {
       </p>
       <p>
         Vous pouvez arrêter d&apos;utiliser les Services à tout moment et pour
-        toute raison. Vous pouvez supprimer votre compte Stan en accédant à votre
-        profil et en suivant les instructions de suppression.
+        toute raison. La marche à suivre est décrite plus bas, dans{" "}
+        <a href="#suppression-du-compte">Suppression de votre compte</a>.
       </p>
       <p>
         L&apos;utilisation de Stan nécessite le téléchargement du logiciel sur
         votre appareil (ordinateur, téléphone, tablette, etc.). Vous acceptez que
         nous puissions automatiquement mettre à jour ce logiciel, et que ces
         Conditions s&apos;appliqueront à toutes les mises à jour.
+      </p>
+
+      <h2 id="suppression-du-compte">Suppression de votre compte</h2>
+      <p>
+        Vous pouvez demander la suppression de votre compte Stan et des données
+        qui y sont rattachées à tout moment, de deux manières.
+      </p>
+
+      <h3>Depuis l&apos;application</h3>
+      <p>
+        Ouvrez votre profil et suivez les instructions de suppression. Le compte
+        est supprimé immédiatement.
+      </p>
+
+      <h3>Sans l&apos;application</h3>
+      <p>
+        Si vous n&apos;avez plus l&apos;application installée, écrivez à{" "}
+        <a href="mailto:client-support@stan-friends.com">
+          client-support@stan-friends.com
+        </a>{" "}
+        en indiquant le numéro de téléphone associé au compte. Votre demande est
+        traitée au plus tard sous 30 jours. Nous pourrions avoir besoin
+        d&apos;informations supplémentaires pour vérifier votre identité avant de
+        procéder, afin que personne ne puisse faire supprimer le compte
+        d&apos;une autre personne.
+      </p>
+
+      <h3>Ce qui est supprimé</h3>
+      <p>Dans les deux cas, la suppression efface&nbsp;:</p>
+      <ul>
+        <li>le compte et le numéro de téléphone qui l&apos;identifie&nbsp;;</li>
+        <li>
+          le profil&nbsp;: nom, prénom, nom d&apos;utilisateur, photo, genre,
+          âge, école et niveau scolaire&nbsp;;
+        </li>
+        <li>les contacts, les amis et les suggestions d&apos;amis&nbsp;;</li>
+        <li>les sondages et les votes reçus&nbsp;;</li>
+        <li>les crédits, y compris les crédits offerts&nbsp;;</li>
+        <li>
+          l&apos;appareil enregistré, ce qui met fin aux notifications, ainsi que
+          les sessions ouvertes.
+        </li>
+      </ul>
+      <p>
+        Le numéro de téléphone est libéré&nbsp;: il redevient disponible pour une
+        nouvelle inscription, qui crée alors un compte entièrement neuf.
+      </p>
+
+      <h3>Ce qui subsiste</h3>
+      <p>
+        Les votes que vous avez émis pour d&apos;autres personnes restent dans
+        l&apos;historique de ces personnes. Ils ne portent pas votre nom et, une
+        fois votre compte supprimé, plus rien ne permet de les rattacher à vous.
+      </p>
+      <p>
+        Nous pouvons par ailleurs conserver les documents que la loi nous impose
+        de garder, notamment les pièces comptables liées à un achat effectué dans
+        l&apos;application, pendant la durée prévue par la réglementation.
       </p>
 
       <h2>Licence d&apos;utilisation de Stan</h2>
