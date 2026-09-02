@@ -107,8 +107,8 @@ export default function Page() {
       <h3>Sans l&apos;application</h3>
       <p>
         Si vous n&apos;avez plus l&apos;application installée, écrivez à{" "}
-        <a href="mailto:client-support@stan-friends.com">
-          client-support@stan-friends.com
+        <a href="mailto:admin@stan-friends.com">
+          admin@stan-friends.com
         </a>{" "}
         en indiquant le numéro de téléphone associé au compte. Votre demande est
         traitée au plus tard sous 30 jours. Nous pourrions avoir besoin
