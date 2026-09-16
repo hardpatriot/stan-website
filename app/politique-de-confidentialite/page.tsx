@@ -16,7 +16,7 @@ export default function Page() {
           Politique de <span className="text-vote">confidentialité</span>
         </>
       }
-      updated="28 janvier 2026"
+      updated="16 septembre 2026"
       intro={
         <>
           <p className="mb-4">
@@ -132,6 +132,47 @@ export default function Page() {
         Ces données nous aident à améliorer l&apos;application, créer de
         nouvelles fonctionnalités et assurer la sécurité du système.
       </p>
+
+      <h3 id="donnees-du-visage">Données du visage (ARKit / TrueDepth)</h3>
+      <ul>
+        <li>
+          <strong>Activation</strong>&nbsp;: suivi facultatif, activé par
+          l&apos;utilisateur avec son autorisation d&apos;accès à la caméra.
+        </li>
+        <li>
+          <strong>Données utilisées</strong>&nbsp;: images traitées localement
+          par ARKit, état du suivi, position et orientation de la tête,
+          informations de caméra et valeurs temporaires de curseur et de
+          calibration.
+        </li>
+        <li>
+          <strong>Finalité</strong>&nbsp;: contrôler uniquement l&apos;effet
+          laser «&nbsp;Révèle-le du regard&nbsp;» pour découvrir une carte
+          «&nbsp;Duo certifié&nbsp;». Aucune identification, analyse des
+          émotions, publicité, création de profil ou utilisation pour entraîner
+          une IA.
+        </li>
+        <li>
+          <strong>Stockage et partage</strong>&nbsp;: traitement en mémoire
+          temporaire sur l&apos;appareil uniquement. Aucun enregistrement dans
+          des fichiers, bases de données ou sauvegardes&nbsp;; aucune
+          association au compte ni transmission à un serveur ou tiers, y compris
+          aux prestataires d&apos;analyse. Les dispositions générales de partage
+          ne s&apos;appliquent pas à ces données.
+        </li>
+        <li>
+          <strong>Conservation</strong>&nbsp;: le suivi s&apos;arrête à la
+          désactivation de l&apos;effet ou à la fermeture de l&apos;écran.
+          Certaines valeurs temporaires peuvent rester en mémoire jusqu&apos;à la
+          libération des composants&nbsp;; aucun historique persistant n&apos;est
+          conservé.
+        </li>
+        <li>
+          <strong>Votre choix</strong>&nbsp;: l&apos;autorisation de caméra peut
+          être retirée dans les réglages iOS. La révélation au doigt reste
+          disponible sans suivi du visage.
+        </li>
+      </ul>
 
       <h2>Partage des données</h2>
       <p>
