@@ -48,6 +48,14 @@ function AppleGlyph({ className = "" }: { className?: string }) {
   );
 }
 
+function PlayGlyph({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className={className} fill="currentColor">
+      <path d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z" />
+    </svg>
+  );
+}
+
 function DownloadGlyph({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden className={className} fill="none" stroke="currentColor" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round">
@@ -128,7 +136,7 @@ function FenetreOrdinateur({ onClose }: { onClose: () => void }) {
             rel="noopener"
             className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-bold text-white transition hover:border-white/30 hover:bg-white/10"
           >
-            <DownloadGlyph className="h-4 w-4" />
+            <PlayGlyph className="h-4 w-4" />
             Google Play
           </a>
         </div>
@@ -171,6 +179,8 @@ export function DownloadButton({
         <span className="relative flex items-center gap-3">
           {iOS ? (
             <AppleGlyph className="h-5 w-5" />
+          ) : plateforme === "android" ? (
+            <PlayGlyph className="h-[18px] w-[18px]" />
           ) : (
             <DownloadGlyph className="h-5 w-5" />
           )}
