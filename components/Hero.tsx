@@ -1,4 +1,4 @@
-import { AppStoreButton } from "./AppStoreButton";
+import { DownloadButton } from "./DownloadButton";
 import { VoteDemo } from "./VoteDemo";
 
 /**
@@ -42,7 +42,7 @@ export function Hero() {
             className="animate-rise mt-9"
             style={{ animationDelay: "320ms" }}
           >
-            <AppStoreButton />
+            <DownloadButton />
           </div>
         </div>
 

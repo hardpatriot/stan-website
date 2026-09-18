@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AppStoreButton } from "./AppStoreButton";
+import { DownloadButton } from "./DownloadButton";
 import { Emoji } from "./EmojiSprite";
 import { WaveFill } from "./WaveFill";
 
@@ -558,7 +558,7 @@ function RevealScreen({
           notifIn ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >
-        <AppStoreButton
+        <DownloadButton
           className="w-full px-6! py-4! text-[17px]!"
           label="Découvrir qui"
         />

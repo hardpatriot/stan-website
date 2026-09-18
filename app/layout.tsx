@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     template: "%s · Stan",
   },
   description:
-    "Si tes potes pouvaient dire ce qu'ils pensent de toi en anonyme, ils diraient quoi ? Rejoins ton école, ajoute tes amis, réponds aux questions. Gratuit sur iPhone.",
+    "Si tes potes pouvaient dire ce qu'ils pensent de toi en anonyme, ils diraient quoi ? Rejoins ton école, ajoute tes amis, réponds aux questions. Gratuit sur iPhone et Android.",
   applicationName: "Stan",
   keywords: [
     "Stan",

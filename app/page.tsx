@@ -15,15 +15,14 @@ const JSON_LD = {
   "@type": "MobileApplication",
   name: "Stan",
   applicationCategory: "SocialNetworkingApplication",
-  operatingSystem: "iOS",
+  operatingSystem: "iOS, Android",
   description:
     "Tes potes répondent à des sondages positifs sur toi, anonymement. Aucun vote négatif, aucun message privé.",
   inLanguage: "fr-FR",
   offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
   publisher: { "@type": "Organization", name: "Stan SAS" },
   url: "https://www.stan-friends.com",
-  downloadUrl:
-    "https://apps.apple.com/fr/app/stan-qui-a-vote-pour-toi/id6740286416",
+  downloadUrl: "https://invite.stan-friends.com/invite",
 };
 
 export default function Home() {

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { AppStoreButton } from "./AppStoreButton";
+import { DownloadButton } from "./DownloadButton";
 import { Reveal } from "./Reveal";
 
 export function FinalCta() {
@@ -41,7 +41,7 @@ export function FinalCta() {
 
         <Reveal delay={250}>
           <div className="mt-10">
-            <AppStoreButton label="Télécharger Stan" />
+            <DownloadButton label="Télécharger Stan" />
           </div>
         </Reveal>
       </div>

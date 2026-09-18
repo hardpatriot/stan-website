@@ -24,7 +24,7 @@ export function Footer() {
               <span className="display text-lg text-white">Stan</span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-white/45">
-              L&apos;app de sondages anonymes entre potes. Sur iPhone.
+              L&apos;app de sondages anonymes entre potes. Sur iPhone et Android.
             </p>
           </div>
 

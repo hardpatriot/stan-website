@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { AppStoreButton } from "./AppStoreButton";
+import { DownloadButton } from "./DownloadButton";
 import { Emoji } from "./EmojiSprite";
 
 /*
@@ -429,7 +429,7 @@ export function EmojiSphere() {
             className="pointer-events-none absolute inset-0 z-[3000] flex items-center justify-center"
           >
             <div className="pointer-events-auto">
-              <AppStoreButton label="Télécharger l'app" />
+              <DownloadButton label="Télécharger l'app" />
             </div>
           </div>
         </div>
