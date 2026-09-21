@@ -16,7 +16,7 @@ export default function Page() {
           Politique de <span className="text-vote">confidentialité</span>
         </>
       }
-      updated="16 septembre 2026"
+      updated="22 septembre 2026"
       intro={
         <>
           <p className="mb-4">
@@ -132,6 +132,48 @@ export default function Page() {
         Ces données nous aident à améliorer l&apos;application, créer de
         nouvelles fonctionnalités et assurer la sécurité du système.
       </p>
+
+      <h3 id="photos-et-souvenirs">Photos et souvenirs (Memories)</h3>
+      <p>
+        Lorsque vous enregistrez un souvenir, Stan reçoit la photo que vous avez
+        choisie ou prise, sa légende éventuelle et le jour associé, et les relie
+        à votre compte. Stan ne parcourt pas toute votre photothèque.
+      </p>
+      <ul>
+        <li>
+          <strong>Utilisation</strong>&nbsp;: ces données servent à fournir
+          Memories, votre archive personnelle, le Wall et les exports que vous
+          demandez, ainsi qu&apos;à modérer les contenus. Ce traitement est
+          nécessaire à l&apos;exécution du service que vous choisissez
+          d&apos;utiliser. Les photos sont stockées dans un espace privé chez
+          Amazon Web Services, en région Paris (France), accessible aux
+          prestataires techniques et aux personnes habilitées pour ces besoins.
+        </li>
+        <li>
+          <strong>Visibilité</strong>&nbsp;: avant le reveal, les souvenirs ne
+          sont pas visibles par vos amis. Lors du reveal, ils deviennent
+          accessibles aux amis autorisés de votre école selon les règles du
+          Wall. Certaines photos peuvent d&apos;abord apparaître floutées.
+        </li>
+        <li>
+          <strong>Conservation et suppression</strong>&nbsp;: la fermeture du
+          Wall met fin à l&apos;accès des amis, mais ne supprime pas votre
+          archive personnelle. Les souvenirs y restent tant que vous les
+          conservez dans votre compte. Vous pouvez les retirer avec les
+          commandes disponibles dans l&apos;app ou demander leur suppression à{" "}
+          <a href="mailto:admin@stan-friends.com">admin@stan-friends.com</a>,
+          notamment après le verrouillage de l&apos;édition. La suppression du
+          compte entraîne aussi celle des photos stockées par Stan.
+        </li>
+        <li>
+          <strong>Vos choix</strong>&nbsp;: vous pouvez retirer les
+          autorisations caméra et photos dans les réglages du téléphone&nbsp;;
+          cela ne supprime pas les souvenirs déjà envoyés. Vous pouvez signaler
+          un contenu ou bloquer son auteur dans l&apos;app. Les copies déjà
+          exportées ou capturées par d&apos;autres personnes ne sont pas effacées
+          par une suppression dans Stan.
+        </li>
+      </ul>
 
       <h3 id="donnees-du-visage">Données du visage (ARKit / TrueDepth)</h3>
       <ul>
