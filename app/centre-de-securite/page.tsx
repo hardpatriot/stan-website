@@ -16,7 +16,7 @@ export default function Page() {
           Centre de <span className="text-aura">sécurité</span>
         </>
       }
-      updated="28 janvier 2026"
+      updated="29 septembre 2026"
       intro={
         <>
           <p className="mb-3 text-lg font-black tracking-tight text-white">
@@ -40,14 +40,22 @@ export default function Page() {
           Nous ne vous suivrons jamais sur d&apos;autres services en ligne.
         </li>
         <li>
-          Nous demandons uniquement votre position approximative lors de
-          l&apos;inscription afin de suggérer des écoles proches.
+          Nous utilisons uniquement votre position approximative (à environ
+          1&nbsp;km près), avec votre accord, seulement quand l&apos;app est
+          ouverte et jamais en arrière-plan. Elle sert à suggérer des écoles
+          proches et à vous situer sur la Map.
         </li>
         <li>
-          Nous ne stockons aucune donnée de localisation sur nos serveurs.
+          Sur la Map, le mode fantôme est activé par défaut&nbsp;: vos amis ne
+          voient pas où vous êtes tant que vous ne le quittez pas.
         </li>
         <li>
-          Nous ne relions jamais vos données de localisation à votre compte.
+          Seule votre dernière position est gardée, 6&nbsp;h au plus. Elle est
+          effacée dès que vous repassez en mode fantôme.
+        </li>
+        <li>
+          Vos votes sur les blocus sont anonymes, même pour vos amis&nbsp;:
+          seuls des totaux par lycée sont affichés.
         </li>
         <li>
           Les demandes de suppression de compte sont généralement traitées sous
@@ -117,14 +125,17 @@ export default function Page() {
         votre compte et entraîner une perte de vos données utilisateur.
       </p>
 
-      <h3>Désactivez l&apos;accès à votre localisation après l&apos;inscription</h3>
+      <h3>Gardez la main sur votre localisation</h3>
       <p>
-        Stan n&apos;a pas besoin de votre localisation après l&apos;inscription.
-        Elle est uniquement utilisée pour suggérer des écoles à proximité. La
-        désactiver n&apos;affectera pas votre expérience.
+        La localisation est facultative. Elle sert à suggérer des écoles à
+        proximité et à vous situer sur la Map. Pour ne pas apparaître aux yeux
+        de vos amis, restez en mode fantôme&nbsp;: il est activé par défaut.
       </p>
       <p>
-        Pour désactiver la localisation&nbsp;:
+        Vous pouvez aussi couper la localisation à tout moment. Le reste de
+        l&apos;app fonctionne normalement, seule la Map ne pourra plus vous
+        situer.
+        <br />
         <br />
         📱 Ouvrez les paramètres de votre téléphone › sélectionnez Stan ›
         définissez Localisation sur «&nbsp;Jamais&nbsp;».
