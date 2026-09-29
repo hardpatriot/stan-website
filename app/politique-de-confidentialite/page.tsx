@@ -16,7 +16,7 @@ export default function Page() {
           Politique de <span className="text-vote">confidentialité</span>
         </>
       }
-      updated="22 septembre 2026"
+      updated="29 septembre 2026"
       intro={
         <>
           <p className="mb-4">
@@ -92,24 +92,33 @@ export default function Page() {
         </li>
       </ul>
 
-      <h3>Données de localisation</h3>
+      <h3 id="donnees-de-localisation">Données de localisation</h3>
       <p>
-        Avant de créer un compte, vous pouvez autoriser Stan à accéder à votre
-        localisation approximative.
+        Avec votre accord, Stan utilise votre position approximative (à environ
+        1&nbsp;km près), seulement quand l&apos;app est ouverte, jamais en
+        arrière-plan. Elle sert à vous proposer des écoles proches et à vous
+        situer sur la Map.
       </p>
-      <p>🚀 Pourquoi&nbsp;?</p>
+
+      <h3 id="map">Map</h3>
+      <p>
+        L&apos;onglet Map affiche la carte des lycées de France, avec les blocus
+        du jour et vos amis.
+      </p>
       <ul>
-        <li>Pour vous suggérer des écoles proches</li>
-        <li>Pour déterminer si Stan est disponible dans votre région</li>
-      </ul>
-      <ul>
-        <li data-emoji>
-          ⚠️ Nous ne stockons <strong>PAS</strong> votre localisation sur nos
-          serveurs.
+        <li>
+          <strong>Blocus</strong>&nbsp;: pour votre lycée, vous pouvez indiquer
+          «&nbsp;Je vote blocus&nbsp;», «&nbsp;Je vote contre&nbsp;» ou
+          «&nbsp;Il y a blocus&nbsp;». Vos votes sont anonymes, même pour vos
+          amis&nbsp;: seuls des totaux par lycée sont affichés. Ces informations
+          sont purement informatives, non vérifiées, et ne constituent pas une
+          incitation au blocus.
         </li>
-        <li data-emoji>
-          ⚠️ Nous ne la relions <strong>PAS</strong> à votre compte et ne suivons{" "}
-          <strong>PAS</strong> vos déplacements après votre inscription.
+        <li>
+          <strong>Amis</strong>&nbsp;: le mode fantôme est activé par défaut. Si
+          vous le quittez, vos amis voient à peu près où vous êtes. Seule votre
+          dernière position est gardée&nbsp;: 6&nbsp;h au plus, et elle est
+          effacée dès que vous repassez en mode fantôme.
         </li>
       </ul>
 
