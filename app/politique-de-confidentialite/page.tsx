@@ -117,7 +117,7 @@ export default function Page() {
         </li>
         <li>
           <strong>Amis</strong>&nbsp;: le mode fantôme est activé par défaut. Si
-          vous le quittez, vos amis voient où vous êtes. Seule votre
+          vous le quittez, seuls vos amis acceptés voient où vous êtes. Seule votre
           dernière position est gardée&nbsp;: 6&nbsp;h au plus, et elle est
           effacée dès que vous repassez en mode fantôme.
         </li>
