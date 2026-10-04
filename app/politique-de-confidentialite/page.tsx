@@ -16,7 +16,7 @@ export default function Page() {
           Politique de <span className="text-vote">confidentialité</span>
         </>
       }
-      updated="29 septembre 2026"
+      updated="4 octobre 2026"
       intro={
         <>
           <p className="mb-4">
@@ -94,10 +94,11 @@ export default function Page() {
 
       <h3 id="donnees-de-localisation">Données de localisation</h3>
       <p>
-        Avec votre accord, Stan utilise votre position approximative (à environ
-        1&nbsp;km près), seulement quand l&apos;app est ouverte, jamais en
-        arrière-plan. Elle sert à vous proposer des écoles proches et à vous
-        situer sur la Map.
+        Avec votre accord, Stan utilise votre position précise, seulement quand
+        l&apos;app est ouverte, jamais en arrière-plan. Elle sert à vous proposer
+        des écoles proches et à vous situer sur la Map. Vous pouvez à tout moment
+        choisir une position approximative ou couper la localisation dans les
+        réglages du téléphone.
       </p>
 
       <h3 id="map">Map</h3>
@@ -116,7 +117,7 @@ export default function Page() {
         </li>
         <li>
           <strong>Amis</strong>&nbsp;: le mode fantôme est activé par défaut. Si
-          vous le quittez, vos amis voient à peu près où vous êtes. Seule votre
+          vous le quittez, vos amis voient où vous êtes. Seule votre
           dernière position est gardée&nbsp;: 6&nbsp;h au plus, et elle est
           effacée dès que vous repassez en mode fantôme.
         </li>

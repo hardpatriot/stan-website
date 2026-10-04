@@ -16,7 +16,7 @@ export default function Page() {
           Centre de <span className="text-aura">sécurité</span>
         </>
       }
-      updated="29 septembre 2026"
+      updated="4 octobre 2026"
       intro={
         <>
           <p className="mb-3 text-lg font-black tracking-tight text-white">
@@ -40,10 +40,9 @@ export default function Page() {
           Nous ne vous suivrons jamais sur d&apos;autres services en ligne.
         </li>
         <li>
-          Nous utilisons uniquement votre position approximative (à environ
-          1&nbsp;km près), avec votre accord, seulement quand l&apos;app est
-          ouverte et jamais en arrière-plan. Elle sert à suggérer des écoles
-          proches et à vous situer sur la Map.
+          Nous utilisons votre position, avec votre accord, seulement quand
+          l&apos;app est ouverte et jamais en arrière-plan. Elle sert à suggérer
+          des écoles proches et à vous situer sur la Map.
         </li>
         <li>
           Sur la Map, le mode fantôme est activé par défaut&nbsp;: vos amis ne
