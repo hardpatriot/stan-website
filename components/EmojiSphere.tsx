@@ -2,8 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { DownloadButton } from "./DownloadButton";
-import { Emoji } from "./EmojiSprite";
-import { Pinceau } from "./Pinceau";
+import { Pictogramme } from "./Pictogramme";
 import { VISAGES } from "./visages";
 
 /*
@@ -49,7 +48,7 @@ const PALETTE = [
   "handshake", "high_voltage", "hourglass_done", "hourglass_not_done",
   "jack_o_lantern", "jeans", "kiss_mark", "kissing_face_with_closed_eyes",
   "light_bulb", "loudly_crying_face", "loudspeaker", "love_letter",
-  "low_battery", "lying_face", "magnifying_glass_tilted_left", "man_zombie",
+  "low_battery", "lying_face", "magnifying_glass_tilted_left", "halloween",
   "microphone", "mirror_ball", "money_bag", "musical_note", "nauseated_face",
   "nerd_face", "old_key", "oncoming_fist", "open_book", "partying_face",
   "pensive_face", "performing_arts", "pisces", "popcorn", "pouting_face",
@@ -198,7 +197,7 @@ function palier(bord0: number, bord1: number, v: number) {
 
 /** Un emplacement de la sphère : un visage cerclé de néon, ou un emoji. */
 function Element({ c }: { c: Contenu }) {
-  if ("emoji" in c) return <Emoji name={c.emoji} className="h-full w-full" />;
+  if ("emoji" in c) return <Pictogramme name={c.emoji} className="h-full w-full" />;
   return (
     // Un anneau néon, comme les avatars des écrans App Store.
     <span className="block h-full w-full rounded-full bg-[linear-gradient(135deg,#ff4fd8,#9b5cff_55%,#3f7bff)] p-[2px]">
@@ -463,10 +462,9 @@ export function EmojiSphere() {
         >
           {/* Deux lignes imposées : sans ça, l'équilibrage automatique
               regroupe tout sur une seule ligne dès que l'écran est large. */}
-          <h1 className="punch mx-auto inline-block max-w-3xl -rotate-3 text-[clamp(2.6rem,8.4vw,5.2rem)] text-white">
+          <h1 className="display mx-auto max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white">
             <span className="block">Ils ont voté.</span>
-            <span className="block">Tu vas savoir.</span>
-            <Pinceau className="-mt-[0.02em] ml-[4%] w-[96%]" />
+            <span className="text-vote block">Tu vas savoir.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
             Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en

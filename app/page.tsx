@@ -1,7 +1,6 @@
 import { Backdrop } from "@/components/Backdrop";
 import { CustomQuestions } from "@/components/CustomQuestions";
 import { EmojiSphere } from "@/components/EmojiSphere";
-import { EcransApp } from "@/components/EcransApp";
 import { EmojiSprite } from "@/components/EmojiSprite";
 import { FinalCta } from "@/components/FinalCta";
 import { Footer } from "@/components/Footer";
@@ -36,7 +35,6 @@ export default function Home() {
       <main className="flex-1">
         <EmojiSphere />
         <Hero />
-        <EcransApp />
         <QuestionMarquee />
         <HowItWorks />
         <CustomQuestions />

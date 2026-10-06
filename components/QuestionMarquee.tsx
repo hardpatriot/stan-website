@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Emoji } from "./EmojiSprite";
+import { Pictogramme } from "./Pictogramme";
 import { Reveal } from "./Reveal";
 
 /*
@@ -16,7 +16,7 @@ import { Reveal } from "./Reveal";
  */
 
 const ROW_A = [
-  { emoji: "man_zombie", text: "Qui survivrait dans un film d'horreur ?" },
+  { emoji: "halloween", text: "Qui survivrait dans un film d'horreur ?" },
   { emoji: "squid", text: "Qui survit à Squid Game ?" },
   { emoji: "desert_island", text: "Avec qui t'aimerais être perdu sur une île déserte ?" },
   { emoji: "popcorn", text: "Qui mérite une série Netflix inspirée de sa vie ?" },
@@ -137,7 +137,7 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
           key={`${item.text}-${i}`}
           className="pill flex shrink-0 items-center gap-2.5 rounded-full py-2.5 pr-5 pl-3 text-[15px] font-bold whitespace-nowrap text-white/75"
         >
-          <Emoji name={item.emoji} className="h-[26px] w-[26px] shrink-0" />
+          <Pictogramme name={item.emoji} className="h-[26px] w-[26px] shrink-0" />
           {item.text}
         </span>
       ))}

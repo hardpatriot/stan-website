@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DownloadButton } from "./DownloadButton";
 import { Emoji } from "./EmojiSprite";
+import { Pictogramme } from "./Pictogramme";
 import { WaveFill } from "./WaveFill";
 
 /*
@@ -46,7 +47,7 @@ function Card({ children }: { children: React.ReactNode }) {
 /* --------------------------------------------------------------- données */
 
 const QUESTIONS = [
-  { emoji: "man_zombie", text: "Qui survivrait dans un film d'horreur ?" },
+  { emoji: "halloween", text: "Qui survivrait dans un film d'horreur ?" },
   { emoji: "squid", text: "Qui survit à Squid Game ?" },
   { emoji: "desert_island", text: "Avec qui t'aimerais être perdu sur une île déserte ?" },
   { emoji: "popcorn", text: "Qui mérite une série Netflix inspirée de sa vie ?" },
@@ -303,7 +304,7 @@ function VoteScreen({
 
       {/* L'emoji 3D posé sans fond, comme QuestionEmojiIconView */}
       <div key={question.emoji} className="animate-rise mt-[26px] flex flex-col items-center">
-        <Emoji
+        <Pictogramme
           name={question.emoji}
           className="h-[86px] w-[86px] drop-shadow-[0_5px_5px_rgba(0,0,0,0.25)]"
         />
