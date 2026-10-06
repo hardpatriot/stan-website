@@ -6,7 +6,7 @@ export function Backdrop() {
   return (
     <div
       aria-hidden
-      className="grain pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="grain pointer-events-none fixed inset-x-0 -top-[env(safe-area-inset-top)] -bottom-40 -z-10 overflow-hidden"
     >
       {/* Le fond, indigo vers nuit */}
       <div className="absolute inset-0 bg-[linear-gradient(165deg,#0d0830_0%,#1a0d52_42%,#120a3d_70%,#07051a_100%)]" />

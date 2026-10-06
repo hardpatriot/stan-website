@@ -92,8 +92,14 @@ html {
   overflow-x: clip;
 }
 
+/* La couleur que Safari voit aux bords de la page : celle du fond violet, pas
+   un noir qui découperait l'écran en trois bandes. Posée sur `html` SEULEMENT :
+   un fond sur `body` en plus passerait par-dessus le fond animé (-z-10). */
+html {
+  background-color: #0e0933;
+}
+
 body {
-  background: var(--color-night-950);
   color: #fff;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;

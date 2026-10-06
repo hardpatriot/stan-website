@@ -66,8 +66,12 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+// La page passe SOUS la barre d'état et la barre d'outils de Safari, comme les
+// autres sites : sans `viewport-fit: cover`, Safari iOS posait deux bandes
+// sombres en haut et en bas, et le fond violet s'arrêtait entre les deux.
 export const viewport: Viewport = {
-  themeColor: "#08050f",
+  viewportFit: "cover",
+  themeColor: "#0e0933",
   colorScheme: "dark",
 };
 
