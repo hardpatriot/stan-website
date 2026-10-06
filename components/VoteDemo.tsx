@@ -58,6 +58,18 @@ const QUESTIONS = [
 
 const DEFAULT_FRIENDS = ["Lana Chung", "Lucas Chevalier", "Léa Sacla", "Noha Kanté"];
 
+/**
+ * Une photo de profil pour chaque pote de démonstration, prise dans les
+ * visages de la sphère. Un prénom tapé par le visiteur garde ses initiales :
+ * lui coller le visage d'un inconnu serait étrange.
+ */
+const PHOTOS: Record<string, string> = {
+  "Lana Chung": "/visages/001.webp",
+  "Lucas Chevalier": "/visages/002.webp",
+  "Léa Sacla": "/visages/005.webp",
+  "Noha Kanté": "/visages/004.webp",
+};
+
 /** Les dégradés de carte de l'app, PollCardExperience.gradients. */
 const CARD_GRADIENTS = [
   ["#F7A25B", "#F78C60", "#F67566", "#F65E6D", "#F64773", "#F53079", "#F5187F", "#F50384"],
@@ -487,12 +499,24 @@ function ChoiceTile({
         }}
       />
 
-      <span
-        className="relative flex h-[67px] w-[67px] items-center justify-center rounded-full text-[17px] font-semibold text-white"
-        style={{ background: "#8E8E93", boxShadow: "0 2px 4px rgba(0,0,0,0.25)" }}
-      >
-        {initials(name)}
-      </span>
+      {PHOTOS[name] ? (
+        // eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille
+        <img
+          src={PHOTOS[name]}
+          alt=""
+          draggable={false}
+          decoding="async"
+          className="relative h-[67px] w-[67px] rounded-full object-cover"
+          style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.25)" }}
+        />
+      ) : (
+        <span
+          className="relative flex h-[67px] w-[67px] items-center justify-center rounded-full text-[17px] font-semibold text-white"
+          style={{ background: "#8E8E93", boxShadow: "0 2px 4px rgba(0,0,0,0.25)" }}
+        >
+          {initials(name)}
+        </span>
+      )}
 
       <span className="relative mt-[8px] px-2 text-center text-[18px] leading-[1.15] font-semibold text-black">
         {first}

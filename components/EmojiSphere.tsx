@@ -197,7 +197,7 @@ function palier(bord0: number, bord1: number, v: number) {
 
 /** Un emplacement de la sphère : un visage cerclé de néon, ou un emoji. */
 function Element({ c }: { c: Contenu }) {
-  if ("emoji" in c) return <Pictogramme name={c.emoji} className="h-full w-full" />;
+  if ("emoji" in c) return <Pictogramme name={c.emoji} carre className="h-full w-full" />;
   return (
     // Un anneau néon, comme les avatars des écrans App Store.
     <span className="block h-full w-full rounded-full bg-[linear-gradient(135deg,#ff4fd8,#9b5cff_55%,#3f7bff)] p-[2px]">
