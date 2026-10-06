@@ -34,14 +34,13 @@ export function FinalCta() {
 
         <Reveal delay={170}>
           <p className="mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/55">
-            Là, quelqu&apos;un pense à toi. Peut-être ton Crush. Télécharge
-            Stan.
+            Là, quelqu&apos;un pense à toi. Peut-être ton Crush.
           </p>
         </Reveal>
 
         <Reveal delay={250}>
           <div className="mt-10">
-            <DownloadButton label="Télécharger Stan" />
+            <DownloadButton label="Télécharge Stan" />
           </div>
         </Reveal>
       </div>

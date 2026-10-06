@@ -331,43 +331,6 @@ body {
   pointer-events: none;
 }
 
-/* Le bouton en verre liquide des écrans App Store : un verre sombre à peine
-   teinté, cerclé d'un reflet irisé rose, jaune, vert, bleu. */
-.verre-irise {
-  position: relative;
-  isolation: isolate;
-  background:
-    radial-gradient(120% 140% at 30% 0%, rgba(255, 255, 255, 0.22), transparent 55%),
-    linear-gradient(180deg, rgba(60, 40, 120, 0.55), rgba(20, 12, 50, 0.7));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -8px 18px rgba(0, 0, 0, 0.35),
-    0 0 28px -4px rgba(255, 60, 200, 0.55),
-    0 0 46px -10px rgba(60, 220, 160, 0.4),
-    0 18px 40px -16px rgba(0, 0, 0, 0.8);
-}
-.verre-irise::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  padding: 2px;
-  background: linear-gradient(
-    100deg,
-    #ff4fd8 0%,
-    #ffd45a 25%,
-    #5cf2a8 50%,
-    #4fb8ff 75%,
-    #b04dff 100%
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-
 /* Le fil de votes : la nouvelle notification tombe, puis s'illumine. */
 @keyframes vote-arrive {
   0% {
@@ -397,32 +360,7 @@ body {
     vote-eclat 1.2s ease-out 0.15s;
 }
 
-/* Le reflet irisé du bouton en verre tourne doucement autour du bord. */
-@keyframes irise {
-  to {
-    background-position: 200% 0;
-  }
-}
-.verre-irise::before {
-  background-size: 200% 100%;
-  animation: irise 5s linear infinite;
-}
-.verre-irise::before {
-  background-image: linear-gradient(
-    100deg,
-    #ff4fd8 0%,
-    #ffd45a 12.5%,
-    #5cf2a8 25%,
-    #4fb8ff 37.5%,
-    #b04dff 50%,
-    #ff4fd8 62.5%,
-    #ffd45a 75%,
-    #5cf2a8 87.5%,
-    #4fb8ff 100%
-  );
-}
 @media (prefers-reduced-motion: reduce) {
-  .verre-irise::before,
   .vote-arrive {
     animation: none;
   }

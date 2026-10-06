@@ -500,7 +500,7 @@ export function EmojiSphere() {
             className="pointer-events-none absolute inset-0 z-[3000] flex items-center justify-center"
           >
             <div className="pointer-events-auto">
-              <DownloadButton label="Télécharger l'app" />
+              <DownloadButton label="Télécharge Stan" />
             </div>
           </div>
         </div>

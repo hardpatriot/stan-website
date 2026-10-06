@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { Emoji } from "./EmojiSprite";
+import { FoilQR } from "./FoilQR";
 
 /**
  * Un seul lien pour les deux téléphones : le serveur d'invitation lit le
@@ -151,15 +152,16 @@ type Props = {
   className?: string;
   label?: string;
   /**
-   * `rose` : le bouton principal. `verre` : le bouton en verre liquide des
-   * écrans App Store, cerclé d'un reflet irisé, avec un cadenas.
+   * `rose` : le bouton principal. `verre` : le bouton à la finition
+   * holographique de la carte QR de l'app (shader inviteCardHolo), avec un
+   * cadenas.
    */
   look?: "rose" | "verre";
 };
 
 export function DownloadButton({
   className = "",
-  label = "Télécharger l'app",
+  label = "Télécharge Stan",
   look = "rose",
 }: Props) {
   const plateforme = usePlateforme();
@@ -180,10 +182,14 @@ export function DownloadButton({
         <a
           href={href}
           onClick={ouvrir}
-          className={`verre-irise group relative inline-flex items-center justify-center gap-3 rounded-full px-8 py-4.5 text-base font-black tracking-tight text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] sm:text-lg ${className}`}
+          className={`group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-full px-8 py-4.5 text-base font-black tracking-tight text-white shadow-[0_0_0_1px_rgba(255,255,255,0.28),0_0_30px_-6px_rgba(255,60,180,0.55),0_18px_40px_-16px_rgba(0,0,0,0.85)] transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] sm:text-lg ${className}`}
         >
-          <Emoji name="locked" className="h-6 w-6 shrink-0" />
-          {label}
+          {/* Le foil de la carte QR de l'app, en fond */}
+          <FoilQR className="absolute inset-0" />
+          <Emoji name="locked" className="relative h-6 w-6 shrink-0" />
+          <span className="relative [text-shadow:0_1px_3px_rgba(0,0,0,0.55)]">
+            {label}
+          </span>
         </a>
         {fenetre ? <FenetreOrdinateur onClose={() => setFenetre(false)} /> : null}
       </>
