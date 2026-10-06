@@ -3,6 +3,8 @@
 import { useEffect, useRef } from "react";
 import { DownloadButton } from "./DownloadButton";
 import { Emoji } from "./EmojiSprite";
+import { Pinceau } from "./Pinceau";
+import { VISAGES } from "./visages";
 
 /*
  * La sphère de questions.
@@ -63,6 +65,56 @@ const PALETTE = [
 
 /** Nombre d'éléments affichés, copies comprises. */
 const ELEMENTS_MAX = 110;
+/** Sur téléphone, on n'en anime qu'une partie. */
+const ELEMENTS_MOBILE = 64;
+
+/**
+ * Les éléments animés sur téléphone : 64 indices répartis sur les 110, pour
+ * que la sélection couvre toute la sphère et pas seulement son sommet.
+ */
+const SOUS_ENSEMBLE_MOBILE = Array.from({ length: ELEMENTS_MOBILE }, (_, j) =>
+  Math.round((j * (ELEMENTS_MAX - 1)) / (ELEMENTS_MOBILE - 1)),
+);
+
+/**
+ * Ordre de van der Corput : n'importe quel début de liste est déjà bien
+ * réparti. Avec 8 visages comme avec 80, ils s'égrènent sur toute la sphère.
+ */
+function reparti<T>(liste: T[]): T[] {
+  const cle = (i: number) => {
+    let r = 0;
+    let f = 0.5;
+    for (let v = i + 1; v > 0; v >>= 1, f /= 2) if (v & 1) r += f;
+    return r;
+  };
+  return liste
+    .map((v, i) => ({ v, k: cle(i) }))
+    .sort((a, b) => a.k - b.k)
+    .map((e) => e.v);
+}
+
+/**
+ * Le contenu de chaque emplacement : un visage, ou un emoji tant qu'il n'y a
+ * pas assez de visages pour remplir la sphère.
+ *
+ * Les visages prennent d'abord les emplacements animés sur téléphone, pour
+ * être tous visibles partout, puis le reste. Chaque visage n'apparaît qu'une
+ * fois ; chaque emoji aussi.
+ */
+type Contenu = { visage: string } | { emoji: string };
+const CONTENUS: Contenu[] = (() => {
+  const mobile = new Set(SOUS_ENSEMBLE_MOBILE);
+  const reste = Array.from({ length: ELEMENTS_MAX }, (_, i) => i).filter(
+    (i) => !mobile.has(i),
+  );
+  const priorite = [...reparti([...mobile]), ...reparti(reste)];
+  const contenus: (Contenu | null)[] = Array(ELEMENTS_MAX).fill(null);
+  VISAGES.slice(0, ELEMENTS_MAX).forEach((v, j) => {
+    contenus[priorite[j]] = { visage: v };
+  });
+  let e = 0;
+  return contenus.map((c) => c ?? { emoji: PALETTE[e++ % PALETTE.length] });
+})();
 
 const OR = Math.PI * (3 - Math.sqrt(5)); // angle d'or, 137,5°
 
@@ -117,10 +169,12 @@ const HAUTEUR_SECTION = "125svh";
  */
 const S_FIN = 0.25;
 
-function combien(): number {
-  if (typeof window === "undefined") return ELEMENTS_MAX;
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return 40;
-  return window.innerWidth <= 640 ? 64 : ELEMENTS_MAX;
+/** Les indices animés sur cet écran. */
+function actifs(): number[] {
+  if (typeof window !== "undefined" && window.innerWidth <= 640) {
+    return SOUS_ENSEMBLE_MOBILE;
+  }
+  return Array.from({ length: ELEMENTS_MAX }, (_, i) => i);
 }
 
 /** Répartition en spirale de Fibonacci : la seule qui espace régulièrement. */
@@ -142,6 +196,24 @@ function palier(bord0: number, bord1: number, v: number) {
   return t * t * (3 - 2 * t);
 }
 
+/** Un emplacement de la sphère : un visage cerclé de néon, ou un emoji. */
+function Element({ c }: { c: Contenu }) {
+  if ("emoji" in c) return <Emoji name={c.emoji} className="h-full w-full" />;
+  return (
+    // Un anneau néon, comme les avatars des écrans App Store.
+    <span className="block h-full w-full rounded-full bg-[linear-gradient(135deg,#ff4fd8,#9b5cff_55%,#3f7bff)] p-[2px]">
+      {/* eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille */}
+      <img
+        src={`/visages/${c.visage}`}
+        alt=""
+        draggable={false}
+        decoding="async"
+        className="h-full w-full rounded-full object-cover"
+      />
+    </span>
+  );
+}
+
 export function EmojiSphere() {
   const section = useRef<HTMLElement>(null);
   const scene = useRef<HTMLDivElement>(null);
@@ -154,7 +226,8 @@ export function EmojiSphere() {
     const sc = scene.current;
     if (!sec || !sc) return;
 
-    const n = combien();
+    const indices = actifs();
+    const n = indices.length;
     const base = positions(n);
     const doux = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const large = window.innerWidth > 640;
@@ -167,9 +240,10 @@ export function EmojiSphere() {
     };
     window.addEventListener("resize", remesurer, { passive: true });
 
-    // Les éléments au-delà du compte retenu ne servent pas sur cet écran.
+    // Les éléments hors de la sélection ne servent pas sur cet écran.
+    const garde = new Set(indices);
     items.current.forEach((el, i) => {
-      if (el) el.style.display = i < n ? "" : "none";
+      if (el) el.style.display = garde.has(i) ? "" : "none";
     });
 
     let lacetAuto = 0;
@@ -243,7 +317,7 @@ export function EmojiSphere() {
         : Math.min(1.95 * h, 1.62 * w);
 
       for (let i = 0; i < n; i++) {
-        const el = items.current[i];
+        const el = items.current[indices[i]];
         if (!el) continue;
         const p = base[i];
 
@@ -389,9 +463,10 @@ export function EmojiSphere() {
         >
           {/* Deux lignes imposées : sans ça, l'équilibrage automatique
               regroupe tout sur une seule ligne dès que l'écran est large. */}
-          <h1 className="display mx-auto max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white">
+          <h1 className="punch mx-auto inline-block max-w-3xl -rotate-3 text-[clamp(2.6rem,8.4vw,5.2rem)] text-white">
             <span className="block">Ils ont voté.</span>
-            <span className="text-vote block">Tu vas savoir.</span>
+            <span className="block">Tu vas savoir.</span>
+            <Pinceau className="-mt-[0.02em] ml-[4%] w-[96%]" />
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
             Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
@@ -413,10 +488,7 @@ export function EmojiSphere() {
               className="absolute top-1/2 left-1/2 origin-center [contain:layout_style_paint] [translate:-50%_-50%]"
               style={{ width: TAILLE_CSS, height: TAILLE_CSS, opacity: 0 }}
             >
-              <Emoji
-                name={PALETTE[i % PALETTE.length]}
-                className="h-full w-full"
-              />
+              <Element c={CONTENUS[i]} />
             </span>
           ))}
 

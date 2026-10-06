@@ -1,4 +1,5 @@
 import { Emoji } from "./EmojiSprite";
+import { Pinceau } from "./Pinceau";
 import { Reveal } from "./Reveal";
 
 /**
@@ -44,20 +45,23 @@ export function CustomQuestions() {
             <p className="text-sm font-black tracking-[0.18em] text-cyan uppercase">
               Tes questions
             </p>
-            <h2 className="display mt-4 text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
-              Balance ta meilleure ref.{" "}
-              <span className="text-vote">
-                Le top 3 part dans les sondages de ton école.
+            <h2 className="mt-4 text-white">
+              <span className="punch inline-block -rotate-2 text-[clamp(2.4rem,6.4vw,4.2rem)]">
+                Balance ta meilleure ref.
+                <Pinceau className="mt-[0.04em] w-full" />
+              </span>
+              <span className="display text-vote mt-5 block text-[clamp(1.5rem,3.6vw,2.3rem)] text-balance">
+                Le top 3 part dans les questions de ton école.
               </span>
             </h2>
             <p className="mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/55">
               Tu écris ta question, ton école vote. Les trois qui récoltent le
-              plus de 🔥 entrent dans les vrais sondages, et là tout le monde y
+              plus de 🔥 entrent dans les vraies questions, et là tout le monde y
               répond.
             </p>
             <p className="mt-4 max-w-lg text-[15px] leading-relaxed font-medium text-white/35">
               120 caractères, pas un de plus. Et tout passe par la modération
-              avant d&apos;arriver dans les sondages.
+              avant d&apos;arriver dans les questions.
             </p>
           </Reveal>
         </div>
@@ -66,12 +70,12 @@ export function CustomQuestions() {
         <Reveal delay={120} className="min-w-0">
           <div className="flex flex-col gap-4">
             {/* Le champ */}
-            <div className="glass rounded-3xl p-6">
+            <div className="neon rounded-3xl p-6">
               <p className="text-lg font-black tracking-tight text-white">
                 Crée ta propre question
               </p>
               <p className="mt-1.5 text-[14px] leading-relaxed font-medium text-white/45">
-                Balance ta meilleure ref, le top 3 entre dans les vrais sondages
+                Balance ta meilleure ref, le top 3 entre dans les vraies questions
                 de l&apos;école
               </p>
               <div className="mt-5 rounded-2xl bg-white/[0.06] px-4 py-3.5">
@@ -91,7 +95,7 @@ export function CustomQuestions() {
             </div>
 
             {/* Le classement */}
-            <div className="glass overflow-hidden rounded-3xl">
+            <div className="neon overflow-hidden rounded-3xl">
               <p className="px-6 pt-6 pb-4 text-[12px] font-black tracking-wide text-white/45 uppercase">
                 Le classement de ton école
               </p>
@@ -113,7 +117,7 @@ export function CustomQuestions() {
                       </p>
                       {item.live && (
                         <p className="mt-0.5 text-[11px] font-black text-[#4ADE80]">
-                          ✓ Dans les sondages
+                          ✓ Dans les questions
                         </p>
                       )}
                     </div>

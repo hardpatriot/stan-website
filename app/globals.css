@@ -267,3 +267,81 @@ body {
     transform: none;
   }
 }
+
+/* ------------------------------------------------------------------
+   L'identité des nouveaux écrans App Store (octobre 2026) :
+   titres noirs en italique majuscule, coup de pinceau rose dessous,
+   cartes de verre cerclées d'un néon rose vers bleu.
+   ------------------------------------------------------------------ */
+
+.punch {
+  font-family: var(--font-archivo), var(--font-roboto), system-ui, sans-serif;
+  font-style: italic;
+  font-weight: 900;
+  font-variation-settings: "wdth" 112;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.86;
+  /* Le halo blanc des écrans : le texte semble éclairé par le néon. */
+  text-shadow:
+    0 0 24px rgba(255, 255, 255, 0.18),
+    0 6px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Verre cerclé de néon. Le contour est un dégradé (rose, violet, bleu)
+   découpé par un masque : aucun flou d'arrière-plan, donc rien à
+   recalculer pendant un défilement. */
+.neon {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    rgba(54, 34, 120, 0.42) 0%,
+    rgba(20, 12, 54, 0.62) 100%
+  );
+  box-shadow:
+    0 24px 60px -24px rgba(0, 0, 0, 0.85),
+    0 0 34px -10px rgba(255, 45, 190, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.neon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    125deg,
+    #ff4fd8 0%,
+    #b04dff 45%,
+    #3f7bff 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Les pastilles du bandeau prennent le même contour néon, en plus discret
+   et sans halo : elles sont nombreuses et défilent en continu. */
+.pill {
+  position: relative;
+  background: rgba(40, 24, 96, 0.45);
+  border-color: transparent;
+}
+.pill::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(125deg, #ff4fd8 0%, #b04dff 45%, #3f7bff 100%);
+  opacity: 0.55;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}

@@ -44,7 +44,7 @@ export function StepCard({
     <article
       ref={ref}
       onPointerMove={suivre}
-      className="glass group relative h-full overflow-hidden rounded-3xl p-6 transition-colors duration-500 hover:border-white/20"
+      className="neon group relative h-full overflow-hidden rounded-3xl p-6 transition-colors duration-500 hover:border-white/20"
       style={
         {
           "--mx": "50%",

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { DownloadButton } from "./DownloadButton";
+import { Pinceau } from "./Pinceau";
 import { Reveal } from "./Reveal";
 
 export function FinalCta() {
@@ -24,9 +25,12 @@ export function FinalCta() {
 
         {/* La phrase de fin de la fiche App Store. */}
         <Reveal delay={90}>
-          <h2 className="display mt-10 text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
-            Stan tes potes.{" "}
-            <span className="text-vote">
+          <h2 className="mt-10 text-white">
+            <span className="punch inline-block -rotate-3 text-[clamp(3rem,9vw,5.6rem)]">
+              Stan tes potes.
+              <Pinceau className="mt-[0.02em] w-full" />
+            </span>
+            <span className="display text-vote mt-5 block text-[clamp(1.6rem,4.4vw,2.7rem)] text-balance">
               Découvre ce qu&apos;ils pensent de toi.
             </span>
           </h2>
