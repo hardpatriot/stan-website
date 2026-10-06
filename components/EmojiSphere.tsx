@@ -468,8 +468,9 @@ export function EmojiSphere() {
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
             Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
-            anonyme, ils diraient quoi&nbsp;? Tu croyais tout savoir.
-            C&apos;est le moment de vérifier.
+            anonyme, ils diraient quoi&nbsp;? Et ton Crush lui dirait
+            quoi&nbsp;? Tu croyais tout savoir. C&apos;est le moment de le
+            découvrir.
           </p>
         </div>
 

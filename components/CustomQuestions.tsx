@@ -1,5 +1,4 @@
 import { Emoji } from "./EmojiSprite";
-import { Pinceau } from "./Pinceau";
 import { Reveal } from "./Reveal";
 
 /**
@@ -45,12 +44,9 @@ export function CustomQuestions() {
             <p className="text-sm font-black tracking-[0.18em] text-cyan uppercase">
               Tes questions
             </p>
-            <h2 className="mt-4 text-white">
-              <span className="punch inline-block -rotate-2 text-[clamp(2.4rem,6.4vw,4.2rem)]">
-                Balance ta meilleure ref.
-                <Pinceau className="mt-[0.04em] w-full" />
-              </span>
-              <span className="display text-vote mt-5 block text-[clamp(1.5rem,3.6vw,2.3rem)] text-balance">
+            <h2 className="display mt-4 text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
+              Balance ta meilleure ref.{" "}
+              <span className="text-vote">
                 Le top 3 part dans les questions de ton école.
               </span>
             </h2>

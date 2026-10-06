@@ -1,4 +1,3 @@
-import { Pinceau } from "./Pinceau";
 import { Reveal } from "./Reveal";
 import { StepCard } from "./StepCard";
 
@@ -38,9 +37,9 @@ export function HowItWorks() {
           <p className="text-sm font-black tracking-[0.18em] text-rose uppercase">
             Ça marche comment
           </p>
-          <h2 className="punch mt-4 inline-block max-w-3xl -rotate-2 text-[clamp(2.2rem,6vw,4rem)] text-white">
-            Quatre étapes. Après, t&apos;attends la notif.
-            <Pinceau className="mt-[0.04em] w-[70%]" />
+          <h2 className="display mt-4 max-w-2xl text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
+            Quatre étapes. Après,{" "}
+            <span className="text-vote">t&apos;attends la notif.</span>
           </h2>
         </Reveal>
 

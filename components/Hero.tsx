@@ -1,5 +1,4 @@
 import { DownloadButton } from "./DownloadButton";
-import { Pinceau } from "./Pinceau";
 import { VoteDemo } from "./VoteDemo";
 
 /**
@@ -22,14 +21,11 @@ export function Hero() {
               Ici on enchaîne sur la démo plutôt que de répéter la même
               phrase à un écran d'intervalle. */}
           <h2
-            className="animate-rise text-white"
+            className="display animate-rise text-[clamp(2.1rem,6vw,3.8rem)] text-white text-balance"
             style={{ animationDelay: "140ms" }}
           >
-            <span className="punch inline-block -rotate-3 text-[clamp(3rem,9vw,5.4rem)]">
-              Essaie.
-              <Pinceau className="mt-[0.02em] w-[108%]" />
-            </span>
-            <span className="display text-vote mt-5 block text-[clamp(1.6rem,4.2vw,2.6rem)] text-balance">
+            Essaie.{" "}
+            <span className="text-vote">
               Tes potes ou ton crush ont peut-être déjà voté pour toi.
             </span>
           </h2>

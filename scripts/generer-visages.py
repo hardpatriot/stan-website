@@ -6,7 +6,7 @@ puis lance :
 
     python3 scripts/generer-visages.py
 
-Chaque visage est recadré au carré, détouré en rond, réduit à 256 px au plus
+Chaque visage est recadré au carré, détouré en rond, réduit à 192 px au plus
 (jamais agrandi : un agrandissement ne crée pas de détail, il floute) et
 enregistré en WebP dans `public/visages/`. La liste lue par la sphère est
 réécrite dans `components/visages.ts`.
@@ -14,8 +14,8 @@ réécrite dans `components/visages.ts`.
 Deux fichiers au contenu identique ne comptent qu'une fois : la sphère ne
 montre jamais deux fois le même visage.
 
-256 px suffit : un visage mesure au plus 70 px à l'écran (56 sur téléphone),
-soit 210 pixels réels sur l'écran le plus dense. Exporter les portraits à
+192 px suffit : un visage mesure au plus 70 px à l'écran (56 sur téléphone),
+soit 140 à 168 pixels réels sur les écrans courants. Exporter les portraits à
 512 px depuis Figma laisse de la marge.
 """
 import hashlib
@@ -26,7 +26,7 @@ RACINE = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = RACINE / "visages"
 SORTIE = RACINE / "public" / "visages"
 LISTE = RACINE / "components" / "visages.ts"
-COTE_MAX = 256
+COTE_MAX = 192
 
 SORTIE.mkdir(parents=True, exist_ok=True)
 for ancien in SORTIE.glob("*.webp"):
@@ -60,7 +60,7 @@ for f in sorted(SOURCE.iterdir()):
     im.putalpha(alpha)
 
     nom = f"{len(noms) + 1:03d}.webp"
-    im.save(SORTIE / nom, "WEBP", quality=86, method=6)
+    im.save(SORTIE / nom, "WEBP", quality=80, method=6)
     noms.append(nom)
 
 LISTE.write_text(

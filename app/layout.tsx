@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Roboto } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 
 // L'app utilise Roboto (.custom("Roboto")), on garde exactement la même.
@@ -10,16 +10,6 @@ const roboto = Roboto({
   display: "swap",
 });
 
-// Les titres des nouveaux écrans App Store : une linéale noire, italique et un
-// peu élargie. Archivo est variable en largeur, ce qui permet de s'en approcher
-// sans charger une police payante.
-const archivo = Archivo({
-  subsets: ["latin"],
-  style: ["italic"],
-  axes: ["wdth"],
-  variable: "--font-archivo",
-  display: "swap",
-});
 
 const SITE = "https://www.stan-friends.com";
 
@@ -83,7 +73,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr" className={`${roboto.variable} ${archivo.variable} h-full antialiased`}>
+    <html lang="fr" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

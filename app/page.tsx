@@ -2,6 +2,7 @@ import { Backdrop } from "@/components/Backdrop";
 import { CustomQuestions } from "@/components/CustomQuestions";
 import { EmojiSphere } from "@/components/EmojiSphere";
 import { EmojiSprite } from "@/components/EmojiSprite";
+import { VotesNeon } from "@/components/VotesNeon";
 import { FinalCta } from "@/components/FinalCta";
 import { Footer } from "@/components/Footer";
 import { Hero } from "@/components/Hero";
@@ -35,6 +36,7 @@ export default function Home() {
       <main className="flex-1">
         <EmojiSphere />
         <Hero />
+        <VotesNeon />
         <QuestionMarquee />
         <HowItWorks />
         <CustomQuestions />

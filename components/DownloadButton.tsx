@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { Emoji } from "./EmojiSprite";
 
 /**
  * Un seul lien pour les deux téléphones : le serveur d'invitation lit le
@@ -149,11 +150,17 @@ function FenetreOrdinateur({ onClose }: { onClose: () => void }) {
 type Props = {
   className?: string;
   label?: string;
+  /**
+   * `rose` : le bouton principal. `verre` : le bouton en verre liquide des
+   * écrans App Store, cerclé d'un reflet irisé, avec un cadenas.
+   */
+  look?: "rose" | "verre";
 };
 
 export function DownloadButton({
   className = "",
   label = "Télécharger l'app",
+  look = "rose",
 }: Props) {
   const plateforme = usePlateforme();
   const [fenetre, setFenetre] = useState(false);
@@ -161,15 +168,33 @@ export function DownloadButton({
   const href = plateforme === "ipad" ? APP_STORE_URL : INVITE_URL;
   const iOS = plateforme === "iphone" || plateforme === "ipad";
 
+  const ouvrir = (e: React.MouseEvent) => {
+    if (plateforme !== "ordinateur") return;
+    e.preventDefault();
+    setFenetre(true);
+  };
+
+  if (look === "verre") {
+    return (
+      <>
+        <a
+          href={href}
+          onClick={ouvrir}
+          className={`verre-irise group relative inline-flex items-center justify-center gap-3 rounded-full px-8 py-4.5 text-base font-black tracking-tight text-white transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] sm:text-lg ${className}`}
+        >
+          <Emoji name="locked" className="h-6 w-6 shrink-0" />
+          {label}
+        </a>
+        {fenetre ? <FenetreOrdinateur onClose={() => setFenetre(false)} /> : null}
+      </>
+    );
+  }
+
   return (
     <>
       <a
         href={href}
-        onClick={(e) => {
-          if (plateforme !== "ordinateur") return;
-          e.preventDefault();
-          setFenetre(true);
-        }}
+        onClick={ouvrir}
         className={`group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-2xl px-8 py-4.5 text-base font-black tracking-tight text-white shadow-[0_18px_50px_-12px_rgba(230,0,110,0.75)] transition-transform duration-300 will-change-transform hover:scale-[1.03] active:scale-[0.98] sm:text-lg ${className}`}
       >
         {/* Le gradient du vote */}

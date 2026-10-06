@@ -19,26 +19,121 @@ const CARD_W = 393;
 const CARD_H = 774;
 
 /** La carte de sondage, mise à l'échelle d'un bloc, posée sur la nuit. */
+/**
+ * Le téléphone autour de la démo, dans le style des écrans App Store : un
+ * châssis violet éclairé par un néon rose et bleu, l'île dynamique, l'heure.
+ *
+ * Tout est en points iOS multipliés par `--ps`, comme la carte : le
+ * téléphone suit la mise à l'échelle sans rien agrandir au-delà de 1.
+ */
+const BORD = 11; // épaisseur du châssis
+const BARRE = 50; // barre d'état au-dessus de la carte
+const MARGE = 7; // espace entre l'écran et la carte
+
+function pt(v: number) {
+  return `calc(${v}px * var(--ps))`;
+}
+
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative [--ps:0.78] sm:[--ps:0.88]">
-      {/* La lueur qui décolle la carte du fond */}
+    <div className="relative [--ps:0.74] sm:[--ps:0.84]">
+      {/* La lueur néon qui décolle le téléphone du fond */}
       <div
         aria-hidden
-        className="animate-pulse-glow pointer-events-none absolute -inset-6 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(230,0,110,0.40)_0%,rgba(217,28,189,0.16)_40%,transparent_72%)] blur-2xl"
+        className="animate-pulse-glow pointer-events-none absolute -inset-10 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_30%_40%,rgba(255,40,200,0.45)_0%,transparent_60%),radial-gradient(ellipse_at_75%_65%,rgba(60,110,255,0.40)_0%,transparent_60%)] blur-2xl"
       />
+
+      {/* Le châssis */}
       <div
-        className="relative overflow-hidden"
+        className="relative"
         style={{
-          width: `calc(${CARD_W}px * var(--ps))`,
-          height: `calc(${CARD_H}px * var(--ps))`,
+          padding: pt(BORD),
+          borderRadius: pt(64),
+          background:
+            "linear-gradient(150deg, #8a5cff 0%, #4b2bb8 22%, #261566 50%, #3a1f96 78%, #9a6bff 100%)",
+          boxShadow:
+            "inset 0 0 0 1.5px rgba(255,255,255,0.28), inset 0 0 18px rgba(255,255,255,0.12), 0 0 34px rgba(255,50,200,0.45), 0 0 70px -10px rgba(70,110,255,0.55), 0 40px 80px -30px rgba(0,0,0,0.9)",
         }}
       >
+        {/* Les boutons sur la tranche */}
+        {[
+          { cote: "left", haut: 150, h: 34 },
+          { cote: "left", haut: 205, h: 62 },
+          { cote: "left", haut: 280, h: 62 },
+          { cote: "right", haut: 230, h: 96 },
+        ].map((b, i) => (
+          <span
+            key={i}
+            aria-hidden
+            className="absolute rounded-full bg-[linear-gradient(180deg,#9a6bff,#4b2bb8)]"
+            style={{
+              [b.cote]: pt(-3),
+              top: pt(b.haut),
+              width: pt(4),
+              height: pt(b.h),
+            }}
+          />
+        ))}
+
+        {/* L'écran */}
         <div
-          className="absolute top-0 left-0 origin-top-left"
-          style={{ width: CARD_W, height: CARD_H, transform: "scale(var(--ps))" }}
+          className="relative overflow-hidden bg-[#0b0716]"
+          style={{
+            borderRadius: pt(54),
+            padding: `${pt(BARRE)} ${pt(MARGE)} ${pt(MARGE)}`,
+          }}
         >
-          {children}
+          {/* Barre d'état : l'heure, l'île, le réseau */}
+          <div
+            aria-hidden
+            className="absolute inset-x-0 top-0 flex items-center justify-between font-semibold text-white"
+            style={{ height: pt(BARRE), padding: `0 ${pt(34)}`, fontSize: pt(16) }}
+          >
+            <span>9:41</span>
+            <span
+              className="absolute left-1/2 -translate-x-1/2 rounded-full bg-black"
+              style={{ top: pt(11), width: pt(120), height: pt(34) }}
+            />
+            <span className="flex items-center" style={{ gap: pt(6) }}>
+              <svg viewBox="0 0 18 12" style={{ width: pt(18) }} fill="currentColor">
+                <rect x="0" y="8" width="3" height="4" rx="1" />
+                <rect x="5" y="5.5" width="3" height="6.5" rx="1" />
+                <rect x="10" y="3" width="3" height="9" rx="1" />
+                <rect x="15" y="0" width="3" height="12" rx="1" />
+              </svg>
+              <svg viewBox="0 0 16 12" style={{ width: pt(16) }} fill="currentColor">
+                <path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.1-1.2A10.2 10.2 0 0 0 8 .6C5.3.6 2.8 1.6.9 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4zm0 3.3c1.4 0 2.7.5 3.7 1.4l1.1-1.2A7.1 7.1 0 0 0 8 3.9c-1.8 0-3.5.7-4.8 1.8l1.1 1.2c1-.9 2.3-1.4 3.7-1.4zm0 3.3c-.6 0-1.1.2-1.5.6L8 11l1.5-1.6A2.2 2.2 0 0 0 8 8.8z" />
+              </svg>
+              <svg viewBox="0 0 27 13" style={{ width: pt(26) }} fill="none">
+                <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" opacity="0.4" />
+                <rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor" />
+                <path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity="0.4" />
+              </svg>
+            </span>
+          </div>
+
+          {/* La carte de vote, à l'échelle */}
+          <div
+            className="relative overflow-hidden"
+            style={{
+              width: `calc(${CARD_W}px * var(--ps))`,
+              height: `calc(${CARD_H}px * var(--ps))`,
+            }}
+          >
+            <div
+              className="absolute top-0 left-0 origin-top-left"
+              style={{ width: CARD_W, height: CARD_H, transform: "scale(var(--ps))" }}
+            >
+              {children}
+            </div>
+          </div>
+
+          {/* La barre d'accueil */}
+          <span
+            aria-hidden
+            className="absolute left-1/2 -translate-x-1/2 rounded-full bg-white/70"
+            style={{ bottom: pt(14), width: pt(130), height: pt(5) }}
+          />
         </div>
       </div>
     </div>
