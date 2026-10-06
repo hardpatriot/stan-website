@@ -467,10 +467,12 @@ export function EmojiSphere() {
             <span className="text-vote block">Tu vas savoir.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
-            Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
-            anonyme, ils diraient quoi&nbsp;? Et ton Crush lui dirait
-            quoi&nbsp;? Tu croyais tout savoir. C&apos;est le moment de tout
-            découvrir.
+            Sur Stan, tu réponds à des questions sur tes potes, vos délires et
+            vos crushs. À chaque question, tu choisis la personne qui te vient
+            en tête. Tes potes font pareil avec toi&nbsp;: tu découvres les
+            questions où ils t&apos;ont choisi, mais leur nom est masqué. Un
+            pote qui joue le jeu… ou ton crush qui tente un truc&nbsp;? Là, tu
+            veux savoir qui c&apos;est&nbsp;!
           </p>
         </div>
 
