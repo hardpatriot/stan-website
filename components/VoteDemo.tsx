@@ -16,7 +16,9 @@ import { WaveFill } from "./WaveFill";
  */
 
 const CARD_W = 393;
-const CARD_H = 774;
+// Comme dans l'app sur un écran de 393 × 852 : la carte commence sous la
+// barre d'état et descend jusqu'au bas de l'écran (ignoresSafeArea bottom).
+const CARD_H = 798;
 
 /** La carte de sondage, mise à l'échelle d'un bloc, posée sur la nuit. */
 /**
@@ -27,8 +29,7 @@ const CARD_H = 774;
  * téléphone suit la mise à l'échelle sans rien agrandir au-delà de 1.
  */
 const BORD = 11; // épaisseur du châssis
-const BARRE = 50; // barre d'état au-dessus de la carte
-const MARGE = 7; // espace entre l'écran et la carte
+const BARRE = 54; // barre d'état, sur le fond de nuit de l'app
 
 function pt(v: number) {
   return `calc(${v}px * var(--ps))`;
@@ -77,10 +78,10 @@ function Card({ children }: { children: React.ReactNode }) {
 
         {/* L'écran */}
         <div
-          className="relative overflow-hidden bg-[#0b0716]"
+          className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0716,#120d24)]"
           style={{
             borderRadius: pt(54),
-            padding: `${pt(BARRE)} ${pt(MARGE)} ${pt(MARGE)}`,
+            paddingTop: pt(BARRE),
           }}
         >
           {/* Barre d'état : l'heure, l'île, le réseau */}
@@ -391,7 +392,7 @@ function VoteScreen({
   return (
     // La carte de sondage : rayon 47, ombre de fullScreenCard.
     <div
-      className="absolute inset-0 flex flex-col items-center overflow-hidden rounded-[47px]"
+      className="absolute inset-0 flex flex-col items-center overflow-hidden rounded-t-[47px]"
       style={{
         background: gradientCss(gradient),
         boxShadow: "0 24px 60px -12px rgba(0,0,0,0.55), 0 8px 18px rgba(0,0,0,0.3)",
@@ -638,7 +639,7 @@ function RevealScreen({
 }) {
   return (
     <div
-      className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-[47px] bg-[linear-gradient(165deg,#0e0920_0%,#1f1445_58%,#2a1b5c_100%)] px-[26px] pt-[38px] pb-[38px]"
+      className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-t-[47px] bg-[linear-gradient(165deg,#0e0920_0%,#1f1445_58%,#2a1b5c_100%)] px-[26px] pt-[38px] pb-[38px]"
       style={{
         boxShadow: "0 24px 60px -12px rgba(0,0,0,0.55), 0 8px 18px rgba(0,0,0,0.3)",
       }}

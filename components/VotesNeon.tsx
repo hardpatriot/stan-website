@@ -2,9 +2,10 @@ import { DownloadButton } from "./DownloadButton";
 import { Reveal } from "./Reveal";
 
 /**
- * La pile de notifications des écrans App Store, refaite en vrai : des cartes
- * de verre cerclées de néon, une casquette rose pour « il », bleue pour
- * « elle », qui rapetissent en s'éloignant.
+ * La pile de notifications des écrans App Store, refaite en vrai avec les
+ * éléments de l'app : les icônes icon_stan_boy et icon_stan_girl, et le verre
+ * de VotesNotificationGlassCard (mêmes teintes, mêmes accents). Les cartes
+ * rapetissent en s'éloignant.
  *
  * Seules des transformations 2D (translation, échelle inférieure à 1) : le
  * texte reste net, aucune couche n'est agrandie.
@@ -18,19 +19,13 @@ const VOTES = [
 ] as const;
 
 const TEINTES = {
-  Il: {
-    anneau: "linear-gradient(135deg,#ff4fd8,#ff7a3d)",
-    halo: "rgba(255,60,190,0.55)",
-    casquette: "none",
-  },
-  Elle: {
-    anneau: "linear-gradient(135deg,#5ce1ff,#4f6bff)",
-    halo: "rgba(70,140,255,0.55)",
-    // La casquette rose, teintée en bleu d'un seul ton.
-    casquette:
-      "grayscale(1) brightness(1.2) sepia(1) hue-rotate(178deg) saturate(5)",
-  },
+  Il: { icone: "/notif-boy.webp", halo: "rgba(255,36,128,0.5)" },
+  Elle: { icone: "/notif-girl.webp", halo: "rgba(13,214,255,0.45)" },
 } as const;
+
+/** Le verre de VotesNotificationGlassCard : fond indigo, accents rose à cyan. */
+const VERRE =
+  "linear-gradient(90deg, rgba(255,36,128,0.13) 0%, rgba(145,64,255,0.07) 42%, rgba(61,110,255,0.07) 72%, rgba(13,214,255,0.12) 100%), linear-gradient(135deg, rgba(64,61,105,0.68) 0%, rgba(38,33,74,0.58) 48%, rgba(14,15,41,0.72) 100%)";
 
 function CarteVote({
   qui,
@@ -45,28 +40,23 @@ function CarteVote({
   const echelle = 1 - rang * 0.075;
   return (
     <div
-      className="neon flex items-center gap-4 rounded-[24px] px-4 py-3.5"
+      className="neon flex items-center gap-4 rounded-[20px] px-4 py-3.5"
       style={{
+        background: VERRE,
         transform: `translateX(${rang * 14}px) scale(${echelle})`,
         transformOrigin: "left center",
         opacity: 1 - rang * 0.13,
         boxShadow: `0 0 30px -8px ${t.halo}, 0 24px 50px -24px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12)`,
       }}
     >
-      <span
-        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full p-[2.5px]"
-        style={{ background: t.anneau, boxShadow: `0 0 16px ${t.halo}` }}
-      >
-        <span className="flex h-full w-full items-center justify-center rounded-full bg-[#07051a]">
-          {/* eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille */}
-          <img
-            src="/casquette.webp"
-            alt=""
-            className="w-[72%]"
-            style={{ filter: t.casquette }}
-          />
-        </span>
-      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille */}
+      <img
+        src={t.icone}
+        alt=""
+        draggable={false}
+        className="h-14 w-14 shrink-0"
+        style={{ filter: `drop-shadow(0 0 10px ${t.halo})` }}
+      />
       <span className="flex-1 text-[17px] font-semibold text-white sm:text-lg">
         {qui} a voté pour toi
       </span>
@@ -81,7 +71,7 @@ export function VotesNeon() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <Reveal className="min-w-0">
           <h2 className="display text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
-            2 votes. <span className="text-vote">Mais de qui&nbsp;?</span>
+            Des votes. <span className="text-vote">Mais de qui&nbsp;?</span>
           </h2>
           <div className="mt-9 hidden lg:block">
             <DownloadButton look="verre" label="Découvre qui a voté pour toi" />
