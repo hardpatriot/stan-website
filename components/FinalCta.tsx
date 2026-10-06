@@ -7,18 +7,25 @@ export function FinalCta() {
     <section className="relative px-5 py-20 sm:px-8 sm:py-28 lg:py-32">
       <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
         <Reveal>
-          <div className="relative">
+          {/* L'icône posée sur la nuit : le fond sombre de l'icône se fondait
+              dans la page. Un halo rose et bleu derrière, un liseré néon
+              autour, comme les cartes, et le tout flotte doucement. */}
+          <div className="animate-float relative">
             <span
               aria-hidden
-              className="animate-pulse-glow absolute -inset-8 rounded-full bg-[radial-gradient(circle,rgba(230,0,110,0.5),transparent_68%)] blur-2xl"
+              className="animate-pulse-glow absolute -inset-14 rounded-full bg-[radial-gradient(circle_at_40%_45%,rgba(255,40,190,0.7),transparent_58%),radial-gradient(circle_at_62%_58%,rgba(70,110,255,0.6),transparent_60%)] blur-2xl"
             />
-            <Image
-              src="/cap-512.png"
-              alt="L'icône de Stan : une casquette en néon rose"
-              width={112}
-              height={112}
-              className="animate-float relative rounded-[28px] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.85)]"
-            />
+            <span
+              className="relative block rounded-[32px] bg-[linear-gradient(135deg,#ff4fd8_0%,#b04dff_48%,#3f7bff_100%)] p-[2px] shadow-[0_0_28px_rgba(255,60,200,0.6),0_0_60px_-6px_rgba(80,110,255,0.6),0_30px_60px_-20px_rgba(0,0,0,0.85)]"
+            >
+              <Image
+                src="/cap-512.png"
+                alt="L'icône de Stan : une casquette en néon rose"
+                width={120}
+                height={120}
+                className="block rounded-[30px]"
+              />
+            </span>
           </div>
         </Reveal>
 

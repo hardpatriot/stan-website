@@ -104,8 +104,11 @@ function Card({ children }: { children: React.ReactNode }) {
                 <rect x="10" y="3" width="3" height="9" rx="1" />
                 <rect x="15" y="0" width="3" height="12" rx="1" />
               </svg>
-              <svg viewBox="0 0 16 12" style={{ width: pt(16) }} fill="currentColor">
-                <path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.1-1.2A10.2 10.2 0 0 0 8 .6C5.3.6 2.8 1.6.9 3.4L2 4.6a8.5 8.5 0 0 1 6-2.4zm0 3.3c1.4 0 2.7.5 3.7 1.4l1.1-1.2A7.1 7.1 0 0 0 8 3.9c-1.8 0-3.5.7-4.8 1.8l1.1 1.2c1-.9 2.3-1.4 3.7-1.4zm0 3.3c-.6 0-1.1.2-1.5.6L8 11l1.5-1.6A2.2 2.2 0 0 0 8 8.8z" />
+              {/* Le Wi-Fi : deux arcs et un point, tracés nets à toute taille. */}
+              <svg viewBox="0 0 17 12.5" style={{ width: pt(17) }} fill="none">
+                <path d="M1.7 4.6a9.8 9.8 0 0 1 13.6 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M4.5 7.6a5.8 5.8 0 0 1 8 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <circle cx="8.5" cy="10.6" r="1.55" fill="currentColor" />
               </svg>
               <svg viewBox="0 0 27 13" style={{ width: pt(26) }} fill="none">
                 <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" opacity="0.4" />

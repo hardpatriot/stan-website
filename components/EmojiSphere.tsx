@@ -466,7 +466,7 @@ export function EmojiSphere() {
             <span className="block">Ils ont voté.</span>
             <span className="text-vote block">Tu vas savoir.</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
+          <p className="mx-auto mt-5 max-w-[50rem] text-[clamp(0.95rem,2.2vw,1.1rem)] leading-relaxed font-medium text-white/55 text-balance">
             Sur Stan, tu réponds à des questions sur tes potes, vos délires et
             vos crushs. À chaque question, tu choisis la personne qui te vient
             en tête. Tes potes font pareil avec toi&nbsp;: tu découvres les
