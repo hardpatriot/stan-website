@@ -471,8 +471,10 @@ export function EmojiSphere() {
             vos crushs. À chaque question, tu choisis la personne qui te vient
             en tête. Tes potes font pareil avec toi&nbsp;: tu découvres les
             questions où ils t&apos;ont choisi, mais leur nom est masqué. Un
-            pote qui joue le jeu… ou ton crush qui tente un truc&nbsp;? Là, tu
-            veux savoir qui c&apos;est&nbsp;!
+            pote qui joue le jeu… ou ton crush qui tente un truc&nbsp;?
+            <span className="mt-2 block font-semibold text-white/80">
+              Là, tu veux savoir qui c&apos;est&nbsp;!
+            </span>
           </p>
         </div>
 
