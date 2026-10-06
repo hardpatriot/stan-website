@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { DownloadButton } from "./DownloadButton";
 import { Reveal } from "./Reveal";
 
@@ -10,13 +13,13 @@ import { Reveal } from "./Reveal";
  * Seules des transformations 2D (translation, échelle inférieure à 1) : le
  * texte reste net, aucune couche n'est agrandie.
  */
-const VOTES = [
-  { qui: "Il", quand: "3m" },
-  { qui: "Elle", quand: "1h" },
-  { qui: "Elle", quand: "2h" },
-  { qui: "Il", quand: "5h" },
-  { qui: "Elle", quand: "1j" },
-] as const;
+/** L'âge affiché selon la place dans la pile : la plus récente en haut. */
+const AGES = ["1m", "3m", "1h", "2h", "5h", "1j"];
+/** Qui vote, dans l'ordre d'arrivée : un motif irrégulier, pour faire vrai. */
+const SUITE = ["Il", "Elle", "Elle", "Il", "Elle", "Il", "Il", "Elle"] as const;
+const VISIBLES = 5;
+/** Une nouvelle notification toutes les 2,6 s. */
+const CADENCE = 2600;
 
 const TEINTES = {
   Il: { icone: "/notif-boy.webp", halo: "rgba(255,36,128,0.5)" },
@@ -30,22 +33,18 @@ const VERRE =
 function CarteVote({
   qui,
   quand,
-  rang,
+  nouvelle,
 }: {
   qui: "Il" | "Elle";
   quand: string;
-  rang: number;
+  nouvelle: boolean;
 }) {
   const t = TEINTES[qui];
-  const echelle = 1 - rang * 0.075;
   return (
     <div
-      className="neon flex items-center gap-4 rounded-[20px] px-4 py-3.5"
+      className={`neon flex items-center gap-4 rounded-[20px] px-4 py-3.5 ${nouvelle ? "vote-arrive" : ""}`}
       style={{
         background: VERRE,
-        transform: `translateX(${rang * 14}px) scale(${echelle})`,
-        transformOrigin: "left center",
-        opacity: 1 - rang * 0.13,
         boxShadow: `0 0 30px -8px ${t.halo}, 0 24px 50px -24px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12)`,
       }}
     >
@@ -65,6 +64,72 @@ function CarteVote({
   );
 }
 
+/**
+ * Le fil vivant : toutes les 2,6 s, un vote tombe en haut, pousse les autres
+ * vers le bas et la plus ancienne s'efface. Les cartes glissent d'une place à
+ * l'autre (translation et échelle inférieure à 1 seulement : rien ne floute).
+ * Tout s'arrête hors de l'écran, et pour qui a demandé moins d'animations.
+ */
+function FilDeVotes() {
+  const [fil, setFil] = useState(() =>
+    Array.from({ length: VISIBLES }, (_, i) => ({ id: i, qui: SUITE[i % SUITE.length] })),
+  );
+  const zone = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = zone.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let minuterie: ReturnType<typeof setInterval> | undefined;
+    let suivant = VISIBLES;
+    const tic = () =>
+      setFil((f) => {
+        const id = suivant++;
+        // Une de plus que visible : la dernière reste le temps de s'effacer.
+        return [{ id, qui: SUITE[id % SUITE.length] }, ...f].slice(0, VISIBLES + 1);
+      });
+    const observateur = new IntersectionObserver(([e]) => {
+      clearInterval(minuterie);
+      if (e.isIntersecting && !document.hidden) minuterie = setInterval(tic, CADENCE);
+    });
+    observateur.observe(el);
+    return () => {
+      clearInterval(minuterie);
+      observateur.disconnect();
+    };
+  }, []);
+
+  const plusRecent = fil[0]?.id;
+  return (
+    <div ref={zone} className="relative h-[470px] -rotate-2 sm:h-[500px]">
+      {fil.map((v, rang) => {
+        const sortie = rang >= VISIBLES;
+        const echelle = 1 - Math.min(rang, VISIBLES) * 0.075;
+        // Chaque place descend un peu moins que la précédente : la pile se tasse.
+        const y = rang * 92 - rang * rang * 3;
+        return (
+          <div
+            key={v.id}
+            className="absolute inset-x-0 top-0 transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1.2,0.36,1)]"
+            style={{
+              transform: `translate(${rang * 14}px, ${y}px) scale(${echelle})`,
+              transformOrigin: "left top",
+              opacity: sortie ? 0 : 1 - rang * 0.13,
+              zIndex: 20 - rang,
+            }}
+          >
+            <CarteVote
+              qui={v.qui}
+              quand={AGES[Math.min(rang, AGES.length - 1)]}
+              nouvelle={v.id === plusRecent && v.id >= VISIBLES}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function VotesNeon() {
   return (
     <section className="relative px-5 py-14 sm:px-8 sm:py-24">
@@ -79,13 +144,7 @@ export function VotesNeon() {
         </Reveal>
 
         <div className="min-w-0">
-          <div className="flex -rotate-2 flex-col gap-3">
-            {VOTES.map((v, i) => (
-              <Reveal key={i} delay={i * 110}>
-                <CarteVote qui={v.qui} quand={v.quand} rang={i} />
-              </Reveal>
-            ))}
-          </div>
+          <FilDeVotes />
           <div className="mt-10 flex justify-center lg:hidden">
             <DownloadButton look="verre" label="Découvre qui a voté pour toi" />
           </div>

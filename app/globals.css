@@ -367,3 +367,63 @@ body {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
 }
+
+/* Le fil de votes : la nouvelle notification tombe, puis s'illumine. */
+@keyframes vote-arrive {
+  0% {
+    opacity: 0;
+    transform: translateY(-26px) scale(0.92);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes vote-eclat {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  35% {
+    filter: brightness(1.35);
+  }
+}
+.vote-arrive {
+  animation:
+    vote-arrive 0.6s cubic-bezier(0.22, 1.2, 0.36, 1) both,
+    vote-eclat 1.2s ease-out 0.15s;
+}
+
+/* Le reflet irisé du bouton en verre tourne doucement autour du bord. */
+@keyframes irise {
+  to {
+    background-position: 200% 0;
+  }
+}
+.verre-irise::before {
+  background-size: 200% 100%;
+  animation: irise 5s linear infinite;
+}
+.verre-irise::before {
+  background-image: linear-gradient(
+    100deg,
+    #ff4fd8 0%,
+    #ffd45a 12.5%,
+    #5cf2a8 25%,
+    #4fb8ff 37.5%,
+    #b04dff 50%,
+    #ff4fd8 62.5%,
+    #ffd45a 75%,
+    #5cf2a8 87.5%,
+    #4fb8ff 100%
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .verre-irise::before,
+  .vote-arrive {
+    animation: none;
+  }
+}
