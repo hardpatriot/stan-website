@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DownloadButton } from "./DownloadButton";
 import { Emoji } from "./EmojiSprite";
+import { FenetreQrInvitation, numeroSaisi, ouvrirMessages } from "./Invitation";
 import { Pictogramme } from "./Pictogramme";
 import { WaveFill } from "./WaveFill";
 
@@ -277,6 +278,9 @@ function VoteScreen({
   onSkip: () => void;
   onShuffle: () => void;
 }) {
+  // Sur PC, le numéro saisi s'affiche en QR code à scanner avec son téléphone.
+  const [qrPour, setQrPour] = useState<string | null>(null);
+
   return (
     // La carte de sondage : rayon 47, ombre de fullScreenCard.
     <div
@@ -316,22 +320,41 @@ function VoteScreen({
       {/* Ajouter ses potes : le seul ajout par rapport à l'app */}
       <div className="mt-[18px] w-[304px] shrink-0">
         {editing ? (
-          <form onSubmit={onAdd} className="flex gap-2">
+          <form
+            onSubmit={(e) => {
+              // Un numéro : on invite ce pote au lieu de l'ajouter à la grille.
+              const numero = numeroSaisi(draft);
+              if (!numero) return onAdd(e);
+              e.preventDefault();
+              if (!ouvrirMessages(numero)) setQrPour(numero);
+              onDraft("");
+            }}
+            className="flex gap-2"
+          >
             <input
               autoFocus
               value={draft}
               onChange={(e) => onDraft(e.target.value)}
               maxLength={22}
-              placeholder="Prénom d'un pote"
+              placeholder="Prénom ou numéro d'un pote"
               className="min-w-0 flex-1 rounded-full bg-white px-4 py-2 text-[15px] font-semibold text-night-900 outline-none placeholder:text-black/35"
             />
-            <button
-              type="submit"
-              aria-label="Ajouter ce pote"
-              className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-black/20 text-[20px] leading-none font-semibold text-white transition active:scale-90"
-            >
-              +
-            </button>
+            {numeroSaisi(draft) ? (
+              <button
+                type="submit"
+                className="flex h-[38px] shrink-0 items-center justify-center rounded-full bg-white px-4 text-[14px] font-black text-[#e6006e] transition active:scale-95"
+              >
+                Inviter
+              </button>
+            ) : (
+              <button
+                type="submit"
+                aria-label="Ajouter ce pote"
+                className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-black/20 text-[20px] leading-none font-semibold text-white transition active:scale-90"
+              >
+                +
+              </button>
+            )}
           </form>
         ) : (
           <button
@@ -341,6 +364,9 @@ function VoteScreen({
             ✏️ Mets les prénoms de tes potes
           </button>
         )}
+        {qrPour ? (
+          <FenetreQrInvitation numero={qrPour} onClose={() => setQrPour(null)} />
+        ) : null}
       </div>
 
       {/* Spacer de PollView, avant la grille */}
