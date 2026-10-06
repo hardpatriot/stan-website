@@ -48,7 +48,7 @@ const PALETTE = [
   "handshake", "high_voltage", "hourglass_done", "hourglass_not_done",
   "jack_o_lantern", "jeans", "kiss_mark", "kissing_face_with_closed_eyes",
   "light_bulb", "loudly_crying_face", "loudspeaker", "love_letter",
-  "low_battery", "lying_face", "magnifying_glass_tilted_left", "halloween",
+  "low_battery", "lying_face", "magnifying_glass_tilted_left", "man_zombie",
   "microphone", "mirror_ball", "money_bag", "musical_note", "nauseated_face",
   "nerd_face", "old_key", "oncoming_fist", "open_book", "partying_face",
   "pensive_face", "performing_arts", "pisces", "popcorn", "pouting_face",
@@ -469,7 +469,7 @@ export function EmojiSphere() {
           <p className="mx-auto mt-5 max-w-xl text-[clamp(0.95rem,2.2vw,1.15rem)] leading-relaxed font-medium text-white/55 text-balance">
             Si tes potes pouvaient dire ce qu&apos;ils pensent de toi en
             anonyme, ils diraient quoi&nbsp;? Et ton Crush lui dirait
-            quoi&nbsp;? Tu croyais tout savoir. C&apos;est le moment de le
+            quoi&nbsp;? Tu croyais tout savoir. C&apos;est le moment de tout
             découvrir.
           </p>
         </div>

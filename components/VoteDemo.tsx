@@ -16,9 +16,12 @@ import { WaveFill } from "./WaveFill";
  */
 
 const CARD_W = 393;
-// Comme dans l'app sur un écran de 393 × 852 : la carte commence sous la
-// barre d'état et descend jusqu'au bas de l'écran (ignoresSafeArea bottom).
-const CARD_H = 798;
+// Comme dans l'app sur un écran de 393 × 852 : la couleur de la question
+// couvre TOUT l'écran, sous la barre d'état et la barre d'onglets
+// (PollCardBackdropView, posé sous TabContentView).
+const CARD_H = 852;
+/** Hauteur réservée en haut : barre d'état (54) puis barre d'onglets (64). */
+const HAUT_ECRAN = 118;
 
 /** La carte de sondage, mise à l'échelle d'un bloc, posée sur la nuit. */
 /**
@@ -29,7 +32,7 @@ const CARD_H = 798;
  * téléphone suit la mise à l'échelle sans rien agrandir au-delà de 1.
  */
 const BORD = 11; // épaisseur du châssis
-const BARRE = 54; // barre d'état, sur le fond de nuit de l'app
+const BARRE = 54; // barre d'état
 
 function pt(v: number) {
   return `calc(${v}px * var(--ps))`;
@@ -78,16 +81,15 @@ function Card({ children }: { children: React.ReactNode }) {
 
         {/* L'écran */}
         <div
-          className="relative overflow-hidden bg-[linear-gradient(180deg,#0b0716,#120d24)]"
+          className="relative overflow-hidden bg-[#0b0716]"
           style={{
             borderRadius: pt(54),
-            paddingTop: pt(BARRE),
-          }}
+                      }}
         >
           {/* Barre d'état : l'heure, l'île, le réseau */}
           <div
             aria-hidden
-            className="absolute inset-x-0 top-0 flex items-center justify-between font-semibold text-white"
+            className="absolute inset-x-0 top-0 z-10 flex items-center justify-between font-semibold text-white"
             style={{ height: pt(BARRE), padding: `0 ${pt(34)}`, fontSize: pt(16) }}
           >
             <span>9:41</span>
@@ -111,6 +113,65 @@ function Card({ children }: { children: React.ReactNode }) {
                 <path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity="0.4" />
               </svg>
             </span>
+          </div>
+
+          {/* La barre d'onglets de l'app (TabBarView) : l'onglet choisi est
+              centré, pastille blanche à texte rose, agrandie de 10 % et cerclée
+              d'un halo blanc ; ses voisins sont des pastilles de verre. */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 z-10 flex items-center justify-center"
+            style={{ top: pt(BARRE), height: pt(64), gap: pt(20) }}
+          >
+            {[
+              { titre: "Votes", badge: 2 },
+              { titre: "Stan", actif: true },
+              { titre: "Profil" },
+            ].map((t) => (
+              <span
+                key={t.titre}
+                className="relative flex shrink-0 items-center justify-center rounded-full font-semibold"
+                style={
+                  t.actif
+                    ? {
+                        width: pt(122),
+                        height: pt(46),
+                        fontSize: pt(18.5),
+                        background: "#fff",
+                        color: "#ff2d55",
+                        boxShadow: `0 0 0 ${pt(5)} rgba(255,255,255,0.22)`,
+                      }
+                    : {
+                        width: pt(110),
+                        height: pt(42),
+                        fontSize: pt(17),
+                        color: "#fff",
+                        background:
+                          "linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.14))",
+                        boxShadow:
+                          "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.25), 0 4px 12px rgba(0,0,0,0.12)",
+                      }
+                }
+              >
+                {t.titre}
+                {t.badge ? (
+                  <span
+                    className="absolute flex items-center justify-center rounded-[7px] font-bold text-white"
+                    style={{
+                      top: pt(-6),
+                      right: pt(-4),
+                      minWidth: pt(20),
+                      padding: `${pt(3)} ${pt(6)}`,
+                      fontSize: pt(12),
+                      background: "linear-gradient(180deg,#FF3B5C,#f81b5d)",
+                      boxShadow: "0 2px 5px rgba(248,27,93,0.55), inset 0 0 0 0.8px rgba(255,255,255,0.35)",
+                    }}
+                  >
+                    {t.badge}
+                  </span>
+                ) : null}
+              </span>
+            ))}
           </div>
 
           {/* La carte de vote, à l'échelle */}
@@ -390,16 +451,13 @@ function VoteScreen({
   const [qrPour, setQrPour] = useState<string | null>(null);
 
   return (
-    // La carte de sondage : rayon 47, ombre de fullScreenCard.
+    // La couleur de la question, sur tout l'écran comme dans l'app.
     <div
-      className="absolute inset-0 flex flex-col items-center overflow-hidden rounded-t-[47px]"
-      style={{
-        background: gradientCss(gradient),
-        boxShadow: "0 24px 60px -12px rgba(0,0,0,0.55), 0 8px 18px rgba(0,0,0,0.3)",
-      }}
+      className="absolute inset-0 flex flex-col items-center overflow-hidden"
+      style={{ background: gradientCss(gradient), paddingTop: HAUT_ECRAN }}
     >
-      {/* En-tête : « X sur Y » + PageControlView */}
-      <div className="flex flex-col items-center gap-2 pt-[32px]">
+      {/* En-tête : « X sur Y » + HolographicPageControlView */}
+      <div className="flex flex-col items-center gap-2 pt-[14px]">
         <p className="text-[18px] leading-none font-semibold text-white">
           {round + 1} sur {TOTAL_ROUNDS}
         </p>
@@ -408,7 +466,13 @@ function VoteScreen({
             <span
               key={i}
               className="h-[3.2px] w-[23.5px] rounded-[12px] transition-colors duration-500"
-              style={{ background: i <= round ? "#fff" : "#8E8E93" }}
+              // Segments franchis : le reflet holographique de l'app.
+              style={{
+                background:
+                  i <= round
+                    ? "linear-gradient(90deg,#ff8ad8,#ffe68a,#8cffcf,#8ad8ff)"
+                    : "rgba(142,142,147,0.85)",
+              }}
             />
           ))}
         </div>
@@ -639,7 +703,7 @@ function RevealScreen({
 }) {
   return (
     <div
-      className="absolute inset-0 flex flex-col justify-between overflow-hidden rounded-t-[47px] bg-[linear-gradient(165deg,#0e0920_0%,#1f1445_58%,#2a1b5c_100%)] px-[26px] pt-[38px] pb-[38px]"
+      className="absolute inset-0 flex flex-col justify-between overflow-hidden bg-[linear-gradient(165deg,#0e0920_0%,#1f1445_58%,#2a1b5c_100%)] px-[26px] pt-[128px] pb-[44px]"
       style={{
         boxShadow: "0 24px 60px -12px rgba(0,0,0,0.55), 0 8px 18px rgba(0,0,0,0.3)",
       }}
