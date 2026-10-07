@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Emoji } from "./EmojiSprite";
+import { IconeEtape } from "./IconeEtape";
 
 /**
  * Une carte d'étape.
@@ -21,7 +21,7 @@ export function StepCard({
   corps,
   teinte,
 }: {
-  /** Nom de l'emoji dans la planche. */
+  /** Nom de l'icône (IconeEtape). */
   icon: string;
   numero: number;
   titre: string;
@@ -76,10 +76,7 @@ export function StepCard({
       />
 
       <div className="relative flex items-start justify-between">
-        <Emoji
-          name={icon}
-          className="h-12 w-12 drop-shadow-[0_6px_10px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-110"
-        />
+        <IconeEtape nom={icon} teinte={teinte} />
         <span className="text-xs font-black tracking-[0.2em] text-white/25">
           0{numero}
         </span>
