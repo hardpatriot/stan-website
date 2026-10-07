@@ -44,7 +44,7 @@ function Card({ children }: { children: React.ReactNode }) {
       {/* La lueur néon qui décolle le téléphone du fond */}
       <div
         aria-hidden
-        className="animate-pulse-glow pointer-events-none absolute -inset-10 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_30%_40%,rgba(255,40,200,0.45)_0%,transparent_60%),radial-gradient(ellipse_at_75%_65%,rgba(60,110,255,0.40)_0%,transparent_60%)] blur-2xl"
+        className="animate-pulse-glow pointer-events-none absolute -inset-10 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_30%_40%,rgba(255,40,200,0.45)_0%,transparent_60%),radial-gradient(ellipse_at_75%_65%,rgba(60,110,255,0.40)_0%,transparent_60%)]"
       />
 
       {/* Le châssis */}

@@ -13,7 +13,7 @@ export function FinalCta() {
           <div className="animate-float relative">
             <span
               aria-hidden
-              className="animate-pulse-glow absolute -inset-14 rounded-full bg-[radial-gradient(circle_at_40%_45%,rgba(255,40,190,0.7),transparent_58%),radial-gradient(circle_at_62%_58%,rgba(70,110,255,0.6),transparent_60%)] blur-2xl"
+              className="animate-pulse-glow absolute -inset-14 rounded-full bg-[radial-gradient(circle_at_40%_45%,rgba(255,40,190,0.7),transparent_58%),radial-gradient(circle_at_62%_58%,rgba(70,110,255,0.6),transparent_60%)]"
             />
             <span
               className="relative block rounded-[32px] bg-[linear-gradient(135deg,#ff4fd8_0%,#b04dff_48%,#3f7bff_100%)] p-[2px] shadow-[0_0_28px_rgba(255,60,200,0.6),0_0_60px_-6px_rgba(80,110,255,0.6),0_30px_60px_-20px_rgba(0,0,0,0.85)]"

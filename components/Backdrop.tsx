@@ -1,41 +1,39 @@
 /**
  * La nuit des écrans App Store : un fond indigo profond, éclairé de néons
- * rose et bleu.
+ * rose à gauche et bleu à droite, qui se répètent tout au long de la page.
  *
- * Ce fond DÉFILE avec la page (position absolue), il n'est plus fixé à
- * l'écran. Safari iOS 26 traite un élément fixe qui touche le bas de l'écran
- * comme une barre collée en bas : il arrête alors la page au-dessus de sa
- * barre d'adresse et peint une bande pleine dessous. Sans élément fixe en bas,
- * la page passe sous la barre flottante, comme sur les autres sites.
+ * UN SEUL élément, peint UNE fois. Pas de flou (`filter: blur`), pas de
+ * mélange (`mix-blend-mode`), pas d'animation : sur iPhone, Safari recalcule
+ * un flou animé à chaque image, et un grain mélangé sur toute la hauteur de
+ * la page l'obligeait à recomposer tout ce qui bouge dessous, sphère comprise.
+ * C'est ce qui faisait ramer la page. Les dégradés radiaux sont déjà doux par
+ * nature : le flou n'apportait rien qu'on voie.
  *
- * Les lueurs se répètent tout au long de la page, rose à gauche puis bleu à
- * droite, pour qu'on retrouve la même lumière à chaque écran.
+ * Le fond défile avec la page (position absolue, pas fixe) : un élément fixe
+ * collé en bas empêchait la page de passer sous la barre de Safari iOS 26.
+ * Le motif est une tuile de 220 % de hauteur d'écran, répétée verticalement ;
+ * le haut et le bas de la tuile ont la même teinte, la couture ne se voit pas.
  */
-const ETAPES = Array.from({ length: 12 }, (_, i) => i);
-
 export function Backdrop() {
   return (
     <div
       aria-hidden
-      className="grain pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-    >
-      {/* Le fond, indigo vers nuit, qui respire légèrement d'un écran à l'autre */}
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#0d0830_0%,#170c4a_8%,#120a3d_20%,#160b46_35%,#110a3a_50%,#170c4a_65%,#120a3d_80%,#0b0728_100%)]" />
-
-      {ETAPES.map((i) => (
-        <div key={i}>
-          {/* Néon rose, bord gauche */}
-          <div
-            className="animate-drift absolute -left-[22%] h-[70vh] w-[60vw] rounded-full bg-[radial-gradient(circle,rgba(255,40,200,0.5)_0%,rgba(217,28,189,0.2)_40%,transparent_70%)] blur-3xl"
-            style={{ top: `${i * 110 - 18}vh`, animationDelay: `${-i * 5}s` }}
-          />
-          {/* Néon bleu électrique, bord droit */}
-          <div
-            className="animate-drift absolute -right-[24%] h-[66vh] w-[58vw] rounded-full bg-[radial-gradient(circle,rgba(60,110,255,0.45)_0%,rgba(80,70,255,0.18)_42%,transparent_72%)] blur-3xl"
-            style={{ top: `${i * 110 + 30}vh`, animationDelay: `${-i * 5 - 7}s` }}
-          />
-        </div>
-      ))}
-    </div>
+      className="pointer-events-none absolute inset-0 -z-10"
+      style={{
+        backgroundColor: "#120a3d",
+        backgroundImage: [
+          // Néon rose, bord gauche, haut de tuile
+          "radial-gradient(ellipse 75% 30% at 0% 14%, rgba(255,40,200,0.42) 0%, rgba(217,28,189,0.16) 45%, transparent 75%)",
+          // Néon bleu électrique, bord droit, milieu de tuile
+          "radial-gradient(ellipse 72% 28% at 100% 52%, rgba(60,110,255,0.38) 0%, rgba(80,70,255,0.14) 45%, transparent 75%)",
+          // Retour rose, bas de tuile, plus discret
+          "radial-gradient(ellipse 65% 24% at 15% 88%, rgba(200,40,255,0.24) 0%, transparent 72%)",
+          // La base : indigo, même teinte en haut et en bas de la tuile
+          "linear-gradient(180deg, #120a3d 0%, #170c4a 35%, #140b44 65%, #120a3d 100%)",
+        ].join(", "),
+        backgroundSize: "100% 220svh",
+        backgroundRepeat: "repeat-y",
+      }}
+    />
   );
 }

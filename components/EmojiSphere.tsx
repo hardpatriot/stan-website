@@ -416,7 +416,7 @@ export function EmojiSphere() {
         }
         // Le plan de profondeur ne change que par paliers : inutile de
         // réécrire l'empilement à chaque image.
-        const z = 1000 + Math.round(z2 * 40);
+        const z = 1000 + Math.round(z2 * 16);
         if (vus[i].z !== z) {
           el.style.zIndex = String(z);
           vus[i].z = z;
