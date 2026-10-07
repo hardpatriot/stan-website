@@ -20,7 +20,7 @@ soit 140 à 168 pixels réels sur les écrans courants. Exporter les portraits �
 """
 import hashlib
 import pathlib
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = RACINE / "visages"
@@ -38,36 +38,77 @@ for dossier in (SORTIE, SORTIE_SPHERE):
         ancien.unlink()
 
 
+def _degrade_diagonal(taille, couleurs):
+    """Dégradé à 135° entre trois couleurs : la première en haut à gauche,
+    la dernière en bas à droite. Sans boucle pixel par pixel."""
+    v = Image.linear_gradient("L").resize((taille, taille))
+    h = v.rotate(90).transpose(Image.FLIP_LEFT_RIGHT)
+    lin = ImageChops.add(v, h, scale=2)
+    a, b, c = (Image.new("RGBA", (taille, taille), col + (255,)) for col in couleurs)
+    premier = lin.point(lambda x: min(255, x * 2))
+    second = lin.point(lambda x: max(0, x * 2 - 255))
+    return Image.composite(c, Image.composite(b, a, premier), second)
+
+
+def _vertical(taille, haut, bas):
+    """Masque vertical : `haut` en haut, `bas` en bas (0 à 255)."""
+    g = Image.linear_gradient("L").resize((taille, taille))
+    return g.point(lambda v: round(haut + (bas - haut) * v / 255))
+
+
 def anneau(visage, cote):
-    """Le visage dans un anneau rose, violet, bleu (diagonale à 135°)."""
-    k = 4  # calcul à 4x, puis réduction : bords lisses
-    grand = cote * k
-    epaisseur = max(2, round(cote * 0.036)) * k
-    # Le dégradé diagonal de l'anneau
-    degrade = Image.new("RGBA", (grand, grand))
-    px = degrade.load()
-    couleurs = [(0xFF, 0x4F, 0xD8), (0x9B, 0x5C, 0xFF), (0x3F, 0x7B, 0xFF)]
-    for y in range(0, grand, k):
-        for x in range(0, grand, k):
-            t = (x + y) / (2 * grand)
-            if t < 0.55:
-                a, b, u = couleurs[0], couleurs[1], t / 0.55
-            else:
-                a, b, u = couleurs[1], couleurs[2], (t - 0.55) / 0.45
-            c = tuple(round(a[i] + (b[i] - a[i]) * u) for i in range(3)) + (255,)
-            for dy in range(k):
-                for dx in range(k):
-                    px[x + dx, y + dy] = c
-    disque = Image.new("L", (grand, grand), 0)
-    ImageDraw.Draw(disque).ellipse((0, 0, grand - 1, grand - 1), fill=255)
-    fond = Image.new("RGBA", (grand, grand), (0, 0, 0, 0))
-    fond.paste(degrade, (0, 0), disque)
-    interieur = grand - 2 * epaisseur
-    v = visage.resize((interieur, interieur), Image.LANCZOS)
-    masque = Image.new("L", (interieur, interieur), 0)
-    ImageDraw.Draw(masque).ellipse((0, 0, interieur - 1, interieur - 1), fill=255)
-    fond.paste(v, (epaisseur, epaisseur), masque)
-    return fond.resize((cote, cote), Image.LANCZOS)
+    """Le visage en bulle 3D : ombre portée, anneau néon biseauté, reflet.
+
+    Tout est dans l'image : la sphère n'affiche qu'une image, sans filtre ni
+    découpe à calculer à chaque image.
+    """
+    k = 4
+    S = cote * k
+    toile = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+    cx, cy = S / 2, S * 0.47
+    R = S * 0.455
+    w = S * 0.042
+
+    # 1. L'ombre portée, douce, décalée vers le bas : la bulle décolle du fond.
+    ombre = Image.new("L", (S, S), 0)
+    ImageDraw.Draw(ombre).ellipse((cx - R * 0.94, cy - R * 0.84 + S * 0.07, cx + R * 0.94, cy + R * 1.0 + S * 0.07), fill=150)
+    ombre = ombre.filter(ImageFilter.GaussianBlur(S * 0.03))
+    toile.paste(Image.new("RGBA", (S, S), (10, 4, 30, 255)), (0, 0), ombre)
+
+    def disque(r):
+        m = Image.new("L", (S, S), 0)
+        ImageDraw.Draw(m).ellipse((cx - r, cy - r, cx + r, cy + r), fill=255)
+        return m
+
+    # 2. L'anneau néon, biseauté : éclairé en haut, plus sombre en bas.
+    anneau_rgba = _degrade_diagonal(S, [(0xFF, 0x4F, 0xD8), (0x9B, 0x5C, 0xFF), (0x3F, 0x7B, 0xFF)])
+    anneau_rgba = Image.composite(Image.new("RGBA", (S, S), (255, 255, 255, 255)), anneau_rgba, _vertical(S, 80, 0))
+    anneau_rgba = Image.composite(Image.new("RGBA", (S, S), (20, 6, 50, 255)), anneau_rgba, _vertical(S, 0, 110))
+    toile.paste(anneau_rgba, (0, 0), disque(R))
+
+    # 3. Le visage, légèrement ombré vers le bas pour le volume.
+    r = R - w
+    v = visage.resize((round(2 * r), round(2 * r)), Image.LANCZOS)
+    calque = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+    calque.paste(v, (round(cx - r), round(cy - r)))
+    calque = Image.composite(Image.new("RGBA", (S, S), (12, 4, 32, 255)), calque, _vertical(S, 0, 95))
+    toile.paste(calque, (0, 0), disque(r))
+
+    # 4. Le reflet : une lueur blanche en haut à gauche, comme une bulle.
+    reflet = Image.new("L", (S, S), 0)
+    ImageDraw.Draw(reflet).ellipse((cx - r * 0.74, cy - r * 0.9, cx + r * 0.2, cy - r * 0.34), fill=125)
+    reflet = reflet.filter(ImageFilter.GaussianBlur(S * 0.035))
+    reflet = Image.composite(reflet, Image.new("L", (S, S), 0), disque(r))
+    toile.paste(Image.new("RGBA", (S, S), (255, 255, 255, 255)), (0, 0), reflet)
+
+    # 5. Un liseré clair sur le haut de l'anneau : l'arête qui prend la lumière.
+    arete = Image.new("L", (S, S), 0)
+    ImageDraw.Draw(arete).arc((cx - R + k, cy - R + k, cx + R - k, cy + R - k), 200, 340, fill=170, width=max(1, round(S * 0.008)))
+    arete = arete.filter(ImageFilter.GaussianBlur(S * 0.003))
+    toile.paste(Image.new("RGBA", (S, S), (255, 255, 255, 255)), (0, 0), arete)
+
+    return toile.resize((cote, cote), Image.LANCZOS)
+
 
 vus = set()
 noms = []

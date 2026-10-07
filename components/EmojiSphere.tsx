@@ -114,6 +114,19 @@ const TAU_SCROLL = 120;
  */
 const RAYON_EFFET = 210;
 const POUSSEE_MAX = 46;
+
+/**
+ * Au doigt, sur téléphone : toucher la sphère y envoie une onde. Les éléments
+ * sont chassés autour du point touché, l'onde s'élargit en 0,7 s en
+ * s'affaiblissant, puis la sphère se referme d'elle-même. Tant que le doigt
+ * reste posé sans faire défiler, la sphère reste creusée sous lui.
+ */
+const ONDE_DUREE = 700;
+const ONDE_RAYON_DEBUT = 90;
+const ONDE_RAYON_FIN = 300;
+const ONDE_POUSSEE = 105;
+const DOIGT_RAYON = 150;
+const DOIGT_POUSSEE = 60;
 const TAU_DEFORME = 180;
 
 /**
@@ -180,7 +193,7 @@ function Element({ c }: { c: Contenu }) {
       draggable={false}
       decoding="async"
       loading="lazy"
-      className="block h-full w-full select-none"
+      className="pointer-events-none block h-full w-full select-none [-webkit-touch-callout:none] [-webkit-user-drag:none]"
     />
   );
 }
@@ -237,9 +250,35 @@ export function EmojiSphere() {
     let px = 0;
     let py = 0;
     let survole = false;
+    // Le doigt posé, et la dernière onde lancée.
+    let doigt = false;
+    let onde = { x: 0, y: 0, t0: -1e9 };
+
+    const versScene = (e: PointerEvent) => {
+      const r = sc.getBoundingClientRect();
+      return { x: e.clientX - r.left - r.width / 2, y: e.clientY - r.top - r.height / 2 };
+    };
+    const poser = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") return;
+      const p = versScene(e);
+      onde = { x: p.x, y: p.y, t0: performance.now() };
+      px = p.x;
+      py = p.y;
+      doigt = true;
+    };
+    const glisserDoigt = (e: PointerEvent) => {
+      if (e.pointerType === "mouse" || !doigt) return;
+      const p = versScene(e);
+      px = p.x;
+      py = p.y;
+    };
+    // Le doigt part, ou le navigateur reprend la main pour faire défiler.
+    const leverDoigt = () => {
+      doigt = false;
+    };
 
     const bouger = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
+      if (e.pointerType !== "mouse") return glisserDoigt(e);
       const r = sc.getBoundingClientRect();
       cibleLacet = ((e.clientX - r.left) / r.width - 0.5) * 2 * AMPL_LACET;
       cibleTangage = ((e.clientY - r.top) / r.height - 0.5) * 2 * AMPL_TANGAGE;
@@ -315,6 +354,34 @@ export function EmojiSphere() {
         // Répulsion : plus l'emoji est près du curseur, plus il s'écarte.
         let cx = 0;
         let cy2 = 0;
+        // L'onde du doigt : un anneau qui s'élargit en s'affaiblissant.
+        const age = t - onde.t0;
+        if (age < ONDE_DUREE) {
+          const p = age / ONDE_DUREE;
+          const rayon = ONDE_RAYON_DEBUT + (ONDE_RAYON_FIN - ONDE_RAYON_DEBUT) * p;
+          const ex = X - onde.x;
+          const ey = Y - onde.y;
+          const d = Math.sqrt(ex * ex + ey * ey) || 0.001;
+          if (d < rayon) {
+            const f = 1 - d / rayon;
+            const pousse = (ONDE_POUSSEE * (1 - p) * (1 - p) * f) / d;
+            cx += ex * pousse;
+            cy2 += ey * pousse;
+          }
+        }
+        // Le doigt posé creuse la sphère sous lui.
+        if (doigt) {
+          const ex = X - px;
+          const ey = Y - py;
+          const d2 = ex * ex + ey * ey;
+          if (d2 < DOIGT_RAYON * DOIGT_RAYON) {
+            const d = Math.sqrt(d2) || 0.001;
+            const f = 1 - d / DOIGT_RAYON;
+            const pousse = (DOIGT_POUSSEE * f * f) / d;
+            cx += ex * pousse;
+            cy2 += ey * pousse;
+          }
+        }
         if (survole) {
           const ex = X - px;
           const ey = Y - py;
@@ -324,8 +391,8 @@ export function EmojiSphere() {
             // Décroissance douce : pleine poussée au contact, nulle au bord.
             const f = 1 - d / RAYON_EFFET;
             const pousse = (POUSSEE_MAX * f * f) / d;
-            cx = ex * pousse;
-            cy2 = ey * pousse;
+            cx += ex * pousse;
+            cy2 += ey * pousse;
           }
         }
         const ad = lissage(dt, TAU_DEFORME);
@@ -413,6 +480,9 @@ export function EmojiSphere() {
     demarrer();
     sc.addEventListener("pointermove", bouger, { passive: true });
     sc.addEventListener("pointerleave", relacher, { passive: true });
+    sc.addEventListener("pointerdown", poser, { passive: true });
+    sc.addEventListener("pointerup", leverDoigt, { passive: true });
+    sc.addEventListener("pointercancel", leverDoigt, { passive: true });
 
     return () => {
       arreter();
@@ -421,6 +491,9 @@ export function EmojiSphere() {
       window.removeEventListener("resize", remesurer);
       sc.removeEventListener("pointermove", bouger);
       sc.removeEventListener("pointerleave", relacher);
+      sc.removeEventListener("pointerdown", poser);
+      sc.removeEventListener("pointerup", leverDoigt);
+      sc.removeEventListener("pointercancel", leverDoigt);
     };
   }, []);
 
@@ -457,7 +530,10 @@ export function EmojiSphere() {
 
         {/* La sphère occupe tout l'espace restant : son centre se place donc
             naturellement sous le texte, quelle que soit la hauteur d'écran. */}
-        <div ref={scene} className="relative flex-1">
+        <div
+          ref={scene}
+          className="relative flex-1 select-none [-webkit-touch-callout:none] [-webkit-tap-highlight-color:transparent]"
+        >
           {Array.from({ length: ELEMENTS_MAX }, (_, i) => (
             <span
               key={i}
@@ -465,7 +541,7 @@ export function EmojiSphere() {
                 items.current[i] = el;
               }}
               aria-hidden
-              className="absolute top-1/2 left-1/2 origin-center [contain:layout_style_paint] [translate:-50%_-50%]"
+              className="pointer-events-none absolute top-1/2 left-1/2 origin-center [contain:layout_style_paint] [translate:-50%_-50%]"
               style={{ width: TAILLE_CSS, height: TAILLE_CSS, opacity: 0 }}
             >
               <Element c={CONTENUS[i]} />

@@ -50,15 +50,6 @@ export function CustomQuestions() {
                 Le top 3 part dans les questions de ton école.
               </span>
             </h2>
-            <p className="mt-6 max-w-lg text-[17px] leading-relaxed font-medium text-white/55">
-              Tu écris ta question, ton école vote. Les trois qui récoltent le
-              plus de 🔥 entrent dans les vraies questions, et là tout le monde y
-              répond.
-            </p>
-            <p className="mt-4 max-w-lg text-[15px] leading-relaxed font-medium text-white/35">
-              120 caractères, pas un de plus. Et tout passe par la modération
-              avant d&apos;arriver dans les questions.
-            </p>
           </Reveal>
         </div>
 
