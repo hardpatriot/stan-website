@@ -16,7 +16,7 @@ import { Reveal } from "./Reveal";
 /** L'âge affiché selon la place dans la pile : la plus récente en haut. */
 const AGES = ["1m", "3m", "1h", "2h", "5h", "1j"];
 /** Qui vote, dans l'ordre d'arrivée : un motif irrégulier, pour faire vrai. */
-const SUITE = ["Il", "Elle", "Elle", "Il", "Elle", "Il", "Il", "Elle"] as const;
+const SUITE = ["Il", "Elle", "Iel", "Il", "Elle", "Il", "Elle", "Iel", "Il", "Elle"] as const;
 const VISIBLES = 5;
 /** Une nouvelle notification toutes les 3 s. */
 const CADENCE = 3000;
@@ -24,6 +24,8 @@ const CADENCE = 3000;
 const TEINTES = {
   Il: { icone: "/notif-boy.webp", halo: "rgba(255,36,128,0.5)" },
   Elle: { icone: "/notif-girl.webp", halo: "rgba(13,214,255,0.45)" },
+  // Comme dans l'app : « Iel a voté pour toi » pour un vote non binaire.
+  Iel: { icone: "/notif-nb.webp", halo: "rgba(176,80,255,0.5)" },
 } as const;
 
 /** Le verre de VotesNotificationGlassCard : fond indigo, accents rose à cyan. */
@@ -35,7 +37,7 @@ function CarteVote({
   quand,
   nouvelle,
 }: {
-  qui: "Il" | "Elle";
+  qui: "Il" | "Elle" | "Iel";
   quand: string;
   nouvelle: boolean;
 }) {

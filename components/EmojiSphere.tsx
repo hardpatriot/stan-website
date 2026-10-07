@@ -146,11 +146,20 @@ const HAUTEUR_SECTION = "125svh";
  */
 const S_FIN = 0.25;
 
+/**
+ * Les emplacements des visages. Dès qu'il y en a assez pour faire une sphère
+ * pleine (autant que sur téléphone), on n'affiche QUE des visages, au bureau
+ * comme sur téléphone : les emojis ne servent qu'à combler tant qu'il manque
+ * des portraits.
+ */
+const INDICES_VISAGES = CONTENUS.flatMap((c, i) => ("visage" in c ? [i] : []));
+
 /** Les indices animés sur cet écran. */
 function actifs(): number[] {
   if (typeof window !== "undefined" && window.innerWidth <= 640) {
     return SOUS_ENSEMBLE_MOBILE;
   }
+  if (INDICES_VISAGES.length >= ELEMENTS_MOBILE) return INDICES_VISAGES;
   return Array.from({ length: ELEMENTS_MAX }, (_, i) => i);
 }
 
@@ -504,7 +513,7 @@ export function EmojiSphere() {
       style={{ height: HAUTEUR_SECTION }}
     >
       <div
-        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:56px] sm:[--taille-emoji:70px]"
+        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:56px] sm:[--taille-emoji:78px]"
       >
         {/* L'accroche, au-dessus de la sphère */}
         <div
