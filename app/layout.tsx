@@ -78,7 +78,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${roboto.variable} h-full antialiased`}>
-      <body className="relative min-h-full flex flex-col">{children}</body>
+      <body className="relative min-h-full flex flex-col pt-[var(--banniere,0px)]">{children}</body>
     </html>
   );
 }

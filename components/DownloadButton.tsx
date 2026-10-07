@@ -19,7 +19,7 @@ import { FoilQR } from "./FoilQR";
 export const INVITE_URL = "https://invite.stan-friends.com/invite";
 const APP_STORE_URL =
   "https://apps.apple.com/fr/app/stan-qui-a-vote-pour-toi/id6740286416";
-const PLAY_STORE_URL =
+export const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=com.stan.android";
 
 type Plateforme = "iphone" | "ipad" | "android" | "ordinateur";

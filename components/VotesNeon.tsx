@@ -53,15 +53,18 @@ function CarteVote({
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.13),rgba(255,255,255,0.03)_60%,transparent)]"
       />
-      {/* À l'arrivée, un trait de lumière traverse la carte une fois */}
+      {/* À l'arrivée, un éclat de la couleur du vote, qui s'éteint aussitôt */}
       {nouvelle ? (
         <span
           aria-hidden
-          className="vote-balayage pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.22),transparent)]"
+          className="vote-eclat pointer-events-none absolute inset-0 rounded-[inherit]"
+          style={{
+            background: `radial-gradient(closest-side at 18% 50%, ${t.halo}, transparent)`,
+          }}
         />
       ) : null}
       <span
-        className="relative h-14 w-14 shrink-0 rounded-full"
+        className={`relative h-14 w-14 shrink-0 rounded-full ${nouvelle ? "vote-icone-pop" : ""}`}
         style={{ boxShadow: `0 0 18px -2px ${t.halo}` }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille */}
