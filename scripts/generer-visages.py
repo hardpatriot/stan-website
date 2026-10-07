@@ -57,7 +57,9 @@ def _vertical(taille, haut, bas):
 
 
 def anneau(visage, cote):
-    """Le visage en bulle 3D : ombre portée, anneau néon biseauté, reflet.
+    """Le visage en bulle 3D : ombre portée et anneau néon biseauté.
+
+    Pas de reflet blanc sur la photo : il voilait le visage (retiré le 08/10).
 
     Tout est dans l'image : la sphère n'affiche qu'une image, sans filtre ni
     découpe à calculer à chaque image.
@@ -91,15 +93,8 @@ def anneau(visage, cote):
     v = visage.resize((round(2 * r), round(2 * r)), Image.LANCZOS)
     calque = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     calque.paste(v, (round(cx - r), round(cy - r)))
-    calque = Image.composite(Image.new("RGBA", (S, S), (12, 4, 32, 255)), calque, _vertical(S, 0, 95))
+    calque = Image.composite(Image.new("RGBA", (S, S), (12, 4, 32, 255)), calque, _vertical(S, 0, 45))
     toile.paste(calque, (0, 0), disque(r))
-
-    # 4. Le reflet : une lueur blanche en haut à gauche, comme une bulle.
-    reflet = Image.new("L", (S, S), 0)
-    ImageDraw.Draw(reflet).ellipse((cx - r * 0.74, cy - r * 0.9, cx + r * 0.2, cy - r * 0.34), fill=125)
-    reflet = reflet.filter(ImageFilter.GaussianBlur(S * 0.035))
-    reflet = Image.composite(reflet, Image.new("L", (S, S), 0), disque(r))
-    toile.paste(Image.new("RGBA", (S, S), (255, 255, 255, 255)), (0, 0), reflet)
 
     # 5. Un liseré clair sur le haut de l'anneau : l'arête qui prend la lumière.
     arete = Image.new("L", (S, S), 0)

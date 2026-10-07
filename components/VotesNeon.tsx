@@ -18,8 +18,8 @@ const AGES = ["1m", "3m", "1h", "2h", "5h", "1j"];
 /** Qui vote, dans l'ordre d'arrivée : un motif irrégulier, pour faire vrai. */
 const SUITE = ["Il", "Elle", "Elle", "Il", "Elle", "Il", "Il", "Elle"] as const;
 const VISIBLES = 5;
-/** Une nouvelle notification toutes les 2,6 s. */
-const CADENCE = 2600;
+/** Une nouvelle notification toutes les 3 s. */
+const CADENCE = 3000;
 
 const TEINTES = {
   Il: { icone: "/notif-boy.webp", halo: "rgba(255,36,128,0.5)" },
@@ -42,24 +42,37 @@ function CarteVote({
   const t = TEINTES[qui];
   return (
     <div
-      className={`neon flex items-center gap-4 rounded-[20px] px-4 py-3.5 ${nouvelle ? "vote-arrive" : ""}`}
+      className={`carte-vote relative flex items-center gap-4 overflow-hidden rounded-[22px] px-4 py-3.5 ${nouvelle ? "vote-arrive" : ""}`}
       style={{
         background: VERRE,
-        boxShadow: `0 0 30px -8px ${t.halo}, 0 24px 50px -24px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.12)`,
+        boxShadow: `0 0 34px -10px ${t.halo}, 0 26px 50px -26px rgba(0,0,0,0.9)`,
       }}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille */}
-      <img
-        src={t.icone}
-        alt=""
-        draggable={false}
-        className="h-14 w-14 shrink-0"
-        style={{ filter: `drop-shadow(0 0 10px ${t.halo})` }}
+      {/* Le reflet du verre, en haut de la carte */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-[linear-gradient(180deg,rgba(255,255,255,0.13),rgba(255,255,255,0.03)_60%,transparent)]"
       />
-      <span className="flex-1 text-[17px] font-semibold text-white sm:text-lg">
+      {/* À l'arrivée, un trait de lumière traverse la carte une fois */}
+      {nouvelle ? (
+        <span
+          aria-hidden
+          className="vote-balayage pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.22),transparent)]"
+        />
+      ) : null}
+      <span
+        className="relative h-14 w-14 shrink-0 rounded-full"
+        style={{ boxShadow: `0 0 18px -2px ${t.halo}` }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille */}
+        <img src={t.icone} alt="" draggable={false} className="h-full w-full" />
+      </span>
+      <span className="relative flex-1 text-[17px] font-semibold text-white sm:text-lg">
         {qui} a voté pour toi
       </span>
-      <span className="text-[15px] font-medium text-white/45">{quand}</span>
+      <span className="relative self-start pt-0.5 text-[15px] font-medium text-white/50">
+        {quand}
+      </span>
     </div>
   );
 }
@@ -110,7 +123,7 @@ function FilDeVotes() {
         return (
           <div
             key={v.id}
-            className="absolute inset-x-0 top-0 transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1.2,0.36,1)]"
+            className="absolute inset-x-0 top-0 transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
             style={{
               transform: `translate(${rang * 14}px, ${y}px) scale(${echelle})`,
               transformOrigin: "left top",

@@ -337,37 +337,65 @@ body {
   pointer-events: none;
 }
 
-/* Le fil de votes : la nouvelle notification tombe, puis s'illumine. */
+/* Les notifications du fil, comme VotesNotificationGlassCard dans l'app :
+   un contour fin rose, violet, bleu, cyan, et une arête claire en haut. */
+.carte-vote::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(
+    100deg,
+    #ff2480 0%,
+    #9140ff 40%,
+    #3d6eff 72%,
+    #0dd6ff 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.carte-vote::after {
+  content: "";
+  position: absolute;
+  inset: 1.5px 18px auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+  pointer-events: none;
+}
+
+/* Le fil de votes : la nouvelle notification descend doucement en place. */
 @keyframes vote-arrive {
-  0% {
+  from {
     opacity: 0;
-    transform: translateY(-26px) scale(0.92);
+    transform: translateY(-34px) scale(0.94);
   }
-  60% {
-    opacity: 1;
-  }
-  100% {
+  to {
     opacity: 1;
     transform: none;
   }
 }
-@keyframes vote-eclat {
-  0%,
-  100% {
-    filter: brightness(1);
+@keyframes vote-balayage {
+  from {
+    transform: translateX(0) skewX(-12deg);
   }
-  35% {
-    filter: brightness(1.35);
+  to {
+    transform: translateX(420%) skewX(-12deg);
   }
 }
 .vote-arrive {
-  animation:
-    vote-arrive 0.6s cubic-bezier(0.22, 1.2, 0.36, 1) both,
-    vote-eclat 1.2s ease-out 0.15s;
+  animation: vote-arrive 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-
+.vote-balayage {
+  animation: vote-balayage 1.1s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
+}
 @media (prefers-reduced-motion: reduce) {
-  .vote-arrive {
+  .vote-arrive,
+  .vote-balayage {
     animation: none;
   }
 }

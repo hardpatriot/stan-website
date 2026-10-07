@@ -44,7 +44,7 @@ function Card({ children }: { children: React.ReactNode }) {
       {/* La lueur néon qui décolle le téléphone du fond */}
       <div
         aria-hidden
-        className="animate-pulse-glow pointer-events-none absolute -inset-10 -z-10 rounded-[999px] bg-[radial-gradient(ellipse_at_30%_40%,rgba(255,40,200,0.45)_0%,transparent_60%),radial-gradient(ellipse_at_75%_65%,rgba(60,110,255,0.40)_0%,transparent_60%)]"
+        className="animate-pulse-glow pointer-events-none absolute -inset-x-16 -inset-y-12 -z-10 bg-[radial-gradient(closest-side_at_32%_40%,rgba(255,40,200,0.42),rgba(255,40,200,0.12)_55%,transparent),radial-gradient(closest-side_at_70%_64%,rgba(60,110,255,0.38),rgba(60,110,255,0.1)_55%,transparent)]"
       />
 
       {/* Le châssis */}
@@ -512,7 +512,14 @@ function VoteScreen({
               onChange={(e) => onDraft(e.target.value)}
               maxLength={22}
               placeholder="Prénom ou numéro d'un pote"
-              className="min-w-0 flex-1 rounded-full bg-white px-4 py-2 text-[15px] font-semibold text-night-900 outline-none placeholder:text-black/35"
+              // Le remplissage automatique de Safari propose les contacts : avec
+              // « tel », choisir un contact insère son NUMÉRO, et le bouton
+              // devient « Inviter ». Avec un nom, il n'y avait rien à inviter.
+              autoComplete="tel"
+              name="tel"
+              autoCorrect="off"
+              autoCapitalize="words"
+              className="min-w-0 flex-1 rounded-full bg-white px-4 py-2 text-[15px] font-semibold text-night-900 outline-none placeholder:text-black/35 [&:-webkit-autofill]:shadow-[inset_0_0_0_100px_#fff] [&:-webkit-autofill]:[-webkit-text-fill-color:#0b0716]"
             />
             {numeroSaisi(draft) ? (
               <button

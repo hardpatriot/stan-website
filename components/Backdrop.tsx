@@ -22,12 +22,15 @@ export function Backdrop() {
       style={{
         backgroundColor: "#120a3d",
         backgroundImage: [
+          // Chaque lueur s'éteint AVANT le bord de la tuile (centre ± 75 % du
+          // rayon reste dans 0-100 %) : sinon elle est coupée net à la couture
+          // et une ligne horizontale apparaît.
           // Néon rose, bord gauche, haut de tuile
-          "radial-gradient(ellipse 75% 30% at 0% 14%, rgba(255,40,200,0.42) 0%, rgba(217,28,189,0.16) 45%, transparent 75%)",
+          "radial-gradient(ellipse 80% 26% at 0% 22%, rgba(255,40,200,0.44) 0%, rgba(217,28,189,0.17) 42%, transparent 75%)",
           // Néon bleu électrique, bord droit, milieu de tuile
-          "radial-gradient(ellipse 72% 28% at 100% 52%, rgba(60,110,255,0.38) 0%, rgba(80,70,255,0.14) 45%, transparent 75%)",
+          "radial-gradient(ellipse 78% 28% at 100% 56%, rgba(60,110,255,0.40) 0%, rgba(80,70,255,0.15) 42%, transparent 75%)",
           // Retour rose, bas de tuile, plus discret
-          "radial-gradient(ellipse 65% 24% at 15% 88%, rgba(200,40,255,0.24) 0%, transparent 72%)",
+          "radial-gradient(ellipse 70% 17% at 12% 86%, rgba(200,40,255,0.26) 0%, transparent 75%)",
           // La base : indigo, même teinte en haut et en bas de la tuile
           "linear-gradient(180deg, #120a3d 0%, #170c4a 35%, #140b44 65%, #120a3d 100%)",
         ].join(", "),
