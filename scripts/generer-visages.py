@@ -19,6 +19,7 @@ soit 140 à 168 pixels réels sur les écrans courants. Exporter les portraits �
 512 px depuis Figma laisse de la marge.
 """
 import hashlib
+import json
 import pathlib
 from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
@@ -28,6 +29,14 @@ SORTIE = RACINE / "public" / "visages"
 # Les mêmes visages cerclés de l'anneau néon, pour la sphère : l'anneau est
 # dans l'image, le navigateur n'a plus rien à découper à chaque image.
 SORTIE_SPHERE = RACINE / "public" / "sphere" / "visages"
+# Le genre de chaque portrait (f, m, nb), tiré des consignes de génération :
+# il choisit la couleur de l'anneau, celles de l'app (icônes de l'onglet Votes).
+GENRES = json.loads((SOURCE / "genres.json").read_text(encoding="utf-8"))
+ANNEAUX = {
+    "m": [(0xFF, 0xB2, 0x5C), (0xFF, 0x6A, 0x6A), (0xF0, 0x33, 0x7A)],   # garçon : orange vers rose (icon_stan_boy)
+    "f": [(0x7F, 0xEB, 0xFF), (0x4F, 0xA2, 0xFF), (0x5B, 0x3B, 0xFF)],   # fille : cyan vers bleu-violet (icon_stan_girl)
+    "nb": [(0xC0, 0x84, 0xFF), (0xA8, 0x55, 0xF7), (0xF0, 0x4F, 0xD8)],  # non-binaire : violet vers magenta
+}
 LISTE = RACINE / "components" / "visages.ts"
 COTE_MAX = 192
 
@@ -56,7 +65,7 @@ def _vertical(taille, haut, bas):
     return g.point(lambda v: round(haut + (bas - haut) * v / 255))
 
 
-def anneau(visage, cote):
+def anneau(visage, cote, genre="nb"):
     """Le visage en bulle 3D : ombre portée et anneau néon biseauté.
 
     Pas de reflet blanc sur la photo : il voilait le visage (retiré le 08/10).
@@ -83,7 +92,7 @@ def anneau(visage, cote):
         return m
 
     # 2. L'anneau néon, biseauté : éclairé en haut, plus sombre en bas.
-    anneau_rgba = _degrade_diagonal(S, [(0xFF, 0x4F, 0xD8), (0x9B, 0x5C, 0xFF), (0x3F, 0x7B, 0xFF)])
+    anneau_rgba = _degrade_diagonal(S, ANNEAUX.get(genre, ANNEAUX["nb"]))
     anneau_rgba = Image.composite(Image.new("RGBA", (S, S), (255, 255, 255, 255)), anneau_rgba, _vertical(S, 80, 0))
     anneau_rgba = Image.composite(Image.new("RGBA", (S, S), (20, 6, 50, 255)), anneau_rgba, _vertical(S, 0, 110))
     toile.paste(anneau_rgba, (0, 0), disque(R))
@@ -134,7 +143,7 @@ for f in sorted(SOURCE.iterdir()):
 
     nom = f"{len(noms) + 1:03d}.webp"
     im.save(SORTIE / nom, "WEBP", quality=80, method=6)
-    anneau(im, cote).save(SORTIE_SPHERE / nom, "WEBP", quality=82, method=6)
+    anneau(im, cote, GENRES.get(f.name, "nb")).save(SORTIE_SPHERE / nom, "WEBP", quality=82, method=6)
     noms.append(nom)
 
 LISTE.write_text(
