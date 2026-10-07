@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { DownloadButton } from "./DownloadButton";
-import { Pictogramme } from "./Pictogramme";
+import { PALETTE } from "./palette-sphere";
 import { VISAGES } from "./visages";
 
 /*
@@ -25,42 +25,7 @@ import { VISAGES } from "./visages";
  * projection est calculée ici et sortie en transformation 2D.
  */
 
-/**
- * La palette de la sphère : 110 emojis, un par élément, aucun doublon.
- *
- * Ceux déjà utilisés ailleurs dans la page ouvrent la liste : ils sont déjà
- * définis dans le document, donc ils ne coûtent rien de plus. Le reste est
- * complété par les plus légers du pack, à l'exclusion des pictogrammes
- * d'interface, qui ne ressemblent pas à des emojis.
- */
-const PALETTE = [
-  "1st_place_medal", "alarm_clock", "alien", "baguette_bread", "battery",
-  "bed", "bell", "beverage_box", "biting_lip", "books", "bread", "briefcase",
-  "broken_heart", "clown_face", "cold_face", "cookie", "crescent_moon",
-  "crying_face", "desert_island", "drop_of_blood", "ear", "eye", "eyes",
-  "face_exhaling", "face_with_open_mouth", "face_with_raised_eyebrow",
-  "face_with_tears_of_joy", "face_without_mouth", "fearful_face", "fire",
-  "flashlight", "flexed_biceps", "flushed_face", "folded_hands", "foot",
-  "french_fries", "game_die", "ghost", "globe_showing_europe_africa",
-  "glowing_star", "graduation_cap", "grimacing_face", "grinning_face",
-  "grinning_face_with_big_eyes", "grinning_face_with_smiling_eyes",
-  "grinning_face_with_sweat", "grinning_squinting_face", "guitar",
-  "handshake", "high_voltage", "hourglass_done", "hourglass_not_done",
-  "jack_o_lantern", "jeans", "kiss_mark", "kissing_face_with_closed_eyes",
-  "light_bulb", "loudly_crying_face", "loudspeaker", "love_letter",
-  "low_battery", "lying_face", "magnifying_glass_tilted_left", "man_zombie",
-  "microphone", "mirror_ball", "money_bag", "musical_note", "nauseated_face",
-  "nerd_face", "old_key", "oncoming_fist", "open_book", "partying_face",
-  "pensive_face", "performing_arts", "pisces", "popcorn", "pouting_face",
-  "red_heart", "relieved_face", "ring", "robot",
-  "rolling_on_the_floor_laughing", "scarf", "school", "shushing_face",
-  "skateboard", "skull", "sleeping_face", "smiling_face_with_hearts",
-  "smiling_face_with_smiling_eyes", "smirking_face", "sneezing_face",
-  "sparkles", "speaking_head", "speech_balloon", "squid", "star",
-  "telephone_receiver", "tent", "thong_sandal", "top_hat", "train", "trophy",
-  "watch", "weary_face", "winking_face_with_tongue", "wrapped_gift",
-  "zany_face",
-];
+
 
 /** Nombre d'éléments affichés, copies comprises. */
 const ELEMENTS_MAX = 110;
@@ -195,21 +160,28 @@ function palier(bord0: number, bord1: number, v: number) {
   return t * t * (3 - 2 * t);
 }
 
-/** Un emplacement de la sphère : un visage cerclé de néon, ou un emoji. */
+/**
+ * Un emplacement de la sphère : une simple image, rien d'autre.
+ *
+ * Visages (anneau néon compris) et emojis sont des images déjà détourées,
+ * rastérisées à 3 fois leur taille maximale à l'écran : la sphère ne fait que
+ * les réduire, jamais les agrandir, donc rien ne floute. Le navigateur n'a ni
+ * coins arrondis à découper ni vectoriel à redessiner à chaque image : c'est
+ * ce qui rend l'animation fluide sur téléphone.
+ */
 function Element({ c }: { c: Contenu }) {
-  if ("emoji" in c) return <Pictogramme name={c.emoji} carre className="h-full w-full" />;
+  const src =
+    "emoji" in c ? `/sphere/emoji/${c.emoji}.webp` : `/sphere/visages/${c.visage}`;
   return (
-    // Un anneau néon, comme les avatars des écrans App Store.
-    <span className="block h-full w-full rounded-full bg-[linear-gradient(135deg,#ff4fd8,#9b5cff_55%,#3f7bff)] p-[2px]">
-      {/* eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille */}
-      <img
-        src={`/visages/${c.visage}`}
-        alt=""
-        draggable={false}
-        decoding="async"
-        className="h-full w-full rounded-full object-cover"
-      />
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille
+    <img
+      src={src}
+      alt=""
+      draggable={false}
+      decoding="async"
+      loading="lazy"
+      className="block h-full w-full select-none"
+    />
   );
 }
 
@@ -363,7 +335,13 @@ export function EmojiSphere() {
         // Fondu de sortie juste avant la limite, plus l'estompe de profondeur.
         const proche = 1 - palier(0.85, 1, k);
         const profondeur = 0.4 + 0.6 * ((z2 + 1) / 2);
-        const sortie = 1;
+        // Fondu vers le bas de l'écran épinglé : quand la sphère s'ouvre, les
+        // éléments qui descendent s'effacent au lieu d'être coupés net par le
+        // bord, là où la section suivante arrive. Calculé ici, élément par
+        // élément : un masque sur toute la sphère coûterait une passe de
+        // rendu de plus à chaque image.
+        const yEcran = h / 2 + Y + dy[i];
+        const sortie = 1 - palier(h * 0.7, h * 0.97, yEcran);
 
         if (vus[i].v !== "visible") {
           el.style.visibility = "visible";

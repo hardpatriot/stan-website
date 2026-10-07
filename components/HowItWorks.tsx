@@ -1,3 +1,4 @@
+import { CarrouselEtapes } from "./CarrouselEtapes";
 import { Reveal } from "./Reveal";
 import { StepCard } from "./StepCard";
 
@@ -46,12 +47,12 @@ export function HowItWorks() {
         {/* Sur mobile : un carrousel qu'on fait défiler au doigt, avec un
             calage sur chaque carte. Quatre cartes empilées demandaient un
             scroll interminable. À partir de `sm`, on retrouve une grille. */}
-        <div className="-mx-5 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scrollbar-width:none] sm:mx-0 sm:mt-14 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+        <CarrouselEtapes>
           {STEPS.map((step, i) => (
             <Reveal
               key={step.title}
               delay={i * 100}
-              className="w-[74vw] max-w-[280px] shrink-0 snap-center sm:w-auto sm:max-w-none"
+              className="w-[74vw] max-w-[280px] shrink-0 snap-start sm:w-auto sm:max-w-none"
             >
               <StepCard
                 icon={step.icon}
@@ -62,7 +63,7 @@ export function HowItWorks() {
               />
             </Reveal>
           ))}
-        </div>
+        </CarrouselEtapes>
       </div>
     </section>
   );

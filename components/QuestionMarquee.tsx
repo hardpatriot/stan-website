@@ -67,6 +67,7 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
         const moitie = el.scrollWidth / 2;
         if (moitie > 0 && position >= moitie) position -= moitie;
         el.scrollLeft = position;
+        derniereEcriture = el.scrollLeft;
       }
       raf = requestAnimationFrame(avancer);
     };
@@ -82,14 +83,49 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
       raf = 0;
     };
 
+    // Le bandeau se joue au doigt : on le pousse, on l'arrête, il repart
+    // seul 1,5 s après qu'on l'a lâché. Sur téléphone, le navigateur annule
+    // le geste (pointercancel) dès que le doigt fait défiler : ce n'est PAS
+    // un lâcher. Reprendre là faisait lutter l'animation contre le doigt.
+    let minuterieReprise: ReturnType<typeof setTimeout> | undefined;
+    let doigtPose = false;
     const pause = () => {
       enPause = true;
+      clearTimeout(minuterieReprise);
     };
-    const reprise = () => {
+    const reprendre = () => {
       enPause = false;
-      // L'utilisateur a pu faire défiler à la main : on repart d'où il a
-      // laissé le bandeau, sans saut.
+      // On repart d'où la personne a laissé le bandeau, sans saut.
       position = el.scrollLeft;
+    };
+    const reprendreBientot = () => {
+      clearTimeout(minuterieReprise);
+      minuterieReprise = setTimeout(() => {
+        if (!doigtPose) reprendre();
+      }, 1500);
+    };
+    // Souris : pause au survol, reprise en sortant.
+    const entrer = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") pause();
+    };
+    const sortir = (e: PointerEvent) => {
+      if (e.pointerType === "mouse") reprendre();
+    };
+    // Doigt : pause au contact, reprise un peu après le lâcher.
+    const toucher = () => {
+      doigtPose = true;
+      pause();
+    };
+    const lacher = () => {
+      doigtPose = false;
+      reprendreBientot();
+    };
+    // L'élan après un lancer fait encore défiler : on attend qu'il s'arrête.
+    let derniereEcriture = -1;
+    const defilement = () => {
+      if (Math.abs(el.scrollLeft - derniereEcriture) > 2 && enPause && !doigtPose) {
+        reprendreBientot();
+      }
     };
 
     // Inutile de faire tourner une boucle pour un bandeau hors de l'écran.
@@ -106,11 +142,12 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
     const surVisibilite = () => (document.hidden ? arreter() : demarrer());
     document.addEventListener("visibilitychange", surVisibilite);
 
-    el.addEventListener("pointerenter", pause);
-    el.addEventListener("pointerleave", reprise);
-    el.addEventListener("pointerdown", pause);
-    el.addEventListener("pointerup", reprise);
-    el.addEventListener("pointercancel", reprise);
+    el.addEventListener("pointerenter", entrer);
+    el.addEventListener("pointerleave", sortir);
+    el.addEventListener("touchstart", toucher, { passive: true });
+    el.addEventListener("touchend", lacher, { passive: true });
+    el.addEventListener("touchcancel", lacher, { passive: true });
+    el.addEventListener("scroll", defilement, { passive: true });
 
     demarrer();
 
@@ -118,18 +155,20 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
       arreter();
       observateur.disconnect();
       document.removeEventListener("visibilitychange", surVisibilite);
-      el.removeEventListener("pointerenter", pause);
-      el.removeEventListener("pointerleave", reprise);
-      el.removeEventListener("pointerdown", pause);
-      el.removeEventListener("pointerup", reprise);
-      el.removeEventListener("pointercancel", reprise);
+      clearTimeout(minuterieReprise);
+      el.removeEventListener("pointerenter", entrer);
+      el.removeEventListener("pointerleave", sortir);
+      el.removeEventListener("touchstart", toucher);
+      el.removeEventListener("touchend", lacher);
+      el.removeEventListener("touchcancel", lacher);
+      el.removeEventListener("scroll", defilement);
     };
   }, [vitesse]);
 
   return (
     <div
       ref={ref}
-      className="flex gap-3.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className="flex gap-3.5 overflow-x-auto py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       style={{ overscrollBehaviorX: "contain" }}
     >
       {doubled.map((item, i) => (
@@ -156,19 +195,11 @@ export function QuestionMarquee() {
         </div>
       </Reveal>
 
-      <div className="relative mt-7 flex flex-col gap-3.5">
+      {/* Les bords s'effacent dans le fond par un masque : les deux bandes
+          sombres d'avant découpaient le bandeau sur le fond violet. */}
+      <div className="relative mt-7 flex flex-col gap-3.5 [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)] sm:[mask-image:linear-gradient(90deg,transparent,#000_14%,#000_86%,transparent)]">
         <Row items={ROW_A} vitesse={26} />
         <Row items={ROW_B} vitesse={19} />
-
-        {/* Fondu sur les bords */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-night-950 to-transparent sm:w-40"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-night-950 to-transparent sm:w-40"
-        />
       </div>
     </section>
   );

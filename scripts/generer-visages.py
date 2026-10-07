@@ -25,12 +25,49 @@ from PIL import Image, ImageDraw
 RACINE = pathlib.Path(__file__).resolve().parent.parent
 SOURCE = RACINE / "visages"
 SORTIE = RACINE / "public" / "visages"
+# Les mêmes visages cerclés de l'anneau néon, pour la sphère : l'anneau est
+# dans l'image, le navigateur n'a plus rien à découper à chaque image.
+SORTIE_SPHERE = RACINE / "public" / "sphere" / "visages"
 LISTE = RACINE / "components" / "visages.ts"
 COTE_MAX = 192
 
 SORTIE.mkdir(parents=True, exist_ok=True)
-for ancien in SORTIE.glob("*.webp"):
-    ancien.unlink()
+SORTIE_SPHERE.mkdir(parents=True, exist_ok=True)
+for dossier in (SORTIE, SORTIE_SPHERE):
+    for ancien in dossier.glob("*.webp"):
+        ancien.unlink()
+
+
+def anneau(visage, cote):
+    """Le visage dans un anneau rose, violet, bleu (diagonale à 135°)."""
+    k = 4  # calcul à 4x, puis réduction : bords lisses
+    grand = cote * k
+    epaisseur = max(2, round(cote * 0.036)) * k
+    # Le dégradé diagonal de l'anneau
+    degrade = Image.new("RGBA", (grand, grand))
+    px = degrade.load()
+    couleurs = [(0xFF, 0x4F, 0xD8), (0x9B, 0x5C, 0xFF), (0x3F, 0x7B, 0xFF)]
+    for y in range(0, grand, k):
+        for x in range(0, grand, k):
+            t = (x + y) / (2 * grand)
+            if t < 0.55:
+                a, b, u = couleurs[0], couleurs[1], t / 0.55
+            else:
+                a, b, u = couleurs[1], couleurs[2], (t - 0.55) / 0.45
+            c = tuple(round(a[i] + (b[i] - a[i]) * u) for i in range(3)) + (255,)
+            for dy in range(k):
+                for dx in range(k):
+                    px[x + dx, y + dy] = c
+    disque = Image.new("L", (grand, grand), 0)
+    ImageDraw.Draw(disque).ellipse((0, 0, grand - 1, grand - 1), fill=255)
+    fond = Image.new("RGBA", (grand, grand), (0, 0, 0, 0))
+    fond.paste(degrade, (0, 0), disque)
+    interieur = grand - 2 * epaisseur
+    v = visage.resize((interieur, interieur), Image.LANCZOS)
+    masque = Image.new("L", (interieur, interieur), 0)
+    ImageDraw.Draw(masque).ellipse((0, 0, interieur - 1, interieur - 1), fill=255)
+    fond.paste(v, (epaisseur, epaisseur), masque)
+    return fond.resize((cote, cote), Image.LANCZOS)
 
 vus = set()
 noms = []
@@ -61,6 +98,7 @@ for f in sorted(SOURCE.iterdir()):
 
     nom = f"{len(noms) + 1:03d}.webp"
     im.save(SORTIE / nom, "WEBP", quality=80, method=6)
+    anneau(im, cote).save(SORTIE_SPHERE / nom, "WEBP", quality=82, method=6)
     noms.append(nom)
 
 LISTE.write_text(
