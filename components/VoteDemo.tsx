@@ -231,9 +231,11 @@ const PHOTOS: Record<string, string> = {
 };
 
 /** Les dégradés de carte de l'app, PollCardExperience.gradients. */
+// Le violet en premier : c'est la carte qu'on voit en arrivant, et elle
+// prolonge le fond violet de la page (Julien, 08/10). L'orange vient ensuite.
 const CARD_GRADIENTS = [
-  ["#F7A25B", "#F78C60", "#F67566", "#F65E6D", "#F64773", "#F53079", "#F5187F", "#F50384"],
   ["#6001FF", "#5601FF", "#4B01FF", "#4001FF", "#3501FF", "#2A01FF", "#1F01FF", "#1501FF"],
+  ["#F7A25B", "#F78C60", "#F67566", "#F65E6D", "#F64773", "#F53079", "#F5187F", "#F50384"],
   ["#45F9FD", "#49DCFD", "#4CBDFC", "#4F9FFC", "#5380FC", "#5662FB", "#5A43FB", "#5D26FB"],
   ["#B35BE6", "#B153E7", "#AF4CE7", "#AD44E8", "#AB3CE9", "#A935E9", "#A72DEA", "#A526EB"],
 ];
