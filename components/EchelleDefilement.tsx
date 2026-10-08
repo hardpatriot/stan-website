@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
  * La barre de défilement du site : l'échelle crantée du Wall des Memories
  * (MemoryWallScrollRuler dans l'app).
  *
- * 25 crans, rangés le long du bord droit. Le cran qui correspond à
+ * 41 crans, répartis sur toute la hauteur du bord droit. Le cran qui correspond à
  * l'avancement s'allonge et s'épaissit, ses voisins un peu moins (sur 3
  * crans), les autres restent de fins traits discrets. Même dégradé que
  * l'app : rose Memories, blanc, cyan.
@@ -15,7 +15,10 @@ import { useEffect, useRef } from "react";
  * à jour au défilement, une fois par image au plus, et seulement quand le
  * cran le plus proche change ou bouge d'un demi-cran : aucun coût au repos.
  */
-const CRANS = 25;
+// Plus de crans que dans l'app : l'échelle couvre toute la hauteur de
+// l'écran, du dessous de la barre Stan jusqu'en bas, et on lit d'un coup
+// d'œil où l'on est dans la page.
+const CRANS = 41;
 
 export function EchelleDefilement() {
   const ref = useRef<HTMLDivElement>(null);
@@ -67,7 +70,7 @@ export function EchelleDefilement() {
     <div
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed top-1/2 right-[5px] z-[60] flex -translate-y-1/2 flex-col items-end gap-[6px] opacity-70 transition-opacity duration-500 data-[actif]:opacity-100"
+      className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+var(--banniere,0px)+84px)] right-[5px] bottom-[calc(env(safe-area-inset-bottom)+28px)] z-[60] flex flex-col items-end justify-between opacity-70 transition-opacity duration-500 data-[actif]:opacity-100 sm:top-[calc(var(--banniere,0px)+96px)] sm:bottom-8"
     >
       {Array.from({ length: CRANS }, (_, i) => (
         <span
