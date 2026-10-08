@@ -97,6 +97,12 @@ html {
    un fond sur `body` en plus passerait par-dessus le fond animé (-z-10). */
 html {
   background-color: #0e0933;
+  /* La barre de défilement native laisse la place à l'échelle crantée
+     (EchelleDefilement), comme sur le Wall des Memories. */
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {

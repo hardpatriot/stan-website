@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+import { EchelleDefilement } from "@/components/EchelleDefilement";
 
 // L'app utilise Roboto (.custom("Roboto")), on garde exactement la même.
 const roboto = Roboto({
@@ -78,7 +79,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="fr" className={`${roboto.variable} h-full antialiased`}>
-      <body className="relative min-h-full flex flex-col pt-[var(--banniere,0px)]">{children}</body>
+      <body className="relative min-h-full flex flex-col pt-[var(--banniere,0px)]">
+        {children}
+        <EchelleDefilement />
+      </body>
     </html>
   );
 }
