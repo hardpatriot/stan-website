@@ -6,10 +6,10 @@ import { useEffect, useRef } from "react";
  * La barre de défilement du site : l'échelle crantée du Wall des Memories
  * (MemoryWallScrollRuler dans l'app).
  *
- * 81 crans, répartis sur toute la hauteur du bord droit, un sur cinq plus
- * long comme sur une règle. Le cran qui correspond à
- * l'avancement s'allonge et s'épaissit, ses voisins un peu moins (sur 3
- * crans), les autres restent de fins traits discrets. Même dégradé que
+ * 81 crans identiques, répartis sur toute la hauteur du bord droit. Le cran
+ * qui correspond à l'avancement s'allonge et s'épaissit, ses voisins un peu
+ * moins (sur 6 crans), les autres restent de fins traits discrets, tous de la
+ * même longueur (pas de repères plus longs : Julien, 09/10). Même dégradé que
  * l'app : rose Memories, blanc, cyan.
  *
  * Purement indicative, comme dans l'app : elle ne capte aucun toucher. Mise
@@ -20,8 +20,9 @@ import { useEffect, useRef } from "react";
 // l'écran, du dessous de la barre Stan jusqu'en bas, et on lit d'un coup
 // d'œil où l'on est dans la page.
 const CRANS = 81;
-/** Un cran sur cinq est un repère, plus long : la lecture d'une règle. */
-const REPERE = 5;
+/** Longueur et opacité d'un cran au repos, tous identiques. */
+const LARGEUR_REPOS = 4;
+const OPACITE_REPOS = 0.16;
 /** Portée de la mise en avant, en crans : le pic s'étend sur 6 crans. */
 const PORTEE = 6;
 
@@ -51,10 +52,9 @@ export function EchelleDefilement() {
         // descendent en douceur.
         const lin = Math.max(0, 1 - distance / PORTEE);
         const emphase = Math.pow(lin * lin * (3 - 2 * lin), 1.8);
-        const base = i % REPERE === 0 ? 8 : 4;
-        c.style.width = `${base + (18 - base) * emphase}px`;
+        c.style.width = `${LARGEUR_REPOS + (18 - LARGEUR_REPOS) * emphase}px`;
         c.style.height = distance < 0.6 ? "2px" : "1px";
-        c.style.opacity = String((i % REPERE === 0 ? 0.32 : 0.16) + 0.72 * emphase);
+        c.style.opacity = String(OPACITE_REPOS + 0.72 * emphase);
       });
     };
     const surDefilement = () => {
@@ -86,9 +86,9 @@ export function EchelleDefilement() {
           key={i}
           className="block rounded-full bg-[linear-gradient(90deg,#ff348d,#ffffff,#22d3ee)] transition-[width,opacity] duration-200 ease-out"
           style={{
-            width: i % REPERE === 0 ? 8 : 4,
+            width: LARGEUR_REPOS,
             height: 1,
-            opacity: i % REPERE === 0 ? 0.32 : 0.16,
+            opacity: OPACITE_REPOS,
           }}
         />
       ))}
