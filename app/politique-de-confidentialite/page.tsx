@@ -16,7 +16,7 @@ export default function Page() {
           Politique de <span className="text-vote">confidentialité</span>
         </>
       }
-      updated="4 octobre 2026"
+      updated="12 octobre 2026"
       intro={
         <>
           <p className="mb-4">
@@ -120,6 +120,11 @@ export default function Page() {
           vous le quittez, seuls vos amis acceptés voient où vous êtes. Seule votre
           dernière position est gardée&nbsp;: 6&nbsp;h au plus, et elle est
           effacée dès que vous repassez en mode fantôme.
+        </li>
+        <li>
+          <strong>Notes et vocaux</strong>&nbsp;: les notes et messages vocaux
+          que vous publiez sur la Map ne sont visibles que par vos amis acceptés,
+          et s&apos;effacent automatiquement au bout de 6&nbsp;h au plus.
         </li>
       </ul>
 

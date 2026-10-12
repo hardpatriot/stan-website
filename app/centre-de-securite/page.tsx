@@ -16,7 +16,7 @@ export default function Page() {
           Centre de <span className="text-aura">sécurité</span>
         </>
       }
-      updated="4 octobre 2026"
+      updated="12 octobre 2026"
       intro={
         <>
           <p className="mb-3 text-lg font-black tracking-tight text-white">
@@ -55,6 +55,10 @@ export default function Page() {
         <li>
           Vos votes sur les blocus sont anonymes, même pour vos amis&nbsp;:
           seuls des totaux par lycée sont affichés.
+        </li>
+        <li>
+          Les notes et vocaux publiés sur la Map ne sont visibles que par vos
+          amis et disparaissent d&apos;eux-mêmes au bout de 6&nbsp;h.
         </li>
         <li>
           Les demandes de suppression de compte sont généralement traitées sous
