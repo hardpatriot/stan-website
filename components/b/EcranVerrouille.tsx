@@ -25,12 +25,10 @@ function heureLocale() {
 }
 
 export function EcranVerrouille() {
-  // Rien ne bouge tant que la pile de notifications n'est pas à moitié à
-  // l'écran : l'heure surgit, puis les notifications tombent une à une, au
-  // rythme du temps et non du défilement. Elles restent un moment, s'effacent
-  // et retombent, en boucle. Si la scène sort de l'écran, tout est remis à
-  // zéro : en revenant, on revoit l'animation depuis le début.
-  // Une classe posée ou retirée par carte : l'animation est en CSS, sur la
+  // Rien ne bouge tant que le haut de la pile n'est pas bien entré dans
+  // l'écran (au quart inférieur) : l'heure apparaît, puis les notifications
+  // descendent une à une, en douceur, et restent. Une seule fois.
+  // Une classe posée par carte : l'animation est en CSS, sur la
   // transformation et l'opacité.
   const notifs = useRef<(HTMLDivElement | null)[]>([]);
   const heure = useRef<HTMLDivElement>(null);
@@ -41,42 +39,21 @@ export function EcranVerrouille() {
     // Moins d'animations demandées : tout est affiché d'emblée (en CSS).
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const minuteurs: ReturnType<typeof setTimeout>[] = [];
-    const plus = (ms: number, f: () => void) => minuteurs.push(setTimeout(f, ms));
-    const cartes = () => notifs.current.filter((n): n is HTMLDivElement => !!n);
-    const vider = () => cartes().forEach((n) => n.classList.remove("b-pop", "b-part"));
-    const arreter = () => {
-      minuteurs.forEach(clearTimeout);
-      minuteurs.length = 0;
-    };
-    // Un tour : 0,9 s entre deux notifications, 3,5 s pour les lire toutes,
-    // puis elles s'effacent et le tour suivant commence.
-    const tour = () => {
-      vider();
-      cartes().forEach((n, i) => plus(250 + i * 900, () => n.classList.add("b-pop")));
-      const fin = 250 + (NOTIFS.length - 1) * 900 + 700 + 3500;
-      plus(fin, () => cartes().forEach((n) => n.classList.add("b-part")));
-      plus(fin + 600, tour);
-    };
-    let enCours = false;
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.intersectionRatio >= 0.5 && !enCours) {
-          enCours = true;
-          heure.current?.classList.add("b-pop");
-          tour();
-        } else if (!e.isIntersecting && enCours) {
-          enCours = false;
-          arreter();
-          vider();
-          heure.current?.classList.remove("b-pop");
-        }
+        if (!e.isIntersecting) return;
+        io.disconnect();
+        heure.current?.classList.add("b-pop");
+        notifs.current.forEach((n, i) => {
+          if (n) minuteurs.push(setTimeout(() => n.classList.add("b-pop"), 250 + i * 420));
+        });
       },
-      { threshold: [0, 0.5] },
+      { rootMargin: "0px 0px -25% 0px" },
     );
     io.observe(el);
     return () => {
       io.disconnect();
-      arreter();
+      minuteurs.forEach(clearTimeout);
     };
   }, []);
 

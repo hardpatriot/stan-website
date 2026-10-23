@@ -521,27 +521,18 @@ html {
   .b-rise, .b-notif, .b-indice { animation: none; }
 }
 
-/* Écran verrouillé : chaque élément attend d'entrer à l'écran, puis surgit
-   avec un petit rebond (dépasse à peine, revient). Transformation et
-   opacité seulement, donc fluide. */
+/* Écran verrouillé : chaque élément attend son tour, puis descend en
+   douceur et se pose, comme une notification iOS (sans rebond). Opacité et
+   transformation seulement, donc fluide. */
 .b-attend {
   opacity: 0;
 }
 @keyframes b-pop {
-  0% { opacity: 0; transform: translate3d(0, 34px, 0) scale(0.84); }
-  55% { opacity: 1; transform: translate3d(0, -4px, 0) scale(1.025); }
-  78% { transform: translate3d(0, 1px, 0) scale(0.995); }
-  100% { opacity: 1; transform: none; }
+  from { opacity: 0; transform: translate3d(0, -14px, 0) scale(0.97); }
+  to { opacity: 1; transform: none; }
 }
 .b-attend.b-pop {
-  animation: b-pop 0.7s cubic-bezier(0.22, 0.9, 0.3, 1) both;
-}
-/* Fin d'un tour : les notifications s'effacent avant de retomber. */
-.b-attend.b-pop.b-part {
-  animation: none;
-  opacity: 0;
-  transform: translate3d(0, -10px, 0) scale(0.97);
-  transition: opacity 0.5s ease-in, transform 0.5s ease-in;
+  animation: b-pop 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @media (prefers-reduced-motion: reduce) {
   .b-attend { opacity: 1; }
