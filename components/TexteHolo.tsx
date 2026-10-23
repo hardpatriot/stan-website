@@ -13,14 +13,23 @@ import { FRAGMENTS, SOMMETS } from "./FoilQR";
  * forme des lettres : on place chaque caractère à l'endroit précis où le
  * navigateur l'a dessiné, dans un masque que le shader lit.
  *
- * Les reflets ne bougent qu'avec le temps, lentement, comme dans l'app. La
+ * Les reflets coulent avec le temps et une bascule automatique, sans souris. La
  * boucle ne tourne que quand le titre est à l'écran ; le texte blanc reste
  * du vrai texte, sélectionnable et lu par les moteurs de recherche.
  */
-const OPACITE = 0.45;
-const INTENSITE = 1.35;
+// Plus vif que dans l'app (0,45 et 1,35) : ici le texte est immense et ne
+// bouge pas sous le doigt, il faut plus d'éclat pour le même effet.
+const OPACITE = 0.62;
+const INTENSITE = 1.6;
+/** Le temps du shader avance 2,4 fois plus vite que la montre. */
+const VITESSE = 2.4;
 
+// Le pigment de la carte (#241547) éclairci en lavande : sur des lettres
+// blanches, le violet sombre donnait des creux gris ternes entre les reflets.
 const FRAGMENTS_TEXTE = FRAGMENTS.replace(
+  "vec3 base = mix(vec3(0.141, 0.082, 0.278), vec3(0.082, 0.047, 0.169)",
+  "vec3 base = mix(vec3(0.40, 0.27, 0.72), vec3(0.28, 0.18, 0.58)",
+).replace(
   "uniform float intensity;",
   "uniform float intensity;\nuniform sampler2D masque;\nuniform float opacite;",
 ).replace(
@@ -124,15 +133,17 @@ export function TexteHolo({
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, masque);
     };
 
-    // Comme HolographicPrivacyText sans gyroscope : aucune inclinaison, seul
-    // le temps fait glisser les reflets, lentement. Ni souris, ni défilement.
+    // Pas de souris ni de défilement : le temps fait couler les reflets, et une
+    // lente bascule automatique (comme un téléphone qu'on tient dans la main)
+    // fait balayer la diffraction d'un bord à l'autre.
     const immobile = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    gl.uniform1f(uTx, 0);
-    gl.uniform1f(uTy, 0);
     const debut = performance.now();
     let raf = 0;
     const dessiner = (t: number) => {
-      gl.uniform1f(uTime, immobile ? 7 : 7 + (t - debut) / 1000);
+      const s = immobile ? 7 : 7 + ((t - debut) / 1000) * VITESSE;
+      gl.uniform1f(uTx, immobile ? 0 : Math.sin(s * 0.33) * 0.55);
+      gl.uniform1f(uTy, immobile ? 0 : Math.cos(s * 0.26) * 0.6);
+      gl.uniform1f(uTime, s);
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
