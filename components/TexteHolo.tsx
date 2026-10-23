@@ -17,10 +17,11 @@ import { FRAGMENTS, SOMMETS } from "./FoilQR";
  * boucle ne tourne que quand le titre est à l'écran ; le texte blanc reste
  * du vrai texte, sélectionnable et lu par les moteurs de recherche.
  */
-// Plus vif que dans l'app (0,45 et 1,35) : ici le texte est immense et ne
-// bouge pas sous le doigt, il faut plus d'éclat pour le même effet.
-const OPACITE = 0.62;
-const INTENSITE = 1.6;
+// Sur le site, la partie holographique doit trancher avec le blanc du début
+// du titre : le foil est posé plein (pas à 45 % sur du blanc comme dans
+// l'app), sur un pigment violet assez clair pour rester lisible sur la nuit.
+const OPACITE = 1;
+const INTENSITE = 1.25;
 /** Le temps du shader avance 2,4 fois plus vite que la montre. */
 const VITESSE = 2.4;
 
@@ -28,13 +29,16 @@ const VITESSE = 2.4;
 // blanches, le violet sombre donnait des creux gris ternes entre les reflets.
 const FRAGMENTS_TEXTE = FRAGMENTS.replace(
   "vec3 base = mix(vec3(0.141, 0.082, 0.278), vec3(0.082, 0.047, 0.169)",
-  "vec3 base = mix(vec3(0.40, 0.27, 0.72), vec3(0.28, 0.18, 0.58)",
+  "vec3 base = mix(vec3(0.62, 0.42, 1.0), vec3(0.46, 0.30, 0.92)",
 ).replace(
   "uniform float intensity;",
   "uniform float intensity;\nuniform sampler2D masque;\nuniform float opacite;",
 ).replace(
   "gl_FragColor = vec4(min(c, vec3(1.0)), 1.0);",
-  "float a = texture2D(masque, uv).a * opacite;\n  gl_FragColor = vec4(min(c, vec3(1.0)) * a, a);",
+  // Jamais de blanc ni de gris : la couleur est saturée, les reflets trop
+  // pâles virent au lilas, et la luminosité est plafonnée pour que la partie
+  // holographique tranche toujours avec le blanc du titre.
+  "c = min(c, vec3(1.0));\n  float lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n  c = clamp(mix(vec3(lu), c, 1.8), 0.0, 1.0);\n  float sat = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));\n  c = mix(vec3(0.82, 0.52, 1.0) * max(lu, 0.6), c, smoothstep(0.1, 0.4, sat));\n  lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n  c *= min(1.0, 0.7 / max(lu, 0.001));\n  float a = texture2D(masque, uv).a * opacite;\n  gl_FragColor = vec4(c * a, a);",
 );
 
 export function TexteHolo({
@@ -154,6 +158,7 @@ export function TexteHolo({
     const relancer = () => {
       construire();
       pret = true;
+      span.style.color = "transparent";
       if (!raf) raf = requestAnimationFrame(dessiner);
     };
     const observateur = new IntersectionObserver(([e]) => {
@@ -171,13 +176,14 @@ export function TexteHolo({
       cancelAnimationFrame(raf);
       observateur.disconnect();
       redim.disconnect();
+      span.style.color = "";
     };
   }, []);
 
   return (
     <h2 ref={titre} className={`relative ${className}`}>
       {avant ? <>{avant} </> : null}
-      <span ref={cible} className="text-white [text-shadow:0_1px_1px_rgba(0,0,0,0.25)]">
+      <span ref={cible} className="text-white">
         {holo}
       </span>
       <canvas ref={toile} aria-hidden className="pointer-events-none absolute inset-0 h-full w-full" />
