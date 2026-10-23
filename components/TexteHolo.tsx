@@ -13,8 +13,7 @@ import { FRAGMENTS, SOMMETS } from "./FoilQR";
  * forme des lettres : on place chaque caractère à l'endroit précis où le
  * navigateur l'a dessiné, dans un masque que le shader lit.
  *
- * Les reflets vivent avec le temps, la souris (le geste de l'app) et, au
- * doigt, le défilement, qui joue le rôle de l'inclinaison du téléphone. La
+ * Les reflets ne bougent qu'avec le temps, lentement, comme dans l'app. La
  * boucle ne tourne que quand le titre est à l'écran ; le texte blanc reste
  * du vrai texte, sélectionnable et lu par les moteurs de recherche.
  */
@@ -125,38 +124,15 @@ export function TexteHolo({
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, masque);
     };
 
+    // Comme HolographicPrivacyText sans gyroscope : aucune inclinaison, seul
+    // le temps fait glisser les reflets, lentement. Ni souris, ni défilement.
     const immobile = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let cibleX = 0, cibleY = 0, tx = 0, ty = 0, survol = false;
-    const bouger = (e: PointerEvent) => {
-      if (e.pointerType !== "mouse") return;
-      const r = h.getBoundingClientRect();
-      cibleX = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 1.6));
-      cibleY = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 1.6));
-      survol = true;
-    };
-    const quitter = () => {
-      survol = false;
-    };
-    window.addEventListener("pointermove", bouger, { passive: true });
-    h.addEventListener("pointerleave", quitter);
-
+    gl.uniform1f(uTx, 0);
+    gl.uniform1f(uTy, 0);
     const debut = performance.now();
     let raf = 0;
     const dessiner = (t: number) => {
-      const s = immobile ? 7 : 7 + (t - debut) / 1000;
-      if (!survol) {
-        // Sans souris : le défilement incline la carte, et une lente
-        // oscillation garde les reflets vivants.
-        const r = h.getBoundingClientRect();
-        const centre = (r.top + r.height / 2) / (window.innerHeight || 1) - 0.5;
-        cibleX = Math.max(-1, Math.min(1, centre * 1.8)) + Math.sin(s * 0.6) * 0.18;
-        cibleY = Math.cos(s * 0.45) * 0.4;
-      }
-      tx += (cibleX - tx) * 0.08;
-      ty += (cibleY - ty) * 0.08;
-      gl.uniform1f(uTx, tx);
-      gl.uniform1f(uTy, ty);
-      gl.uniform1f(uTime, s);
+      gl.uniform1f(uTime, immobile ? 7 : 7 + (t - debut) / 1000);
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -184,8 +160,6 @@ export function TexteHolo({
       cancelAnimationFrame(raf);
       observateur.disconnect();
       redim.disconnect();
-      window.removeEventListener("pointermove", bouger);
-      h.removeEventListener("pointerleave", quitter);
     };
   }, []);
 
