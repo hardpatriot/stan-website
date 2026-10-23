@@ -288,9 +288,13 @@ export function EmojiSphere() {
       // disponible : son rayon apparent vaut F / D0, on veut donc
       // F ≈ 2 × hauteur pour un rayon d'un peu moins d'une demi-hauteur.
       // Sans ça, les 110 emojis se tassaient en un amas cinq fois trop dense.
+      // Sur un téléphone, l'écran est deux fois plus haut que large : la
+      // sphère déborde un peu des bords et s'étire en hauteur, sinon elle
+      // tient dans un petit cercle au milieu et les visages s'entassent.
       const F = large
         ? Math.min(1.84 * h, 1.54 * w)
-        : Math.min(1.95 * h, 1.62 * w);
+        : Math.min(1.6 * h, 2.05 * w);
+      const etirement = large ? 1 : Math.min(1.35, Math.max(1, (h / w) * 0.62));
       // La zone du titre, en demi-axes d'ellipse.
       const clairiereX = large ? Math.min(w * 0.34, 380) : w * 0.47;
       const clairiereY = large ? Math.min(h * 0.25, 210) : Math.min(h * 0.19, 150);
@@ -318,7 +322,7 @@ export function EmojiSphere() {
         }
 
         const X = (F * x1) / den;
-        const Y = (-F * y2) / den;
+        const Y = (-F * y2 * etirement) / den;
 
         // Répulsion : plus l'emoji est près du curseur, plus il s'écarte.
         let cx = 0;
