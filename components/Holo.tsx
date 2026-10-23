@@ -19,34 +19,35 @@ import { FRAGMENTS, SOMMETS } from "./FoilQR";
 
 /** Le temps du shader avance 2,4 fois plus vite que la montre. */
 const VITESSE = 2.4;
-const INTENSITE = 1.25;
+const INTENSITE = 1.55;
 
 // Variante du shader pour le site :
-// - les motifs sont agrandis (plan à 70 %) et les nappes élargies, la
-//   diffraction est moins tranchante : de grands dégradés diffus, sans
-//   coupure nette d'une couleur à l'autre ;
+// - les motifs sont un peu agrandis (plan à 85 %), les nappes un peu
+//   élargies : les rubans brillants de l'app, en plus fondus ;
 // - le pigment de la carte (#241547) est éclairci en violet clair, pour que
 //   les lettres restent lisibles sur la nuit ;
-// - la couleur est saturée sans excès, les reflets trop pâles virent au lilas
-//   plutôt qu'au gris, et la luminosité est plafonnée : jamais de blanc, qui se
-//   confondrait avec le texte blanc autour (ou celui du bouton) ;
+// - les reflets gardent leur éclat : la luminosité n'est plafonnée que tout
+//   en haut, et seuls les reflets vraiment blancs virent au lilas, pour ne
+//   pas se confondre avec le texte blanc autour (ou celui du bouton) ;
 // - un masque découpe le résultat (les lettres), ou rien pour un fond plein.
 const FRAGMENTS_SITE = FRAGMENTS.replace(
   "vec2 plane = vec2(uv.x, uv.y * aspect);",
-  "vec2 plane = vec2(uv.x, uv.y * aspect) * 0.7;",
+  "vec2 plane = vec2(uv.x, uv.y * aspect) * 0.85;",
 )
   .replace(
     "float nappeA = pow(clamp(1.0 - abs(phaseA - 0.5) * 2.0, 0.0, 1.0), 2.6);",
-    "float nappeA = pow(clamp(1.0 - abs(phaseA - 0.5) * 2.0, 0.0, 1.0), 1.8);",
+    "float nappeA = pow(clamp(1.0 - abs(phaseA - 0.5) * 2.0, 0.0, 1.0), 2.2);",
   )
   .replace(
     "float nappeB = pow(clamp(1.0 - abs(phaseB - 0.5) * 2.0, 0.0, 1.0), 3.2);",
-    "float nappeB = pow(clamp(1.0 - abs(phaseB - 0.5) * 2.0, 0.0, 1.0), 2.1);",
+    "float nappeB = pow(clamp(1.0 - abs(phaseB - 0.5) * 2.0, 0.0, 1.0), 2.6);",
   )
-  .replace("vec3 raw = spectrum(order, 2.4);", "vec3 raw = spectrum(order, 1.6);")
+  .replace("vec3 raw = spectrum(order, 2.4);", "vec3 raw = spectrum(order, 2.0);")
   .replace(
     "vec3 base = mix(vec3(0.141, 0.082, 0.278), vec3(0.082, 0.047, 0.169)",
-    "vec3 base = mix(vec3(0.62, 0.42, 1.0), vec3(0.46, 0.30, 0.92)",
+    // Texte : pigment éclairci. Fond de bouton (plein) : le violet profond
+    // d'origine de la carte, pour que le texte blanc ressorte.
+    "vec3 base = mix(mix(vec3(0.50, 0.33, 0.92), vec3(0.141, 0.082, 0.278), plein), mix(vec3(0.36, 0.22, 0.80), vec3(0.082, 0.047, 0.169), plein)",
   )
   .replace(
     "uniform float intensity;",
@@ -58,7 +59,7 @@ const FRAGMENTS_SITE = FRAGMENTS.replace(
       "  float lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
       "  c = clamp(mix(vec3(lu), c, saturation), 0.0, 1.0);\n" +
       "  float sat = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));\n" +
-      "  c = mix(vec3(0.82, 0.52, 1.0) * max(lu, 0.6), c, smoothstep(0.02, 0.22, sat));\n" +
+      "  c = mix(c, mix(vec3(0.82, 0.52, 1.0) * max(lu, 0.6), c, smoothstep(0.0, 0.12, sat)), 1.0 - plein);\n" +
       "  lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
       "  c *= min(1.0, plafond / max(lu, 0.001));\n" +
       "  float a = mix(texture2D(masque, uv).a, 1.0, plein);\n" +
@@ -266,7 +267,7 @@ export function Holo({ children, className = "" }: { children: string; className
 
     const creer = () => {
       const canvas = nouveauCanevas();
-      const m = moteur(canvas, false, 0.7, 2.0);
+      const m = moteur(canvas, false, 0.9, 1.35);
       if (!m) return null;
       hote.appendChild(canvas);
       // Le dégradé de secours s'efface, le shader prend le relais.
@@ -301,9 +302,9 @@ export function HoloFond() {
     const creer = () => {
       const canvas = nouveauCanevas();
       Object.assign(canvas.style, { inset: "0", width: "100%", height: "100%" });
-      // Plus sombre et plus saturé que sur les textes : le texte blanc du
-      // bouton ressort, et le fond reste franchement coloré.
-      const m = moteur(canvas, true, 0.5, 2.8);
+      // Sur le violet profond de la carte, reflets vifs, sans plafond serré :
+      // le texte blanc du bouton ressort sur les creux sombres.
+      const m = moteur(canvas, true, 0.85, 1.3);
       if (!m) return null;
       place.appendChild(canvas);
       return { canvas, m };
