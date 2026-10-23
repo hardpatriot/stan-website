@@ -62,7 +62,7 @@ export function EcranVerrouille() {
   }, []);
 
   return (
-    <section ref={scene} className="relative flex flex-col items-center overflow-hidden px-5 pt-10 pb-24 sm:pt-16">
+    <section ref={scene} className="relative z-10 -mt-[10svh] flex flex-col items-center overflow-hidden px-5 pt-4 pb-4 sm:pt-8 sm:pb-6">
       {/* L'heure, comme un écran verrouillé */}
       <p className="b-attend text-center text-[15px] font-semibold tracking-wide text-white/55 capitalize">
         {t.jour}
@@ -74,7 +74,7 @@ export function EcranVerrouille() {
       </p>
 
       {/* Les notifications, empilées comme dans le centre de notifications */}
-      <div className="relative mt-10 flex w-full max-w-[420px] flex-col gap-2.5">
+      <div className="relative mt-7 flex w-full max-w-[420px] flex-col gap-2.5">
         {NOTIFS.map((n, i) => (
           <div
             key={i}

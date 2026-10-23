@@ -17,7 +17,7 @@ const RANKING = [
 
 export function CustomQuestions() {
   return (
-    <section className="relative px-5 py-14 sm:px-8 sm:py-24 lg:py-28">
+    <section className="relative px-5 py-8 sm:px-8 sm:py-12 lg:py-14">
       <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1fr_1.05fr] lg:gap-16">
         {/* Le discours */}
         <div className="min-w-0">

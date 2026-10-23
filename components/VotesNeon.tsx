@@ -119,7 +119,7 @@ function FilDeVotes() {
 
   const plusRecent = fil[0]?.id;
   return (
-    <div ref={zone} className="relative h-[470px] sm:h-[500px]">
+    <div ref={zone} className="relative h-[420px] sm:h-[440px]">
       {fil.map((v, rang) => {
         const sortie = rang >= VISIBLES;
         const echelle = 1 - Math.min(rang, VISIBLES) * 0.075;
@@ -152,7 +152,7 @@ function FilDeVotes() {
 
 export function VotesNeon() {
   return (
-    <section className="relative px-5 py-14 sm:px-8 sm:py-24">
+    <section className="relative px-5 py-8 sm:px-8 sm:py-12">
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <Reveal className="min-w-0">
           <h2 className="display text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
@@ -165,7 +165,7 @@ export function VotesNeon() {
 
         <div className="min-w-0">
           <FilDeVotes />
-          <div className="mt-10 flex justify-center lg:hidden">
+          <div className="mt-4 flex justify-center lg:hidden">
             <DownloadButton look="verre" label="Découvre qui a voté pour toi" />
           </div>
         </div>

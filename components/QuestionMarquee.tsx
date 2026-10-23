@@ -188,7 +188,7 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
 
 export function QuestionMarquee() {
   return (
-    <section className="relative overflow-hidden py-10 sm:py-16">
+    <section className="relative overflow-hidden py-6 sm:py-10">
       <Reveal className="px-5 sm:px-8">
         <div className="mx-auto max-w-6xl">
           <p className="text-center text-sm font-black tracking-[0.18em] text-lavender uppercase">

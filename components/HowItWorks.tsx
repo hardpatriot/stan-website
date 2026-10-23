@@ -32,7 +32,7 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="relative px-5 py-14 sm:px-8 sm:py-24 lg:py-28">
+    <section className="relative px-5 py-8 sm:px-8 sm:py-12 lg:py-14">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="text-sm font-black tracking-[0.18em] text-rose uppercase">

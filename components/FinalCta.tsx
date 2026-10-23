@@ -4,7 +4,7 @@ import { Reveal } from "./Reveal";
 
 export function FinalCta() {
   return (
-    <section className="relative px-5 py-20 sm:px-8 sm:py-28 lg:py-32">
+    <section className="relative px-5 py-12 sm:px-8 sm:py-16 lg:py-20">
       <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
         <Reveal>
           {/* L'icône posée sur la nuit : le fond sombre de l'icône se fondait
