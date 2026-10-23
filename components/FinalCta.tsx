@@ -30,11 +30,10 @@ export function FinalCta() {
           </div>
         </Reveal>
 
-        {/* La phrase de fin de la fiche App Store. */}
         <Reveal delay={90}>
           <h2 className="display mt-10 text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
-            Stan tes potes.{" "}
-            <Holo>{"Découvre ce qu'ils pensent de toi."}</Holo>
+            Stan, c&apos;est toi{" "}
+            <Holo>{"vu par tes potes ou ton Crush\u00a0?"}</Holo>
           </h2>
         </Reveal>
 
