@@ -8,25 +8,21 @@ const STEPS = [
     icon: "ecole",
     title: "Rejoins ton école",
     body: "Tu retrouves ta classe et les potes qui sont déjà sur Stan.",
-    couleurs: ["#A78BFA", "#F472B6"] as [string, string],
   },
   {
     icon: "amis",
     title: "Ajoute tes amis",
     body: "Tes contacts, tes camarades. Que des gens que tu connais en vrai.",
-    couleurs: ["#0DD6FF", "#3D6EFF"] as [string, string],
   },
   {
     icon: "questions",
     title: "Réponds aux questions",
     body: "Des questions courtes sur tes potes. Que des trucs bien, jamais l'inverse.",
-    couleurs: ["#FBBF24", "#FB7185"] as [string, string],
   },
   {
     icon: "notif",
     title: "Reçois la notif",
     body: "Quelqu'un t'a choisi. Tu le sais tout de suite. Tu ne sais pas qui.",
-    couleurs: ["#FF2480", "#9140FF"] as [string, string],
   },
 ];
 
@@ -39,8 +35,10 @@ export function HowItWorks() {
             Ça marche comment
           </p>
           <h2 className="display mt-4 max-w-2xl text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
-            Quatre étapes. Après,{" "}
-            <span className="text-vote">t&apos;attends la notif.</span>
+            Quatre étapes,{" "}
+            <span className="text-vote">
+              après t&apos;attends le vote de tes potes ou de ton Crush&nbsp;!
+            </span>
           </h2>
         </Reveal>
 
@@ -59,7 +57,6 @@ export function HowItWorks() {
                 numero={i + 1}
                 titre={step.title}
                 corps={step.body}
-                couleurs={step.couleurs}
               />
             </Reveal>
           ))}
