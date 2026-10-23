@@ -25,13 +25,13 @@ function heureLocale() {
 }
 
 export function EcranVerrouille() {
-  // Rien ne bouge tant que le haut de la pile n'est pas bien entré dans
-  // l'écran (au quart inférieur) : l'heure apparaît, puis les notifications
+  // L'heure est là d'emblée : sur téléphone, elle dépasse sous la sphère et
+  // annonce la suite. Rien ne bouge tant que le haut de la pile n'est pas
+  // bien entré dans l'écran (au quart inférieur) : les notifications
   // surgissent une à une, toutes les 0,75 s, et restent. Une seule fois.
   // Une classe posée par carte : l'animation est en CSS, sur la
   // transformation et l'opacité.
   const notifs = useRef<(HTMLDivElement | null)[]>([]);
-  const heure = useRef<HTMLDivElement>(null);
   const pile = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,7 +43,6 @@ export function EcranVerrouille() {
       ([e]) => {
         if (!e.isIntersecting) return;
         io.disconnect();
-        heure.current?.classList.add("b-pop");
         notifs.current.forEach((n, i) => {
           if (n) minuteurs.push(setTimeout(() => n.classList.add("b-pop"), 400 + i * 750));
         });
@@ -71,9 +70,9 @@ export function EcranVerrouille() {
 
   return (
     <section className="relative">
-      <div className="flex min-h-[100svh] flex-col items-center justify-center px-5 py-16">
+      <div className="flex flex-col items-center px-5 pt-3 pb-16 sm:min-h-[100svh] sm:justify-center sm:py-16">
       {/* L'heure, comme un écran verrouillé */}
-      <div ref={heure} className="b-attend flex flex-col items-center">
+      <div className="flex flex-col items-center">
         <p className="text-center text-[15px] font-semibold tracking-wide text-white/55 capitalize">{t.jour}</p>
         <p className="mt-1 text-center text-[clamp(4.6rem,20vw,8.5rem)] leading-none font-light tracking-[-0.04em] text-white/90 tabular-nums">
           {t.heure}

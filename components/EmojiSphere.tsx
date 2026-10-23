@@ -94,19 +94,11 @@ const RESSORT_RAIDEUR = 0.09;
 const RESSORT_FREIN = 0.8;
 
 /**
- * Longueur de la section, et part de cette longueur consacrée à la traversée.
- *
- * L'écran reste épinglé pendant (hauteur de section − 1 écran), donc
- * l'avancement va de 0 à 0,6 ici. La traversée se termine à 0,5 : il reste
- * un dixième d'écran avant que le héros ne prenne la suite, juste de quoi
- * ne pas enchaîner brutalement.
- */
-const HAUTEUR_SECTION = "125svh";
-/**
- * L'écran reste épinglé pendant (hauteur de section − 1 écran), soit 0,40 ici.
- * On règle la fin de traversée sur exactement cette valeur : la sphère finit
- * de se dissoudre au moment précis où l'épinglage lâche, donc il n'y a jamais
- * d'écran épinglé qui ne montre plus rien.
+ * Sur ordinateur, l'écran reste épinglé pendant (hauteur de section −
+ * hauteur de la scène), soit un quart d'écran (125 − 100). La fin de
+ * traversée est réglée sur exactement cette valeur : la sphère finit de se
+ * dissoudre au moment précis où l'épinglage lâche. Sur téléphone, rien
+ * n'est épinglé : la sphère se dissout pendant qu'elle remonte.
  */
 const S_FIN = 0.25;
 
@@ -288,13 +280,11 @@ export function EmojiSphere() {
       // disponible : son rayon apparent vaut F / D0, on veut donc
       // F ≈ 2 × hauteur pour un rayon d'un peu moins d'une demi-hauteur.
       // Sans ça, les 110 emojis se tassaient en un amas cinq fois trop dense.
-      // Sur un téléphone, l'écran est deux fois plus haut que large : la
-      // sphère déborde un peu des bords et s'étire en hauteur, sinon elle
-      // tient dans un petit cercle au milieu et les visages s'entassent.
+      // Sur un téléphone, la sphère touche presque les bords et ses visages
+      // sont plus petits : elle reste ronde sans que les visages s'entassent.
       const F = large
         ? Math.min(1.84 * h, 1.54 * w)
-        : Math.min(1.6 * h, 2.05 * w);
-      const etirement = large ? 1 : Math.min(1.35, Math.max(1, (h / w) * 0.62));
+        : Math.min(1.6 * h, 1.85 * w);
       // La zone du titre, en demi-axes d'ellipse.
       const clairiereX = large ? Math.min(w * 0.34, 380) : w * 0.47;
       const clairiereY = large ? Math.min(h * 0.25, 210) : Math.min(h * 0.19, 150);
@@ -322,7 +312,7 @@ export function EmojiSphere() {
         }
 
         const X = (F * x1) / den;
-        const Y = (-F * y2 * etirement) / den;
+        const Y = (-F * y2) / den;
 
         // Répulsion : plus l'emoji est près du curseur, plus il s'écarte.
         let cx = 0;
@@ -485,13 +475,11 @@ export function EmojiSphere() {
   }, []);
 
   return (
-    <section
-      ref={section}
-      className="relative"
-      style={{ height: HAUTEUR_SECTION }}
-    >
+    // Sur téléphone, la scène laisse dépasser le haut de la section suivante
+    // (l'heure de l'écran verrouillé) : on voit qu'il y a une suite.
+    <section ref={section} className="relative h-[85svh] sm:h-[125svh]">
       <div
-        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:62px] sm:[--taille-emoji:96px]"
+        className="sticky top-0 flex h-[85svh] flex-col overflow-hidden [--taille-emoji:50px] sm:h-[100svh] sm:[--taille-emoji:96px]"
       >
         {/* La sphère occupe tout l'espace restant : son centre se place donc
             naturellement sous le texte, quelle que soit la hauteur d'écran. */}
