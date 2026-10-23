@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Holo } from "./Holo";
 import { DownloadButton } from "./DownloadButton";
 import { Reveal } from "./Reveal";
 
@@ -33,9 +34,7 @@ export function FinalCta() {
         <Reveal delay={90}>
           <h2 className="display mt-10 text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
             Stan tes potes.{" "}
-            <span className="text-vote">
-              Découvre ce qu&apos;ils pensent de toi.
-            </span>
+            <Holo>{"Découvre ce qu'ils pensent de toi."}</Holo>
           </h2>
         </Reveal>
 

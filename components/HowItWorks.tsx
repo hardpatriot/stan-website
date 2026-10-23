@@ -1,4 +1,5 @@
 import { CarrouselEtapes } from "./CarrouselEtapes";
+import { Holo } from "./Holo";
 import { Reveal } from "./Reveal";
 import { StepCard } from "./StepCard";
 
@@ -31,14 +32,12 @@ export function HowItWorks() {
     <section className="relative px-5 py-8 sm:px-8 sm:py-12 lg:py-14">
       <div className="mx-auto max-w-6xl">
         <Reveal>
-          <p className="text-sm font-black tracking-[0.18em] text-rose uppercase">
+          <p className="text-sm font-black tracking-[0.18em] text-lavender uppercase">
             Ça marche comment
           </p>
           <h2 className="display mt-4 max-w-2xl text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
             Quatre étapes,{" "}
-            <span className="text-vote">
-              après t&apos;attends le vote de tes potes ou de ton Crush&nbsp;!
-            </span>
+            <Holo>{"après t'attends le vote de tes potes ou de ton Crush\u00a0!"}</Holo>
           </h2>
         </Reveal>
 

@@ -14,9 +14,6 @@ const NOTIFS = [
   { quand: "il y a 9 min", corps: "Elle a pensé à toi… viens voir" },
   { quand: "il y a 17 min", corps: "Quelqu'un a pensé à toi… viens voir" },
   { quand: "il y a 34 min", corps: "Il a pensé à toi… viens voir" },
-  { quand: "il y a 1 h", corps: "Elle a pensé à toi… viens voir" },
-  { quand: "il y a 2 h", corps: "Il a pensé à toi… viens voir" },
-  { quand: "il y a 3 h", corps: "Quelqu'un a pensé à toi… viens voir" },
 ];
 
 function heureLocale() {

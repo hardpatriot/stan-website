@@ -1,5 +1,6 @@
 "use client";
 
+import { Holo } from "./Holo";
 import { useEffect, useRef, useState } from "react";
 import { DownloadButton } from "./DownloadButton";
 import { Reveal } from "./Reveal";
@@ -156,7 +157,7 @@ export function VotesNeon() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
         <Reveal className="min-w-0">
           <h2 className="display text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
-            Des votes. <span className="text-vote">Mais de qui&nbsp;?</span>
+            Des votes. <Holo>{"Mais de qui\u00a0?"}</Holo>
           </h2>
           <div className="mt-9 hidden lg:block">
             <DownloadButton look="verre" label="Découvre qui a voté pour toi" />

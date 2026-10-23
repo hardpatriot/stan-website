@@ -1,5 +1,6 @@
 "use client";
 
+import { Holo } from "./Holo";
 import { useEffect, useRef } from "react";
 import { DownloadButton } from "./DownloadButton";
 import { VISAGES } from "./visages";
@@ -521,7 +522,7 @@ export function EmojiSphere() {
                   dans sa zone s'estompent, la sphère garde sa forme. */}
               <h1 className="display text-[clamp(2.4rem,8vw,5.2rem)] text-white">
                 <span className="block [text-shadow:0_6px_40px_rgba(11,8,24,0.85)]">Ils ont voté.</span>
-                <span className="text-vote block pb-[0.08em]">Tu vas savoir.</span>
+                <Holo className="block pb-[0.08em]">Tu vas savoir.</Holo>
               </h1>
               <div className="pointer-events-auto mt-7 sm:mt-9">
                 <DownloadButton label="Télécharge Stan" />

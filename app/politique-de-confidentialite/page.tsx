@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Holo } from "@/components/Holo";
 import { LegalPage } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function Page() {
     <LegalPage
       title={
         <>
-          Politique de <span className="text-vote">confidentialité</span>
+          Politique de <Holo>confidentialité</Holo>
         </>
       }
       updated="12 octobre 2026"

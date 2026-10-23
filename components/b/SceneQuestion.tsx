@@ -1,5 +1,6 @@
 "use client";
 
+import { Holo } from "../Holo";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { FenetreQrInvitation, numeroSaisi, ouvrirMessages } from "../Invitation";
@@ -52,7 +53,7 @@ const CHOISI = 1;
 const LEGENDES = [
   { a: 0.0, b: 0.34, haut: "Chaque jour,", bas: "des questions sur tes potes." },
   { a: 0.34, b: 0.66, haut: "Tu choisis.", bas: "Ton nom reste masqué." },
-  { a: 0.66, b: 1.01, haut: "Toi aussi, on te choisit.", bas: "Peut-être la personne à qui tu penses…" },
+  { a: 0.66, b: 1.01, haut: "Toi aussi, on te choisit.", bas: "Peut-être ton Crush…" },
 ];
 
 function BarreEtat() {
@@ -270,7 +271,9 @@ export function SceneQuestion() {
               style={{ opacity: i === 0 ? 1 : 0 }}
             >
               <p className="display text-[clamp(2rem,7.5vw,4.4rem)] text-white">{l.haut}</p>
-              <p className="display text-vote text-[clamp(2rem,7.5vw,4.4rem)]">{l.bas}</p>
+              <p className="display text-[clamp(2rem,7.5vw,4.4rem)]">
+                <Holo>{l.bas}</Holo>
+              </p>
             </div>
           ))}
         </div>

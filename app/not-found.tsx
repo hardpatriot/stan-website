@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Holo } from "@/components/Holo";
 import { Backdrop } from "@/components/Backdrop";
 import { Footer } from "@/components/Footer";
 import { Nav } from "@/components/Nav";
@@ -12,7 +13,7 @@ export default function NotFound() {
         <div className="mx-auto flex max-w-lg flex-col items-center text-center">
           <span className="text-6xl">🧢</span>
           <h1 className="display mt-8 text-[clamp(2.4rem,8vw,4rem)] text-white text-balance">
-            Cette page n&apos;existe <span className="text-vote">pas.</span>
+            Cette page n&apos;existe <Holo>pas.</Holo>
           </h1>
           <p className="mt-5 text-[17px] leading-relaxed font-medium text-white/55">
             Elle a peut-être changé d&apos;adresse, ou le lien s&apos;est perdu
