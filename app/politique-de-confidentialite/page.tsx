@@ -16,7 +16,7 @@ export default function Page() {
           Politique de <span className="text-vote">confidentialité</span>
         </>
       }
-      updated="12 octobre 2026"
+      updated="23 octobre 2026"
       intro={
         <>
           <p className="mb-4">
@@ -268,6 +268,13 @@ export default function Page() {
       <p>
         Nous conservons vos données uniquement aussi longtemps que nécessaire
         pour fournir nos services, sauf obligation légale contraire.
+      </p>
+      <p>
+        En cas de bannissement définitif pour non-respect des règles, nous
+        gardons une empreinte irréversible de votre numéro de téléphone et de
+        votre appareil (Apple DeviceCheck sur iPhone, identifiant de
+        l&apos;appareil sur Android), uniquement pour empêcher la création
+        d&apos;un nouveau compte.
       </p>
 
       <h2>Vos droits</h2>
