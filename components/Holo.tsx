@@ -27,8 +27,8 @@ const INTENSITE = 1.55;
 // - le pigment de la carte (#241547) est éclairci en violet clair, pour que
 //   les lettres restent lisibles sur la nuit ;
 // - les reflets gardent leur éclat : la luminosité n'est plafonnée que tout
-//   en haut, et seuls les reflets vraiment blancs virent au lilas, pour ne
-//   pas se confondre avec le texte blanc autour (ou celui du bouton) ;
+//   en haut, et seuls les reflets vraiment blancs virent au lilas (au
+//   rose-violet sur un bouton), pour ne pas se confondre avec le texte blanc ;
 // - un masque découpe le résultat (les lettres), ou rien pour un fond plein.
 const FRAGMENTS_SITE = FRAGMENTS.replace(
   "vec2 plane = vec2(uv.x, uv.y * aspect);",
@@ -59,7 +59,7 @@ const FRAGMENTS_SITE = FRAGMENTS.replace(
       "  float lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
       "  c = clamp(mix(vec3(lu), c, saturation), 0.0, 1.0);\n" +
       "  float sat = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));\n" +
-      "  c = mix(c, mix(vec3(0.82, 0.52, 1.0) * max(lu, 0.6), c, smoothstep(0.0, 0.12, sat)), 1.0 - plein);\n" +
+      "  c = mix(mix(vec3(0.82, 0.52, 1.0), vec3(0.86, 0.32, 1.0), plein) * max(lu, 0.6), c, smoothstep(0.0, mix(0.12, 0.34, plein), sat));\n" +
       "  lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
       "  c *= min(1.0, plafond / max(lu, 0.001));\n" +
       "  float a = mix(texture2D(masque, uv).a, 1.0, plein);\n" +
@@ -302,9 +302,10 @@ export function HoloFond() {
     const creer = () => {
       const canvas = nouveauCanevas();
       Object.assign(canvas.style, { inset: "0", width: "100%", height: "100%" });
-      // Sur le violet profond de la carte, reflets vifs, sans plafond serré :
-      // le texte blanc du bouton ressort sur les creux sombres.
-      const m = moteur(canvas, true, 0.85, 1.3);
+      // Sur le violet profond de la carte, reflets vifs mais jamais blancs :
+      // les zones pâles virent au rose-violet et la luminosité est un peu
+      // plafonnée, pour que le texte blanc du bouton ressorte partout.
+      const m = moteur(canvas, true, 0.62, 1.6);
       if (!m) return null;
       place.appendChild(canvas);
       return { canvas, m };
