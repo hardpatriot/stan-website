@@ -1,6 +1,5 @@
 "use client";
 
-import { HoloFond } from "./Holo";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { Emoji } from "./EmojiSprite";
@@ -204,11 +203,9 @@ export function DownloadButton({
         onClick={ouvrir}
         className={`group relative inline-flex items-center justify-center gap-3 overflow-hidden rounded-2xl px-8 py-4.5 text-base font-black tracking-tight text-white shadow-[0_0_0_1px_rgba(255,255,255,0.22),0_18px_50px_-14px_rgba(145,64,255,0.7)] transition-transform duration-300 will-change-transform hover:scale-[1.03] active:scale-[0.98] sm:text-lg ${className}`}
       >
-        {/* Le gradient du vote, en secours, puis le reflet holographique des
-            titres par-dessus, calculé en direct */}
-        <span className="absolute inset-0 bg-[linear-gradient(105deg,#d91cbd_0%,#e6006e_58%,#ff7a3d_120%)]" />
-        <HoloFond />
-        <span className="relative flex items-center gap-3 [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]">
+        {/* Le foil de la carte QR de l'app, en fond, comme le bouton en verre */}
+        <FoilQR className="absolute inset-0" />
+        <span className="relative flex items-center gap-3 [text-shadow:0_1px_3px_rgba(0,0,0,0.55)]">
           {iOS ? (
             <AppleGlyph className="h-5 w-5" />
           ) : plateforme === "android" ? (
