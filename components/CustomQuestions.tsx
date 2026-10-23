@@ -1,6 +1,7 @@
 import { Emoji } from "./EmojiSprite";
 import { GifMini } from "./GifMini";
 import { Reveal } from "./Reveal";
+import { TexteHolo } from "./TexteHolo";
 
 /**
  * Reprend l'écran « Crée ta propre question » : le champ limité à 120
@@ -26,10 +27,11 @@ export function CustomQuestions() {
             <p className="text-sm font-black tracking-[0.18em] text-cyan uppercase">
               Tes questions
             </p>
-            <h2 className="display mt-4 text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
-              Balance ta meilleure ref.{" "}
-              <span className="texte-foil">Le top 3 part dans les questions de ton école.</span>
-            </h2>
+            <TexteHolo
+              className="display mt-4 text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance"
+              avant="Balance ta meilleure ref."
+              holo="Le top 3 part dans les questions de ton école."
+            />
           </Reveal>
         </div>
 

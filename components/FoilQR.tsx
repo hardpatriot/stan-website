@@ -16,12 +16,12 @@ import { useEffect, useRef } from "react";
  * de l'écran : aucun agrandissement, rien de flou. Il s'arrête hors de
  * l'écran, et reste immobile pour qui demande moins d'animations.
  */
-const SOMMETS = `
+export const SOMMETS = `
 attribute vec2 p;
 void main() { gl_Position = vec4(p, 0.0, 1.0); }
 `;
 
-const FRAGMENTS = `
+export const FRAGMENTS = `
 precision highp float;
 uniform vec2 size;
 uniform float tiltX;
