@@ -19,8 +19,9 @@ const AGES = ["1m", "3m", "1h", "2h", "5h", "1j"];
 /** Qui vote, dans l'ordre d'arrivée : un motif irrégulier, pour faire vrai. */
 const SUITE = ["Il", "Elle", "Iel", "Il", "Elle", "Il", "Elle", "Iel", "Il", "Elle"] as const;
 const VISIBLES = 5;
-/** Une nouvelle notification toutes les 3 s. */
-const CADENCE = 3000;
+/** Une nouvelle notification toutes les 2 s, la première dès 0,4 s. */
+const CADENCE = 2000;
+const PREMIERE = 400;
 
 const TEINTES = {
   Il: { icone: "/notif-boy.webp", halo: "rgba(255,36,128,0.5)" },
@@ -84,9 +85,10 @@ function CarteVote({
 }
 
 /**
- * Le fil vivant : toutes les 2,6 s, un vote tombe en haut, pousse les autres
+ * Le fil vivant : toutes les 2 s, un vote tombe en haut, pousse les autres
  * vers le bas et la plus ancienne s'efface. Les cartes glissent d'une place à
  * l'autre (translation et échelle inférieure à 1 seulement : rien ne floute).
+ * Le premier vote tombe dès que la pile est à moitié à l'écran.
  * Tout s'arrête hors de l'écran, et pour qui a demandé moins d'animations.
  */
 function FilDeVotes() {
@@ -100,6 +102,7 @@ function FilDeVotes() {
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let minuterie: ReturnType<typeof setInterval> | undefined;
+    let depart: ReturnType<typeof setTimeout> | undefined;
     let suivant = VISIBLES;
     const tic = () =>
       setFil((f) => {
@@ -107,12 +110,25 @@ function FilDeVotes() {
         // Une de plus que visible : la dernière reste le temps de s'effacer.
         return [{ id, qui: SUITE[id % SUITE.length] }, ...f].slice(0, VISIBLES + 1);
       });
-    const observateur = new IntersectionObserver(([e]) => {
-      clearInterval(minuterie);
-      if (e.isIntersecting && !document.hidden) minuterie = setInterval(tic, CADENCE);
-    });
+    let enCours = false;
+    const observateur = new IntersectionObserver(
+      ([e]) => {
+        const visible = e.intersectionRatio >= 0.5 && !document.hidden;
+        if (visible === enCours) return;
+        enCours = visible;
+        clearTimeout(depart);
+        clearInterval(minuterie);
+        if (!visible) return;
+        depart = setTimeout(() => {
+          tic();
+          minuterie = setInterval(tic, CADENCE);
+        }, PREMIERE);
+      },
+      { threshold: [0, 0.5] },
+    );
     observateur.observe(el);
     return () => {
+      clearTimeout(depart);
       clearInterval(minuterie);
       observateur.disconnect();
     };

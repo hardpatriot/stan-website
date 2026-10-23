@@ -36,7 +36,7 @@ export function HowItWorks() {
             Ça marche comment
           </p>
           <h2 className="display mt-4 max-w-2xl text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
-            Quatre étapes,{" "}
+            4 étapes,{" "}
             <Holo>{"après t'attends le vote de tes potes ou de ton Crush\u00a0!"}</Holo>
           </h2>
         </Reveal>
