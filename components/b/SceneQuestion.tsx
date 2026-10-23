@@ -52,7 +52,7 @@ const CHOISI = 1;
 const LEGENDES = [
   { a: 0.0, b: 0.34, haut: "Chaque jour,", bas: "des questions sur tes potes." },
   { a: 0.34, b: 0.66, haut: "Tu choisis.", bas: "Ton nom reste masqué." },
-  { a: 0.66, b: 1.01, haut: "Et pendant ce temps,", bas: "eux votent pour toi." },
+  { a: 0.66, b: 1.01, haut: "Et si c'était", bas: "la personne à qui tu penses\u00a0?" },
 ];
 
 function BarreEtat() {
