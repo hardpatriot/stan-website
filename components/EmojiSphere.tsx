@@ -290,7 +290,7 @@ export function EmojiSphere() {
       const F = large
         ? Math.min(1.84 * h, 1.54 * w)
         : Math.min(1.95 * h, 1.62 * w);
-      // La clairière autour du titre, en demi-axes d'ellipse.
+      // La zone du titre, en demi-axes d'ellipse.
       const clairiereX = large ? Math.min(w * 0.34, 380) : w * 0.47;
       const clairiereY = large ? Math.min(h * 0.25, 210) : Math.min(h * 0.19, 150);
 
@@ -322,21 +322,16 @@ export function EmojiSphere() {
         // Répulsion : plus l'emoji est près du curseur, plus il s'écarte.
         let cx = 0;
         let cy2 = 0;
-        // La clairière : les visages de la moitié avant s'écartent du titre,
-        // qui reste lisible au centre. Elle se referme quand on entre dans
-        // la sphère au défilement.
-        const avantPlan = palier(-0.35, 0.25, z2) * attenue;
+        // Le titre au centre reste lisible sans déformer la sphère : les
+        // bulles ne bougent pas, celles qui passent devant ou derrière le
+        // titre s'estompent simplement, avec un bord doux. Plus rien quand
+        // on entre dans la sphère au défilement.
         let voile = 1;
-        if (avantPlan > 0) {
-          const e = Math.hypot(X / clairiereX, Y / clairiereY) || 0.001;
-          if (e < 1) {
-            const f = (1 / e - 1) * 0.92 * avantPlan;
-            cx += X * f;
-            cy2 += Y * f;
-          }
-        } else if (Math.hypot(X / clairiereX, Y / clairiereY) < 1) {
-          // Derrière le titre : à peine visibles, pour ne pas le brouiller.
-          voile = 0.35 + 0.65 * (1 - attenue);
+        const e = Math.hypot(X / clairiereX, Y / clairiereY);
+        if (e < 1) {
+          const plancher = z2 > 0 ? 0.16 : 0.3;
+          const dedans = 1 - palier(0.55, 1, e);
+          voile = 1 - (1 - plancher) * dedans * attenue;
         }
         // L'onde du doigt : un anneau qui s'élargit en s'affaiblissant.
         const age = t - onde.t0;
@@ -522,8 +517,8 @@ export function EmojiSphere() {
             className="pointer-events-none absolute inset-0 z-[3000] flex items-center justify-center"
           >
             <div className="flex flex-col items-center px-5 text-center">
-              {/* Le titre au cœur de la sphère : les visages de devant
-                  s'écartent autour de lui (voir CLAIRIERE). */}
+              {/* Le titre au cœur de la sphère : les bulles qui passent
+                  dans sa zone s'estompent, la sphère garde sa forme. */}
               <h1 className="display text-[clamp(2.4rem,8vw,5.2rem)] text-white">
                 <span className="block [text-shadow:0_6px_40px_rgba(11,8,24,0.85)]">Ils ont voté.</span>
                 <span className="text-vote block pb-[0.08em]">Tu vas savoir.</span>
