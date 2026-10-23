@@ -12,6 +12,11 @@ const NOTIFS = [
   { quand: "maintenant", corps: "Elle a pensé à toi… viens voir" },
   { quand: "il y a 2 min", corps: "Il a pensé à toi… viens voir" },
   { quand: "il y a 9 min", corps: "Elle a pensé à toi… viens voir" },
+  { quand: "il y a 17 min", corps: "Quelqu'un a pensé à toi… viens voir" },
+  { quand: "il y a 34 min", corps: "Il a pensé à toi… viens voir" },
+  { quand: "il y a 1 h", corps: "Elle a pensé à toi… viens voir" },
+  { quand: "il y a 2 h", corps: "Il a pensé à toi… viens voir" },
+  { quand: "il y a 3 h", corps: "Quelqu'un a pensé à toi… viens voir" },
 ];
 
 function heureLocale() {
@@ -23,21 +28,24 @@ function heureLocale() {
 }
 
 export function EcranVerrouille() {
-  // Les notifications ne tombent qu'une fois l'écran sous les yeux.
+  // Chaque notification surgit quand elle entre à l'écran, une à une, au
+  // rythme du défilement. Une seule classe ajoutée par carte, une seule fois :
+  // l'animation est en CSS, sur la transformation et l'opacité.
   const scene = useRef<HTMLElement>(null);
   useEffect(() => {
     const el = scene.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          el.classList.add("b-vu");
-          obs.disconnect();
-        }
+      (entrees) => {
+        entrees.forEach((e) => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add("b-pop");
+          obs.unobserve(e.target);
+        });
       },
-      { threshold: 0.35 },
+      { rootMargin: "0px 0px -14% 0px" },
     );
-    obs.observe(el);
+    el.querySelectorAll(".b-attend").forEach((n) => obs.observe(n));
     return () => obs.disconnect();
   }, []);
 
@@ -54,14 +62,13 @@ export function EcranVerrouille() {
   }, []);
 
   return (
-    <section ref={scene} className="b-attente relative flex flex-col items-center overflow-hidden px-5 pt-10 pb-20 sm:pt-16">
+    <section ref={scene} className="relative flex flex-col items-center overflow-hidden px-5 pt-10 pb-24 sm:pt-16">
       {/* L'heure, comme un écran verrouillé */}
-      <p className="b-rise text-center text-[15px] font-semibold tracking-wide text-white/55 capitalize">
+      <p className="b-attend text-center text-[15px] font-semibold tracking-wide text-white/55 capitalize">
         {t.jour}
       </p>
       <p
-        className="b-rise mt-1 text-center text-[clamp(5.2rem,22vw,9.5rem)] leading-none font-light tracking-[-0.04em] text-white/90 tabular-nums"
-        style={{ animationDelay: "80ms" }}
+        className="b-attend mt-1 text-center text-[clamp(5.2rem,22vw,9.5rem)] leading-none font-light tracking-[-0.04em] text-white/90 tabular-nums"
       >
         {t.heure}
       </p>
@@ -71,8 +78,8 @@ export function EcranVerrouille() {
         {NOTIFS.map((n, i) => (
           <div
             key={i}
-            className="b-notif flex items-start gap-3 rounded-[22px] px-3.5 py-3"
-            style={{ animationDelay: `${500 + i * 800}ms`, zIndex: 10 - i }}
+            className="b-notif b-attend flex items-start gap-3 rounded-[22px] px-3.5 py-3"
+            style={{ zIndex: 20 - i }}
           >
             <Image
               src="/cap-180.png"

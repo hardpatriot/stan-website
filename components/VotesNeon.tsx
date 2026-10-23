@@ -8,7 +8,7 @@ import { Reveal } from "./Reveal";
  * La pile de notifications des écrans App Store, refaite en vrai avec les
  * éléments de l'app : les icônes icon_stan_boy et icon_stan_girl, et le verre
  * de VotesNotificationGlassCard (mêmes teintes, mêmes accents). Les cartes
- * rapetissent en s'éloignant.
+ * rapetissent en s'éloignant, bien droites et centrées.
  *
  * Seules des transformations 2D (translation, échelle inférieure à 1) : le
  * texte reste net, aucune couche n'est agrandie.
@@ -119,7 +119,7 @@ function FilDeVotes() {
 
   const plusRecent = fil[0]?.id;
   return (
-    <div ref={zone} className="relative h-[470px] -rotate-2 sm:h-[500px]">
+    <div ref={zone} className="relative h-[470px] sm:h-[500px]">
       {fil.map((v, rang) => {
         const sortie = rang >= VISIBLES;
         const echelle = 1 - Math.min(rang, VISIBLES) * 0.075;
@@ -128,10 +128,12 @@ function FilDeVotes() {
         return (
           <div
             key={v.id}
-            className="absolute inset-x-0 top-0 transition-[transform,opacity] duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform"
+            // Bien droites, centrées, et poussées vers le bas avec un léger
+            // ressort : elles dépassent à peine leur place puis s'y posent.
+            className="absolute inset-x-0 top-0 transition-[transform,opacity] duration-[760ms] ease-[cubic-bezier(0.34,1.36,0.64,1)] will-change-transform"
             style={{
-              transform: `translate(${rang * 14}px, ${y}px) scale(${echelle})`,
-              transformOrigin: "left top",
+              transform: `translate3d(0, ${y}px, 0) scale(${echelle})`,
+              transformOrigin: "center top",
               opacity: sortie ? 0 : 1 - rang * 0.13,
               zIndex: 20 - rang,
             }}

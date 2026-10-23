@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { DownloadButton } from "./DownloadButton";
-import { PALETTE } from "./palette-sphere";
 import { VISAGES } from "./visages";
 
 /*
@@ -27,58 +26,20 @@ import { VISAGES } from "./visages";
 
 
 
-/** Nombre d'éléments affichés, copies comprises. */
-const ELEMENTS_MAX = 110;
-/** Sur téléphone, on n'en anime qu'une partie. */
-const ELEMENTS_MOBILE = 64;
-
 /**
- * Les éléments animés sur téléphone : 64 indices répartis sur les 110, pour
- * que la sélection couvre toute la sphère et pas seulement son sommet.
+ * Le nombre de bulles. Au bureau, 84 : les 68 visages, plus 16 qui
+ * reviennent une seconde fois. Un visage n'est repris qu'à l'autre bout de
+ * la spirale (emplacement i et i + 68), donc jamais deux fois du même côté.
+ * Sur téléphone, 68 : chaque visage une seule fois, la sphère étant plus
+ * petite.
  */
-const SOUS_ENSEMBLE_MOBILE = Array.from({ length: ELEMENTS_MOBILE }, (_, j) =>
-  Math.round((j * (ELEMENTS_MAX - 1)) / (ELEMENTS_MOBILE - 1)),
-);
+const ELEMENTS_MAX = 84;
+const ELEMENTS_MOBILE = 68;
 
-/**
- * Ordre de van der Corput : n'importe quel début de liste est déjà bien
- * réparti. Avec 8 visages comme avec 80, ils s'égrènent sur toute la sphère.
- */
-function reparti<T>(liste: T[]): T[] {
-  const cle = (i: number) => {
-    let r = 0;
-    let f = 0.5;
-    for (let v = i + 1; v > 0; v >>= 1, f /= 2) if (v & 1) r += f;
-    return r;
-  };
-  return liste
-    .map((v, i) => ({ v, k: cle(i) }))
-    .sort((a, b) => a.k - b.k)
-    .map((e) => e.v);
-}
-
-/**
- * Le contenu de chaque emplacement : un visage, ou un emoji tant qu'il n'y a
- * pas assez de visages pour remplir la sphère.
- *
- * Les visages prennent d'abord les emplacements animés sur téléphone, pour
- * être tous visibles partout, puis le reste. Chaque visage n'apparaît qu'une
- * fois ; chaque emoji aussi.
- */
-type Contenu = { visage: string } | { emoji: string };
-const CONTENUS: Contenu[] = (() => {
-  const mobile = new Set(SOUS_ENSEMBLE_MOBILE);
-  const reste = Array.from({ length: ELEMENTS_MAX }, (_, i) => i).filter(
-    (i) => !mobile.has(i),
-  );
-  const priorite = [...reparti([...mobile]), ...reparti(reste)];
-  const contenus: (Contenu | null)[] = Array(ELEMENTS_MAX).fill(null);
-  VISAGES.slice(0, ELEMENTS_MAX).forEach((v, j) => {
-    contenus[priorite[j]] = { visage: v };
-  });
-  let e = 0;
-  return contenus.map((c) => c ?? { emoji: PALETTE[e++ % PALETTE.length] });
-})();
+type Contenu = { visage: string };
+const CONTENUS: Contenu[] = Array.from({ length: ELEMENTS_MAX }, (_, i) => ({
+  visage: VISAGES[i % VISAGES.length],
+}));
 
 const OR = Math.PI * (3 - Math.sqrt(5)); // angle d'or, 137,5°
 
@@ -89,7 +50,7 @@ const OR = Math.PI * (3 - Math.sqrt(5)); // angle d'or, 137,5°
  */
 const TAILLE_CSS = "var(--taille-emoji)";
 /** Échelle de référence : garde l'échelle réelle bien en dessous de 1. */
-const K_REF = 0.52;
+const K_REF = 0.6;
 
 const D_DEBUT = 4.5;
 const D_FIN = 0.8;
@@ -127,7 +88,9 @@ const ONDE_RAYON_FIN = 300;
 const ONDE_POUSSEE = 105;
 const DOIGT_RAYON = 150;
 const DOIGT_POUSSEE = 60;
-const TAU_DEFORME = 180;
+/** Le ressort des bulles : raideur par image, et part de vitesse gardée. */
+const RESSORT_RAIDEUR = 0.09;
+const RESSORT_FREIN = 0.8;
 
 /**
  * Longueur de la section, et part de cette longueur consacrée à la traversée.
@@ -146,21 +109,10 @@ const HAUTEUR_SECTION = "125svh";
  */
 const S_FIN = 0.25;
 
-/**
- * Les emplacements des visages. Dès qu'il y en a assez pour faire une sphère
- * pleine (autant que sur téléphone), on n'affiche QUE des visages, au bureau
- * comme sur téléphone : les emojis ne servent qu'à combler tant qu'il manque
- * des portraits.
- */
-const INDICES_VISAGES = CONTENUS.flatMap((c, i) => ("visage" in c ? [i] : []));
-
-/** Les indices animés sur cet écran. */
+/** Les indices animés sur cet écran : les premiers de la spirale. */
 function actifs(): number[] {
-  if (typeof window !== "undefined" && window.innerWidth <= 640) {
-    return SOUS_ENSEMBLE_MOBILE;
-  }
-  if (INDICES_VISAGES.length >= ELEMENTS_MOBILE) return INDICES_VISAGES;
-  return Array.from({ length: ELEMENTS_MAX }, (_, i) => i);
+  const n = typeof window !== "undefined" && window.innerWidth <= 640 ? ELEMENTS_MOBILE : ELEMENTS_MAX;
+  return Array.from({ length: n }, (_, i) => i);
 }
 
 /** Répartition en spirale de Fibonacci : la seule qui espace régulièrement. */
@@ -192,8 +144,7 @@ function palier(bord0: number, bord1: number, v: number) {
  * ce qui rend l'animation fluide sur téléphone.
  */
 function Element({ c }: { c: Contenu }) {
-  const src =
-    "emoji" in c ? `/sphere/emoji/${c.emoji}.webp` : `/sphere/visages/${c.visage}`;
+  const src = `/sphere/visages/${c.visage}`;
   return (
     // eslint-disable-next-line @next/next/no-img-element -- site statique, image déjà à la bonne taille
     <img
@@ -254,6 +205,11 @@ export function EmojiSphere() {
     // Déplacement courant de chaque emoji sous l'effet du pointeur.
     const dx = new Float32Array(n);
     const dy = new Float32Array(n);
+    // Leur vitesse : un ressort un peu souple, qui dépasse à peine sa place
+    // et revient, comme une gelée. C'est ce rebond qui rend le geste
+    // satisfaisant.
+    const vx = new Float32Array(n);
+    const vy = new Float32Array(n);
 
     // Position du pointeur dans le repère de la scène, centre à l'origine.
     let px = 0;
@@ -423,9 +379,12 @@ export function EmojiSphere() {
             cy2 += ey * pousse;
           }
         }
-        const ad = lissage(dt, TAU_DEFORME);
-        dx[i] += (cx - dx[i]) * ad;
-        dy[i] += (cy2 - dy[i]) * ad;
+        const st = dt / 16.67;
+        const frein = Math.pow(RESSORT_FREIN, st);
+        vx[i] = (vx[i] + (cx - dx[i]) * RESSORT_RAIDEUR * st) * frein;
+        vy[i] = (vy[i] + (cy2 - dy[i]) * RESSORT_RAIDEUR * st) * frein;
+        dx[i] += vx[i] * st;
+        dy[i] += vy[i] * st;
 
         // Fondu de sortie juste avant la limite, plus l'estompe de profondeur.
         const proche = 1 - palier(0.85, 1, k);
@@ -532,7 +491,7 @@ export function EmojiSphere() {
       style={{ height: HAUTEUR_SECTION }}
     >
       <div
-        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:56px] sm:[--taille-emoji:78px]"
+        className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:62px] sm:[--taille-emoji:96px]"
       >
         {/* La sphère occupe tout l'espace restant : son centre se place donc
             naturellement sous le texte, quelle que soit la hauteur d'écran. */}

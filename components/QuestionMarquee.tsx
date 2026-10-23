@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Pictogramme } from "./Pictogramme";
+import { GifMini } from "./GifMini";
 import { Reveal } from "./Reveal";
 
 /*
@@ -15,25 +15,27 @@ import { Reveal } from "./Reveal";
  * résolution. Bonus : on peut le faire défiler au doigt.
  */
 
+// Questions activées en prod, chacune avec le GIF que l'app lui affiche
+// (feuille des questions, colonne « GIF final »).
 const ROW_A = [
-  { emoji: "halloween", text: "Qui survivrait dans un film d'horreur ?" },
-  { emoji: "squid", text: "Qui survit à Squid Game ?" },
-  { emoji: "desert_island", text: "Avec qui t'aimerais être perdu sur une île déserte ?" },
-  { emoji: "popcorn", text: "Qui mérite une série Netflix inspirée de sa vie ?" },
-  { emoji: "clown_face", text: "Qui fait toujours les meilleures pranks ?" },
-  { emoji: "nerd_face", text: "Qui dort en cours mais a 18/20 easy ?" },
+  { gif: "147", largeur: 128, text: "Qui fait toujours les meilleures pranks ?" },
+  { gif: "32", largeur: 98, text: "Qui transforme le pire mood en fou rire ?" },
+  { gif: "710", largeur: 96, text: "Qui a la vitesse de Mbappé mais seulement pour aller à la cantine ?" },
+  { gif: "563", largeur: 130, text: "Qui propose un plan à 22h et t'es dehors à 22h15" },
+  { gif: "151", largeur: 77, text: "Qui loupe le bus de 8h mais pas les soirées ?" },
+  { gif: "558", largeur: 129, text: "Qui rend sa copie en premier juste pour le flex" },
 ];
 
 const ROW_B = [
-  { emoji: "flashlight", text: "Qui aimerait être téléporté avec toi dans Stranger Things ?" },
-  { emoji: "money_bag", text: "Qui survit une semaine avec 3 € et des pâtes ?" },
-  { emoji: "folded_hands", text: "Qui dit « merci » à l'IA au cas où elle prendrait le pouvoir un jour ?" },
-  { emoji: "robot", text: "Qui sort toujours « non mais c'est plus rapide par là » ?" },
-  { emoji: "alarm_clock", text: "Qui se lève 12 min avant les cours et arrive nickel" },
-  { emoji: "speaking_head", text: "Qui a toujours le meilleur comeback" },
+  { gif: "39", largeur: 170, text: "Qui se fait virer de cours sans forcer ?" },
+  { gif: "912", largeur: 170, text: "Qui crie «PASSE !» devant la télé comme si le joueur pouvait l'entendre ?" },
+  { gif: "579", largeur: 96, text: "Qui a plus de dossiers sur toi que la vie scolaire ?" },
+  { gif: "119", largeur: 128, text: "Qui insulte le jeu alors que c'est juste lui/elle qui sait pas jouer ?" },
+  { gif: "450", largeur: 172, text: "Qui a le pire emploi du temps et est au bord du craquage ?" },
+  { gif: "16", largeur: 168, text: "Qui a un rire plus puissant qu'un meme ?" },
 ];
 
-type Item = { emoji: string; text: string };
+type Item = { gif: string; largeur: number; text: string };
 
 function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -174,9 +176,9 @@ function Row({ items, vitesse }: { items: Item[]; vitesse: number }) {
       {doubled.map((item, i) => (
         <span
           key={`${item.text}-${i}`}
-          className="pill flex shrink-0 items-center gap-2.5 rounded-full py-2.5 pr-5 pl-3 text-[15px] font-bold whitespace-nowrap text-white/75"
+          className="pill flex shrink-0 items-center gap-2.5 rounded-full py-2 pr-5 pl-2 text-[15px] font-bold whitespace-nowrap text-white/75"
         >
-          <Pictogramme name={item.emoji} className="h-[26px] w-[26px] shrink-0" />
+          <GifMini id={item.gif} largeur={item.largeur} hauteur={30} />
           {item.text}
         </span>
       ))}

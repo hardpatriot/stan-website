@@ -380,14 +380,17 @@ body {
 @keyframes vote-arrive {
   0% {
     opacity: 0;
-    transform: translateY(-30px) scale(0.86);
+    transform: translate3d(0, -46px, 0) scale(0.8);
   }
-  55% {
+  48% {
     opacity: 1;
-    transform: translateY(3px) scale(1.025);
+    transform: translate3d(0, 5px, 0) scale(1.035);
   }
-  78% {
-    transform: translateY(-1px) scale(0.995);
+  70% {
+    transform: translate3d(0, -2px, 0) scale(0.99);
+  }
+  86% {
+    transform: translate3d(0, 0.5px, 0) scale(1.004);
   }
   100% {
     opacity: 1;
@@ -421,7 +424,7 @@ body {
   }
 }
 .vote-arrive {
-  animation: vote-arrive 0.75s cubic-bezier(0.25, 0.9, 0.3, 1) both;
+  animation: vote-arrive 0.8s cubic-bezier(0.22, 0.9, 0.3, 1) both;
 }
 .vote-eclat {
   animation: vote-eclat 1.1s ease-out both;
@@ -491,16 +494,10 @@ html {
   animation: b-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* La notification iOS, verre sombre, qui tombe du haut */
-@keyframes b-notif {
-  0% { opacity: 0; transform: translate3d(0, -26px, 0) scale(0.94); }
-  60% { opacity: 1; transform: translate3d(0, 3px, 0) scale(1.01); }
-  100% { opacity: 1; transform: none; }
-}
+/* La notification iOS, en verre sombre */
 .b-notif {
   background: rgba(34, 28, 52, 0.82);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 14px 30px -14px rgba(0, 0, 0, 0.8);
-  animation: b-notif 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
 }
 
 @keyframes b-indice {
@@ -515,8 +512,22 @@ html {
   .b-rise, .b-notif, .b-indice { animation: none; }
 }
 
-/* Les animations de l'écran verrouillé attendent qu'il soit à l'écran */
-.b-attente:not(.b-vu) .b-rise,
-.b-attente:not(.b-vu) .b-notif {
-  animation-play-state: paused;
+/* Écran verrouillé : chaque élément attend d'entrer à l'écran, puis surgit
+   avec un petit rebond (dépasse à peine, revient). Transformation et
+   opacité seulement, donc fluide. */
+.b-attend {
+  opacity: 0;
+}
+@keyframes b-pop {
+  0% { opacity: 0; transform: translate3d(0, 34px, 0) scale(0.84); }
+  55% { opacity: 1; transform: translate3d(0, -4px, 0) scale(1.025); }
+  78% { transform: translate3d(0, 1px, 0) scale(0.995); }
+  100% { opacity: 1; transform: none; }
+}
+.b-attend.b-pop {
+  animation: b-pop 0.7s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .b-attend { opacity: 1; }
+  .b-attend.b-pop { animation: none; }
 }

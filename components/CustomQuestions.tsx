@@ -1,37 +1,18 @@
 import { Emoji } from "./EmojiSprite";
+import { GifMini } from "./GifMini";
 import { Reveal } from "./Reveal";
 
 /**
  * Reprend l'écran « Crée ta propre question » : le champ limité à 120
  * caractères, puis le classement de l'école où le top 3 passe dans les
- * vrais sondages. Les emojis et les compteurs sont ceux de l'app.
+ * vraies questions. Les GIF et les compteurs sont ceux de l'app.
  */
 
 const RANKING = [
-  {
-    emoji: "robot",
-    text: "Qui sort toujours « non mais c'est plus rapide par là » ?",
-    votes: 14,
-    live: true,
-  },
-  {
-    emoji: "hourglass_not_done",
-    text: "Qui arrive toujours en retard avec une excuse improbable ?",
-    votes: 9,
-    live: true,
-  },
-  {
-    emoji: "flushed_face",
-    text: "Qui met toujours les stories les plus improbables",
-    votes: 6,
-    live: true,
-  },
-  {
-    emoji: "face_with_tears_of_joy",
-    text: "À qui il arrive toujours des galères improbables",
-    votes: 3,
-    live: false,
-  },
+  { gif: "580", largeur: 96, text: "Qui écrit «c'était quoi les devoirs ?» dans le groupe à 23h", votes: 14, live: true },
+  { gif: "621", largeur: 145, text: "Qui refresh Pronote 15 fois par jour pour voir si un prof est absent ?", votes: 9, live: true },
+  { gif: "745", largeur: 79, text: "Qui dit «attends c'était noté ?» trente secondes avant chaque contrôle ?", votes: 6, live: true },
+  { gif: "503", largeur: 172, text: "Qui finit son DM 5 minutes avant le début du cours", votes: 3, live: false },
 ];
 
 export function CustomQuestions() {
@@ -97,9 +78,9 @@ export function CustomQuestions() {
                     <span className="w-5 shrink-0 text-center text-[14px] font-black text-white/85">
                       {i + 1}
                     </span>
-                    <Emoji name={item.emoji} className="h-[30px] w-[30px] shrink-0" />
+                    <GifMini id={item.gif} largeur={item.largeur} hauteur={34} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] font-semibold text-white/90">
+                      <p className="line-clamp-2 text-[14px] leading-snug font-semibold text-white/90">
                         {item.text}
                       </p>
                       {item.live && (

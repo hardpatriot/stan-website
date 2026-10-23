@@ -39,6 +39,9 @@ ANNEAUX = {
 }
 LISTE = RACINE / "components" / "visages.ts"
 COTE_MAX = 192
+# Les bulles de la sphère sont plus grandes (jusqu'à 100 px au bureau) :
+# 320 px couvrent un écran 3x sans agrandir. Jamais au-delà de la source.
+COTE_SPHERE = 320
 
 SORTIE.mkdir(parents=True, exist_ok=True)
 SORTIE_SPHERE.mkdir(parents=True, exist_ok=True)
@@ -130,6 +133,8 @@ for f in sorted(SOURCE.iterdir()):
     g = (im.width - cote) // 2
     h = (im.height - cote) // 2
     im = im.crop((g, h, g + cote, h + cote))
+    cote_sphere = min(cote, COTE_SPHERE)
+    grand = im.resize((cote_sphere, cote_sphere), Image.LANCZOS) if cote > cote_sphere else im.copy()
     if cote > COTE_MAX:
         im = im.resize((COTE_MAX, COTE_MAX), Image.LANCZOS)
         cote = COTE_MAX
@@ -143,7 +148,7 @@ for f in sorted(SOURCE.iterdir()):
 
     nom = f"{len(noms) + 1:03d}.webp"
     im.save(SORTIE / nom, "WEBP", quality=80, method=6)
-    anneau(im, cote, GENRES.get(f.name, "nb")).save(SORTIE_SPHERE / nom, "WEBP", quality=82, method=6)
+    anneau(grand, cote_sphere, GENRES.get(f.name, "nb")).save(SORTIE_SPHERE / nom, "WEBP", quality=86, method=6)
     noms.append(nom)
 
 LISTE.write_text(
