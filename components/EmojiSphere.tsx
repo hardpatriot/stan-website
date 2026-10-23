@@ -334,6 +334,9 @@ export function EmojiSphere() {
       const F = large
         ? Math.min(1.84 * h, 1.54 * w)
         : Math.min(1.95 * h, 1.62 * w);
+      // La clairière autour du titre, en demi-axes d'ellipse.
+      const clairiereX = large ? Math.min(w * 0.34, 380) : w * 0.47;
+      const clairiereY = large ? Math.min(h * 0.25, 210) : Math.min(h * 0.19, 150);
 
       for (let i = 0; i < n; i++) {
         const el = items.current[indices[i]];
@@ -363,6 +366,22 @@ export function EmojiSphere() {
         // Répulsion : plus l'emoji est près du curseur, plus il s'écarte.
         let cx = 0;
         let cy2 = 0;
+        // La clairière : les visages de la moitié avant s'écartent du titre,
+        // qui reste lisible au centre. Elle se referme quand on entre dans
+        // la sphère au défilement.
+        const avantPlan = palier(-0.35, 0.25, z2) * attenue;
+        let voile = 1;
+        if (avantPlan > 0) {
+          const e = Math.hypot(X / clairiereX, Y / clairiereY) || 0.001;
+          if (e < 1) {
+            const f = (1 / e - 1) * 0.92 * avantPlan;
+            cx += X * f;
+            cy2 += Y * f;
+          }
+        } else if (Math.hypot(X / clairiereX, Y / clairiereY) < 1) {
+          // Derrière le titre : à peine visibles, pour ne pas le brouiller.
+          voile = 0.35 + 0.65 * (1 - attenue);
+        }
         // L'onde du doigt : un anneau qui s'élargit en s'affaiblissant.
         const age = t - onde.t0;
         if (age < ONDE_DUREE) {
@@ -432,7 +451,7 @@ export function EmojiSphere() {
         }
         // L'opacité ne bouge que par petits paliers : on évite d'écrire une
         // valeur que l'œil ne distingue pas de la précédente.
-        const o = Math.round(proche * profondeur * sortie * 50) / 50;
+        const o = Math.round(proche * profondeur * sortie * voile * 50) / 50;
         if (vus[i].o !== o) {
           el.style.opacity = String(o);
           vus[i].o = o;
@@ -515,28 +534,6 @@ export function EmojiSphere() {
       <div
         className="sticky top-0 flex h-[100svh] flex-col overflow-hidden [--taille-emoji:56px] sm:[--taille-emoji:78px]"
       >
-        {/* L'accroche, au-dessus de la sphère */}
-        <div
-          ref={avant}
-          className="relative z-[3000] shrink-0 px-5 pt-20 text-center sm:pt-24"
-        >
-          {/* Deux lignes imposées : sans ça, l'équilibrage automatique
-              regroupe tout sur une seule ligne dès que l'écran est large. */}
-          <h1 className="display mx-auto max-w-3xl text-[clamp(2.2rem,7vw,4.4rem)] text-white">
-            <span className="block">Ils ont voté.</span>
-            <span className="text-vote block">Tu vas savoir.</span>
-          </h1>
-          <p className="mx-auto mt-5 max-w-[50rem] text-[clamp(0.95rem,2.2vw,1.1rem)] leading-relaxed font-medium text-white/55 text-balance">
-            Des questions sur tes potes, vos délires, vos crushs. Tu choisis
-            qui te vient en tête. Eux aussi te choisissent, mais leur nom est
-            masqué. Un pote qui joue le jeu… ou ton crush qui tente un
-            truc&nbsp;?
-            <span className="mt-2 block font-semibold text-white/80">
-              Là, tu veux savoir qui c&apos;est&nbsp;!
-            </span>
-          </p>
-        </div>
-
         {/* La sphère occupe tout l'espace restant : son centre se place donc
             naturellement sous le texte, quelle que soit la hauteur d'écran. */}
         <div
@@ -565,8 +562,16 @@ export function EmojiSphere() {
             ref={bouton}
             className="pointer-events-none absolute inset-0 z-[3000] flex items-center justify-center"
           >
-            <div className="pointer-events-auto">
-              <DownloadButton label="Télécharge Stan" />
+            <div className="flex flex-col items-center px-5 text-center">
+              {/* Le titre au cœur de la sphère : les visages de devant
+                  s'écartent autour de lui (voir CLAIRIERE). */}
+              <h1 className="display text-[clamp(2.4rem,8vw,5.2rem)] text-white">
+                <span className="block [text-shadow:0_6px_40px_rgba(11,8,24,0.85)]">Ils ont voté.</span>
+                <span className="text-vote block pb-[0.08em]">Tu vas savoir.</span>
+              </h1>
+              <div className="pointer-events-auto mt-7 sm:mt-9">
+                <DownloadButton label="Télécharge Stan" />
+              </div>
             </div>
           </div>
         </div>

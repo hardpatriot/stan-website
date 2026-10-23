@@ -5,7 +5,8 @@ import { EmojiSprite } from "@/components/EmojiSprite";
 import { VotesNeon } from "@/components/VotesNeon";
 import { FinalCta } from "@/components/FinalCta";
 import { Footer } from "@/components/Footer";
-import { Hero } from "@/components/Hero";
+import { EcranVerrouille } from "@/components/b/EcranVerrouille";
+import { SceneQuestion } from "@/components/b/SceneQuestion";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Nav } from "@/components/Nav";
 import { QuestionMarquee } from "@/components/QuestionMarquee";
@@ -35,7 +36,8 @@ export default function Home() {
       <Nav />
       <main className="flex-1">
         <EmojiSphere />
-        <Hero />
+        <EcranVerrouille />
+        <SceneQuestion />
         <VotesNeon />
         <QuestionMarquee />
         <HowItWorks />

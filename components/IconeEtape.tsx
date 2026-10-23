@@ -4,7 +4,7 @@
  * famille Lucide (licence ISC), au trait arrondi, dans un dégradé néon de la
  * couleur de l'étape, posés sur une petite tuile de verre.
  */
-const TRACES: Record<string, React.ReactNode> = {
+export const TRACES: Record<string, React.ReactNode> = {
   // Rejoindre son école : la toque
   ecole: (
     <>

@@ -1,93 +1,87 @@
-"use client";
-
-import { useRef } from "react";
-import { IconeEtape } from "./IconeEtape";
+import { TRACES } from "./IconeEtape";
 
 /**
- * Une carte d'étape.
+ * Une carte d'étape, aux couleurs de l'app.
  *
- * Au bureau, un halo de la couleur de l'étape suit le curseur à l'intérieur
- * de la carte. On écrit la position dans deux variables CSS et c'est le
- * navigateur qui dessine : aucun rendu React pendant le mouvement, donc
- * aucune saccade.
- *
- * Sur mobile il ne se passe rien : le halo est piloté par le survol, qui
- * n'existe pas au doigt. Un reflet fixe et discret prend le relais.
+ * Le fond est VotesNotificationGlassCard, la carte des votes : verre violet
+ * sombre, voile coloré rose → violet → bleu → cyan, liseré néon du même
+ * dégradé et filet blanc intérieur. L'icône est celle des statuts Secret
+ * Crush (SentCrushPollStatusIcon) : un disque en dégradé, un puits sombre et
+ * le pictogramme en blanc. Le numéro est une pastille de statut, comme
+ * « Indice » ou « Reveal » dans l'onglet Votes.
  */
 export function StepCard({
   icon,
   numero,
   titre,
   corps,
-  teinte,
+  couleurs,
 }: {
-  /** Nom de l'icône (IconeEtape). */
+  /** Nom du pictogramme (IconeEtape). */
   icon: string;
   numero: number;
   titre: string;
   corps: string;
-  /** Couleur du halo, en hexadécimal. */
-  teinte: string;
+  /** Les deux couleurs du disque, la première sert aussi à la pastille. */
+  couleurs: [string, string];
 }) {
-  const ref = useRef<HTMLElement>(null);
-
-  function suivre(e: React.PointerEvent<HTMLElement>) {
-    if (e.pointerType !== "mouse") return;
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    el.style.setProperty("--my", `${e.clientY - r.top}px`);
-  }
-
+  const [a, b] = couleurs;
   return (
     <article
-      ref={ref}
-      onPointerMove={suivre}
-      className="neon group relative h-full overflow-hidden rounded-3xl p-6 transition-colors duration-500 hover:border-white/20"
-      style={
-        {
-          "--mx": "50%",
-          "--my": "0%",
-          "--teinte": teinte,
-        } as React.CSSProperties
-      }
+      className="relative h-full rounded-[22px] p-5"
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(64,61,105,0.68), rgba(38,33,74,0.58) 48%, rgba(14,15,41,0.72)) padding-box, linear-gradient(90deg, rgba(255,36,128,0.13), rgba(145,64,255,0.07) 42%, rgba(61,110,255,0.07) 72%, rgba(13,214,255,0.12)) padding-box, linear-gradient(#181231, #181231) padding-box, linear-gradient(90deg, rgba(255,36,128,0.92), rgba(145,64,255,0.8) 38%, rgba(61,110,255,0.76) 72%, rgba(13,214,255,0.92)) border-box",
+        border: "1.1px solid transparent",
+        boxShadow: "-1px 2px 10px rgba(255,36,128,0.12), 2px 0 8px rgba(13,214,255,0.08), 0 6px 20px rgba(0,0,0,0.3)",
+      }}
     >
-      {/* Le halo qui suit le curseur */}
+      {/* Le filet blanc intérieur, en retrait de 2,5 pt */}
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-100"
+        className="pointer-events-none absolute inset-[2.5px] rounded-[19px]"
         style={{
-          background:
-            "radial-gradient(340px circle at var(--mx) var(--my), color-mix(in srgb, var(--teinte) 26%, transparent), transparent 68%)",
-        }}
-      />
-
-      {/* Le reflet fixe, seul visible au doigt.
-          Un dégradé radial plutôt qu'un disque flouté : Safari ne découpe pas
-          un enfant portant un filtre aux angles arrondis de son parent, et le
-          flou ressortait en angle droit dans le carrousel. */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-3xl transition-opacity duration-500 [@media(hover:hover)_and_(pointer:fine)]:group-hover:opacity-0"
-        style={{
-          background: `radial-gradient(150px circle at 100% 0%, color-mix(in srgb, ${teinte} 20%, transparent), transparent 70%)`,
+          padding: 0.65,
+          background: "linear-gradient(135deg, rgba(255,255,255,0.2), transparent 50%, rgba(255,36,128,0.1))",
+          WebkitMask: "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
         }}
       />
 
       <div className="relative flex items-start justify-between">
-        <IconeEtape nom={icon} teinte={teinte} />
-        <span className="text-xs font-black tracking-[0.2em] text-white/25">
-          0{numero}
+        {/* SentCrushPollStatusIcon */}
+        <span
+          className="relative flex h-[50px] w-[50px] items-center justify-center rounded-full"
+          style={{
+            background: `linear-gradient(135deg, ${a}, ${b})`,
+            boxShadow: `0 5px 12px color-mix(in srgb, ${a} 42%, transparent)`,
+          }}
+        >
+          <span className="absolute inset-[4.5px] rounded-full bg-[#100A24]/[0.88]" />
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden
+            className="relative h-[21px] w-[21px] text-white"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {TRACES[icon]}
+          </svg>
+        </span>
+        <span
+          className="rounded-full px-2 py-1 text-[11px] font-bold"
+          style={{ color: a, background: `color-mix(in srgb, ${a} 15%, transparent)` }}
+        >
+          Étape {numero}
         </span>
       </div>
 
-      <h3 className="relative mt-4 text-lg font-black tracking-tight text-white">
-        {titre}
-      </h3>
-      <p className="relative mt-2 text-[14px] leading-relaxed font-medium text-white/55">
-        {corps}
-      </p>
+      <h3 className="relative mt-4 text-[17px] font-semibold text-white">{titre}</h3>
+      <p className="relative mt-1.5 text-[15px] leading-snug font-medium text-white/60">{corps}</p>
     </article>
   );
 }

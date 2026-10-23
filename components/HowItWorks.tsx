@@ -8,25 +8,25 @@ const STEPS = [
     icon: "ecole",
     title: "Rejoins ton école",
     body: "Tu retrouves ta classe et les potes qui sont déjà sur Stan.",
-    teinte: "#a78bfa",
+    couleurs: ["#A78BFA", "#F472B6"] as [string, string],
   },
   {
     icon: "amis",
     title: "Ajoute tes amis",
     body: "Tes contacts, tes camarades. Que des gens que tu connais en vrai.",
-    teinte: "#47dbff",
+    couleurs: ["#0DD6FF", "#3D6EFF"] as [string, string],
   },
   {
     icon: "questions",
     title: "Réponds aux questions",
     body: "Des questions courtes sur tes potes. Que des trucs bien, jamais l'inverse.",
-    teinte: "#f50384",
+    couleurs: ["#FBBF24", "#FB7185"] as [string, string],
   },
   {
     icon: "notif",
     title: "Reçois la notif",
     body: "Quelqu'un t'a choisi. Tu le sais tout de suite. Tu ne sais pas qui.",
-    teinte: "#e6006e",
+    couleurs: ["#FF2480", "#9140FF"] as [string, string],
   },
 ];
 
@@ -59,7 +59,7 @@ export function HowItWorks() {
                 numero={i + 1}
                 titre={step.title}
                 corps={step.body}
-                teinte={step.teinte}
+                couleurs={step.couleurs}
               />
             </Reveal>
           ))}

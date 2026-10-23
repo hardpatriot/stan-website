@@ -6,7 +6,7 @@ import { EchelleDefilement } from "@/components/EchelleDefilement";
 // L'app utilise Roboto (.custom("Roboto")), on garde exactement la même.
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
+  weight: ["300", "400", "500", "700", "900"],
   variable: "--font-roboto",
   display: "swap",
 });
