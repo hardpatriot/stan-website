@@ -1,10 +1,13 @@
 /**
- * TEST A : la nuit de l'app, telle quelle.
+ * La nuit de l'app : BackgroundViewStyle.standard, #120D24 puis #1F1445,
+ * assombri pour le site.
  *
- * BackgroundViewStyle.standard dans l'app : #120D24 puis #1F1445. Le site
- * reprend ces deux teintes, beaucoup plus sombres que le fond précédent, et ne
- * garde qu'une lueur violette très discrète par écran, en haut, comme le halo
- * que l'app pose derrière sa barre d'onglets. Un seul élément, peint une fois.
+ * Un seul élément, peint une fois, répété verticalement. Chaque tuile est
+ * raccordable : le dégradé finit sur la couleur où il commence, et chaque
+ * lueur est centrée assez loin des bords pour être éteinte avant la jointure.
+ * Aucune lueur ne touche le haut ou le bas d'une tuile, donc aucune ligne
+ * nette. Un grain très léger, fixe, casse les marches que les écrans 8 bits
+ * dessinent dans les dégradés sombres.
  */
 export function Backdrop() {
   return (
@@ -12,14 +15,16 @@ export function Backdrop() {
       aria-hidden
       className="pointer-events-none absolute inset-0 -z-10"
       style={{
-        backgroundColor: "#0b0818",
+        backgroundColor: "#0c0919",
         backgroundImage: [
-          "radial-gradient(ellipse 90% 26% at 50% 0%, rgba(124,58,237,0.16) 0%, rgba(124,58,237,0.05) 45%, transparent 75%)",
-          "radial-gradient(ellipse 60% 18% at 100% 58%, rgba(230,0,110,0.07) 0%, transparent 75%)",
-          "linear-gradient(180deg, #0b0818 0%, #120d24 30%, #171030 62%, #0b0818 100%)",
+          "url(/grain.png)",
+          "radial-gradient(ellipse 70% 26% at 50% 34%, rgba(124,58,237,0.13) 0%, rgba(124,58,237,0.05) 45%, transparent 100%)",
+          "radial-gradient(ellipse 46% 18% at 88% 72%, rgba(230,0,110,0.07) 0%, transparent 100%)",
+          "radial-gradient(ellipse 40% 16% at 10% 76%, rgba(61,110,255,0.06) 0%, transparent 100%)",
+          "linear-gradient(180deg, #0c0919 0%, #110c22 22%, #16102e 50%, #110c22 78%, #0c0919 100%)",
         ].join(", "),
-        backgroundSize: "100% 200svh",
-        backgroundRepeat: "repeat-y",
+        backgroundSize: "160px 160px, 100% 220svh, 100% 220svh, 100% 220svh, 100% 220svh",
+        backgroundRepeat: "repeat, repeat-y, repeat-y, repeat-y, repeat-y",
       }}
     />
   );
