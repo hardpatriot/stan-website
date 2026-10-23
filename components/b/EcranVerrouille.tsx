@@ -27,7 +27,7 @@ function heureLocale() {
 export function EcranVerrouille() {
   // Rien ne bouge tant que le haut de la pile n'est pas bien entré dans
   // l'écran (au quart inférieur) : l'heure apparaît, puis les notifications
-  // descendent une à une, en douceur, et restent. Une seule fois.
+  // surgissent une à une, toutes les 0,75 s, et restent. Une seule fois.
   // Une classe posée par carte : l'animation est en CSS, sur la
   // transformation et l'opacité.
   const notifs = useRef<(HTMLDivElement | null)[]>([]);
@@ -45,7 +45,7 @@ export function EcranVerrouille() {
         io.disconnect();
         heure.current?.classList.add("b-pop");
         notifs.current.forEach((n, i) => {
-          if (n) minuteurs.push(setTimeout(() => n.classList.add("b-pop"), 250 + i * 420));
+          if (n) minuteurs.push(setTimeout(() => n.classList.add("b-pop"), 400 + i * 750));
         });
       },
       { rootMargin: "0px 0px -25% 0px" },
