@@ -6,7 +6,7 @@ import { EchelleDefilement } from "@/components/EchelleDefilement";
 // L'app utilise Roboto (.custom("Roboto")), on garde exactement la même.
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
+  weight: ["300", "400", "500", "700", "900"],
   variable: "--font-roboto",
   display: "swap",
 });
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
 // sombres en haut et en bas, et le fond violet s'arrêtait entre les deux.
 export const viewport: Viewport = {
   viewportFit: "cover",
-  themeColor: "#0e0933",
+  themeColor: "#0b0818",
   colorScheme: "dark",
 };
 

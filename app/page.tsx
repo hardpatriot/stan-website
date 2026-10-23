@@ -1,14 +1,12 @@
 import { Backdrop } from "@/components/Backdrop";
-import { CustomQuestions } from "@/components/CustomQuestions";
-import { EmojiSphere } from "@/components/EmojiSphere";
 import { EmojiSprite } from "@/components/EmojiSprite";
-import { VotesNeon } from "@/components/VotesNeon";
-import { FinalCta } from "@/components/FinalCta";
 import { Footer } from "@/components/Footer";
-import { Hero } from "@/components/Hero";
-import { HowItWorks } from "@/components/HowItWorks";
 import { Nav } from "@/components/Nav";
-import { QuestionMarquee } from "@/components/QuestionMarquee";
+import { EcranVerrouille } from "@/components/b/EcranVerrouille";
+import { MurVisages } from "@/components/b/MurVisages";
+import { SceneQuestion } from "@/components/b/SceneQuestion";
+import { SceneQuestions } from "@/components/b/SceneQuestions";
+import { SceneReveal } from "@/components/b/SceneReveal";
 
 // Balisage Schema.org : ce que Google affiche quand on cherche « Stan app ».
 const JSON_LD = {
@@ -18,7 +16,7 @@ const JSON_LD = {
   applicationCategory: "SocialNetworkingApplication",
   operatingSystem: "iOS, Android",
   description:
-    "Tes potes répondent à des sondages positifs sur toi, anonymement. Aucun vote négatif, aucun message privé.",
+    "Tes potes répondent à des questions positives sur toi, anonymement. Aucun vote négatif, aucun message privé.",
   inLanguage: "fr-FR",
   offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
   publisher: { "@type": "Organization", name: "Stan SAS" },
@@ -26,6 +24,10 @@ const JSON_LD = {
   downloadUrl: "https://invite.stan-friends.com/invite",
 };
 
+/*
+ * TEST B : le site raconté comme une soirée sur Stan. Écran verrouillé et
+ * notifications, la question, les questions, le reveal, puis tout le monde.
+ */
 export default function Home() {
   return (
     <>
@@ -34,13 +36,11 @@ export default function Home() {
       <Backdrop />
       <Nav />
       <main className="flex-1">
-        <EmojiSphere />
-        <Hero />
-        <VotesNeon />
-        <QuestionMarquee />
-        <HowItWorks />
-        <CustomQuestions />
-        <FinalCta />
+        <EcranVerrouille />
+        <SceneQuestion />
+        <SceneQuestions />
+        <SceneReveal />
+        <MurVisages />
       </main>
       <Footer />
     </>
