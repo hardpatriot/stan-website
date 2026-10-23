@@ -8,6 +8,7 @@ export function GifMini({
   id,
   largeur,
   hauteur = 34,
+  carre = false,
 }: {
   /** Identifiant de la question : le fichier est /gifs/m{id}.webp. */
   id: string;
@@ -15,8 +16,10 @@ export function GifMini({
   largeur: number;
   /** Hauteur affichée, en points. */
   hauteur?: number;
+  /** Vignette carrée, recadrée au centre : toutes les lignes d'une liste alignées. */
+  carre?: boolean;
 }) {
-  const l = Math.round(Math.min(hauteur * 1.6, Math.max(hauteur * 0.8, (largeur * hauteur) / 96)));
+  const l = carre ? hauteur : Math.round(Math.min(hauteur * 1.6, Math.max(hauteur * 0.8, (largeur * hauteur) / 96)));
   return (
     <span
       className="relative block shrink-0 rounded-[8px] bg-black/[0.12] p-[1.5px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]"

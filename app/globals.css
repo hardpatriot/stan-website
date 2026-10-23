@@ -531,3 +531,25 @@ html {
   .b-attend { opacity: 1; }
   .b-attend.b-pop { animation: none; }
 }
+
+/* Le texte holographique du Secret Crush (HolographicPrivacyText) : le
+   texte est blanc, et le reflet du shader de la carte QR passe dessus à 45 %.
+   La texture est une image du vrai shader (inviteCardHolo), qui dérive
+   lentement : une seule couche, rien d'autre à recalculer. */
+.texte-foil {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url(/foil-texte.webp);
+  background-size: 100% 100%, 220% 260%;
+  background-position: 0 0, 0% 40%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  animation: texte-foil 16s ease-in-out infinite alternate;
+}
+@keyframes texte-foil {
+  to { background-position: 0 0, 100% 60%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .texte-foil { animation: none; }
+}

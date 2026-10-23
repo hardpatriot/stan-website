@@ -8,11 +8,12 @@ import { Reveal } from "./Reveal";
  * vraies questions. Les GIF et les compteurs sont ceux de l'app.
  */
 
+// Des questions activées en prod, courtes (une ligne), avec leur GIF.
 const RANKING = [
-  { gif: "580", largeur: 96, text: "Qui écrit «c'était quoi les devoirs ?» dans le groupe à 23h", votes: 14, live: true },
-  { gif: "621", largeur: 145, text: "Qui refresh Pronote 15 fois par jour pour voir si un prof est absent ?", votes: 9, live: true },
-  { gif: "745", largeur: 79, text: "Qui dit «attends c'était noté ?» trente secondes avant chaque contrôle ?", votes: 6, live: true },
-  { gif: "503", largeur: 172, text: "Qui finit son DM 5 minutes avant le début du cours", votes: 3, live: false },
+  { gif: "254", text: "Qui t'envoie tous les matins «t'es où ?»", votes: 14, live: true },
+  { gif: "387", text: "Qui connaît toutes les trends Tiktok", votes: 9, live: true },
+  { gif: "508", text: "Qui master l'art du sarcasme", votes: 6, live: true },
+  { gif: "145", text: "Qui est le/la plus hilarant·e ?", votes: 3, live: false },
 ];
 
 export function CustomQuestions() {
@@ -27,78 +28,53 @@ export function CustomQuestions() {
             </p>
             <h2 className="display mt-4 text-[clamp(2.1rem,5.5vw,3.6rem)] text-white text-balance">
               Balance ta meilleure ref.{" "}
-              <span className="text-vote">
-                Le top 3 part dans les questions de ton école.
-              </span>
+              <span className="texte-foil">Le top 3 part dans les questions de ton école.</span>
             </h2>
           </Reveal>
         </div>
 
-        {/* La maquette : champ de saisie + classement */}
+        {/* La maquette : une seule carte, le champ puis le classement */}
         <Reveal delay={120} className="min-w-0">
-          <div className="flex flex-col gap-4">
-            {/* Le champ */}
-            <div className="neon rounded-3xl p-6">
-              <p className="text-lg font-black tracking-tight text-white">
-                Crée ta propre question
-              </p>
-              <p className="mt-1.5 text-[14px] leading-relaxed font-medium text-white/45">
-                Balance ta meilleure ref, le top 3 entre dans les vraies questions
-                de l&apos;école
-              </p>
-              <div className="mt-5 rounded-2xl bg-white/[0.06] px-4 py-3.5">
-                <p className="text-[15px] font-medium text-white/80">
+          <div className="neon overflow-hidden rounded-3xl">
+            <div className="p-5 sm:p-6">
+              <p className="text-[17px] font-semibold text-white">Crée ta propre question</p>
+              <div className="mt-4 flex items-center gap-3 rounded-2xl bg-white/[0.06] py-2 pr-2 pl-4">
+                <p className="min-w-0 flex-1 truncate text-[15px] font-medium text-white/80">
                   Qui survivrait dans un film d&apos;horreur&nbsp;?
                   <span className="ml-0.5 inline-block h-[1.1em] w-[2px] translate-y-[3px] animate-pulse bg-rose" />
                 </p>
-              </div>
-              <div className="mt-2.5 flex items-center justify-between">
-                <span className="text-[12px] font-bold text-white/30">
-                  39/120
-                </span>
-                <span className="rounded-full bg-[linear-gradient(105deg,#d91cbd,#e6006e)] px-4 py-1.5 text-[13px] font-black text-white">
+                <span className="shrink-0 rounded-full bg-[linear-gradient(105deg,#d91cbd,#e6006e)] px-4 py-2 text-[13px] font-bold text-white">
                   Publier
                 </span>
               </div>
             </div>
 
-            {/* Le classement */}
-            <div className="neon overflow-hidden rounded-3xl">
-              <p className="px-6 pt-6 pb-4 text-[12px] font-black tracking-wide text-white/45 uppercase">
-                Le classement de ton école
-              </p>
-              <ul>
-                {RANKING.map((item, i) => (
-                  <li
-                    key={item.text}
-                    className={`flex items-center gap-3 border-t border-white/[0.07] px-5 py-3.5 ${
-                      item.live ? "" : "opacity-45"
-                    }`}
-                  >
-                    <span className="w-5 shrink-0 text-center text-[14px] font-black text-white/85">
-                      {i + 1}
-                    </span>
-                    <GifMini id={item.gif} largeur={item.largeur} hauteur={34} />
-                    <div className="min-w-0 flex-1">
-                      <p className="line-clamp-2 text-[14px] leading-snug font-semibold text-white/90">
-                        {item.text}
-                      </p>
-                      {item.live && (
-                        <p className="mt-0.5 text-[11px] font-black text-[#4ADE80]">
-                          ✓ Dans les questions
-                        </p>
-                      )}
-                    </div>
-                    <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-white/[0.08] px-3 py-1.5">
-                      <Emoji name="fire" className="h-[15px] w-[15px] shrink-0" />
-                      <span className="text-[13px] font-black text-white/70">
-                        {item.votes}
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <p className="border-t border-white/[0.07] px-5 pt-4 pb-1 text-[12px] font-bold tracking-wide text-white/40 uppercase sm:px-6">
+              Le classement de ton école
+            </p>
+            <ol className="px-2 pb-2 sm:px-3 sm:pb-3">
+              {RANKING.map((item, i) => (
+                <li
+                  key={item.text}
+                  className={`flex h-[62px] items-center gap-3 rounded-2xl px-3 ${item.live ? "" : "opacity-40"}`}
+                >
+                  <span className="w-4 shrink-0 text-center text-[14px] font-bold text-white/60">{i + 1}</span>
+                  <GifMini id={item.gif} largeur={96} hauteur={40} carre />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[15px] font-semibold text-white">{item.text}</p>
+                    {item.live ? (
+                      <p className="mt-0.5 text-[12px] font-semibold text-[#4ADE80]">✓ Dans les questions</p>
+                    ) : (
+                      <p className="mt-0.5 text-[12px] font-medium text-white/45">Encore quelques votes</p>
+                    )}
+                  </div>
+                  <span className="flex shrink-0 items-center gap-1 rounded-full bg-white/[0.07] px-2.5 py-1">
+                    <Emoji name="fire" className="h-[14px] w-[14px] shrink-0" />
+                    <span className="text-[13px] font-bold text-white/70 tabular-nums">{item.votes}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
           </div>
         </Reveal>
       </div>
