@@ -1,23 +1,31 @@
 "use client";
 
-import { useRef } from "react";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { WaveFill } from "../WaveFill";
+import { GifQuestion } from "./GifQuestion";
 import { phase, useScene } from "./useScene";
 
 /**
- * Scène 2 : une question, en vrai. L'écran de vote de l'app (393 × 852,
- * dégradé violet de la série, quatre tuiles de verre blanc) monte, une tuile
- * est choisie, les résultats se remplissent. Les légendes racontent à côté.
+ * Scène 2 : l'écran de vote, recopié du code de l'app.
  *
- * Tout est piloté par le défilement, uniquement en translations, échelles
- * inférieures à 1 et opacités : rien ne floute, rien ne se recalcule.
+ * Barre d'état, barre d'onglets (Votes · Stan · Profil), carte plein écran
+ * au dégradé violet de la série, « 1 sur 12 » et ses 12 segments, le GIF de
+ * la question dans son écrin métal, la question en 18 semibold, les quatre
+ * cartes de verre blanc-lilas 147 × 147, puis Shuffle et Skip. En défilant,
+ * une carte s'enfonce sous le doigt, puis les vagues de résultat montent.
  */
 const W = 393;
 const H = 852;
+const BARRE = 54;
+const ONGLETS = 64;
+const SERIE = 12;
+
 const POTES = [
-  { nom: ["Lana", "Chung"], photo: "/visages/001.webp", pct: 18 },
-  { nom: ["Lucas", "Chevalier"], photo: "/visages/002.webp", pct: 47 },
-  { nom: ["Léa", "Sacla"], photo: "/visages/005.webp", pct: 26 },
-  { nom: ["Noha", "Kanté"], photo: "/visages/004.webp", pct: 9 },
+  { nom: ["Lana", "Chung"], photo: "/visages/001.webp", part: 0.18 },
+  { nom: ["Lucas", "Chevalier"], photo: "/visages/002.webp", part: 0.47 },
+  { nom: ["Léa", "Sacla"], photo: "/visages/005.webp", part: 0.26 },
+  { nom: ["Noha", "Kanté"], photo: "/visages/004.webp", part: 0.09 },
 ];
 const CHOISI = 1;
 
@@ -27,55 +35,173 @@ const LEGENDES = [
   { a: 0.66, b: 1.01, haut: "Et pendant ce temps,", bas: "eux votent pour toi." },
 ];
 
+function BarreEtat() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-[34px] text-[16px] font-semibold text-white"
+      style={{ height: BARRE }}
+    >
+      <span>21:47</span>
+      <span className="absolute top-[11px] left-1/2 h-[34px] w-[120px] -translate-x-1/2 rounded-full bg-black" />
+      <span className="flex items-center gap-[6px]">
+        <svg viewBox="0 0 18 12" width="18" fill="currentColor">
+          <rect x="0" y="8" width="3" height="4" rx="1" />
+          <rect x="5" y="5.5" width="3" height="6.5" rx="1" />
+          <rect x="10" y="3" width="3" height="9" rx="1" />
+          <rect x="15" y="0" width="3" height="12" rx="1" />
+        </svg>
+        <svg viewBox="0 0 17 12.5" width="17" fill="none">
+          <path d="M1.7 4.6a9.8 9.8 0 0 1 13.6 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <path d="M4.5 7.6a5.8 5.8 0 0 1 8 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="8.5" cy="10.6" r="1.55" fill="currentColor" />
+        </svg>
+        <svg viewBox="0 0 27 13" width="26" fill="none">
+          <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" opacity="0.4" />
+          <rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor" />
+          <path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity="0.4" />
+        </svg>
+      </span>
+    </div>
+  );
+}
+
+/** TabBarView : l'onglet choisi au centre, blanc à texte rose, cerclé d'un halo. */
+function BarreOnglets() {
+  return (
+    <div
+      aria-hidden
+      className="absolute inset-x-0 z-10 flex items-center justify-center gap-5"
+      style={{ top: BARRE, height: ONGLETS }}
+    >
+      {[{ t: "Votes", badge: 2 }, { t: "Stan", actif: true }, { t: "Profil" }].map((o) => (
+        <span
+          key={o.t}
+          className="relative flex shrink-0 items-center justify-center rounded-full font-semibold"
+          style={
+            o.actif
+              ? {
+                  width: 122,
+                  height: 46,
+                  fontSize: 18.5,
+                  background: "#fff",
+                  color: "#ff2d55",
+                  boxShadow: "0 0 0 5px rgba(255,255,255,0.22)",
+                }
+              : {
+                  width: 110,
+                  height: 42,
+                  fontSize: 17,
+                  color: "#fff",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.14))",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.25), 0 4px 12px rgba(0,0,0,0.12)",
+                }
+          }
+        >
+          {o.t}
+          {o.badge ? (
+            <span
+              className="absolute -top-[6px] -right-[4px] flex min-w-[20px] items-center justify-center rounded-[7px] px-[6px] py-[3px] text-[12px] font-bold text-white"
+              style={{
+                background: "linear-gradient(180deg,#FF3B5C,#f81b5d)",
+                boxShadow: "0 2px 5px rgba(248,27,93,0.55), inset 0 0 0 0.8px rgba(255,255,255,0.35)",
+              }}
+            >
+              {o.badge}
+            </span>
+          ) : null}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** PollChoiceLightGlassCard + ProfileCard, à l'identique. */
+function Carte({
+  pote,
+  resultat,
+  refCarte,
+}: {
+  pote: (typeof POTES)[number];
+  resultat: boolean;
+  refCarte: (el: HTMLDivElement | null) => void;
+}) {
+  return (
+    <div
+      ref={refCarte}
+      className="relative flex h-[147px] w-[147px] flex-col items-center justify-center overflow-hidden rounded-[16px]"
+      style={{
+        background:
+          "radial-gradient(circle at 42% 28%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.34) 52%, rgba(255,255,255,0) 76%), linear-gradient(160deg, #ffffff 0%, #fefcff 46%, #f9f2fd 100%)",
+        boxShadow:
+          "0 8px 11px rgba(91,33,182,0.42), 0 4px 5px rgba(0,0,0,0.15), inset 0 0 0 1.55px rgba(255,255,255,0.92)",
+      }}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-[3.2px] rounded-[13px]"
+        style={{
+          border: "0.85px solid rgba(255,255,255,0.6)",
+          background:
+            "linear-gradient(135deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 46%, rgba(184,155,209,0.18) 100%)",
+        }}
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element -- site statique */}
+      <img
+        src={pote.photo}
+        alt=""
+        className="relative h-[67px] w-[67px] rounded-full object-cover"
+        style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.25)" }}
+      />
+      <span className="relative mt-[8px] text-center text-[18px] leading-[1.15] font-semibold text-black">
+        {pote.nom[0]}
+        <br />
+        {pote.nom[1]}
+      </span>
+      {resultat ? <WaveFill percentage={pote.part} width={147} height={147} /> : null}
+    </div>
+  );
+}
+
 export function SceneQuestion() {
-  const carte = useRef<HTMLDivElement>(null);
-  const tuiles = useRef<(HTMLDivElement | null)[]>([]);
-  const barres = useRef<(HTMLDivElement | null)[]>([]);
-  const pcts = useRef<(HTMLSpanElement | null)[]>([]);
-  const anneau = useRef<HTMLDivElement>(null);
+  const tel = useRef<HTMLDivElement>(null);
+  const cartes = useRef<(HTMLDivElement | null)[]>([]);
   const legendes = useRef<(HTMLDivElement | null)[]>([]);
+  const [resultat, setResultat] = useState(false);
+  const etat = useRef(false);
 
   const ref = useScene<HTMLElement>((p) => {
-    const c = carte.current;
-    if (!c) return;
+    const t = tel.current;
+    if (!t) return;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const large = vw >= 900;
-    // L'échelle de base : la carte tient dans l'écran, jamais au-delà de 1.
-    const k = Math.min(1, (vh * (large ? 0.76 : 0.66)) / H, (vw * (large ? 0.42 : 0.86)) / W);
+    const total = H + 22;
+    const k = Math.min(1, (vh * (large ? 0.8 : 0.68)) / total, (vw * (large ? 0.42 : 0.86)) / (W + 22));
     const entree = phase(p, 0, 0.16);
-    const sortie = phase(p, 0.86, 1);
-    const s = k * (0.86 + 0.14 * entree) * (1 - 0.06 * sortie);
-    c.style.transform = `translate3d(-50%, ${(1 - entree) * 9 - sortie * 6}vh, 0) scale(${s.toFixed(4)})`;
-    c.style.opacity = String((0.25 + 0.75 * entree) * (1 - 0.65 * sortie));
+    const sortie = phase(p, 0.88, 1);
+    const s = k * (0.88 + 0.12 * entree) * (1 - 0.05 * sortie);
+    t.style.transform = `translate3d(-50%, ${((1 - entree) * 9 - sortie * 5).toFixed(2)}vh, 0) scale(${s.toFixed(4)})`;
+    t.style.opacity = String((0.3 + 0.7 * entree) * (1 - 0.6 * sortie));
 
-    // Le doigt appuie sur la tuile, puis elle est choisie.
-    const appui = phase(p, 0.38, 0.43) - phase(p, 0.43, 0.48);
-    const choisi = phase(p, 0.44, 0.5);
-    tuiles.current.forEach((t, i) => {
-      if (!t) return;
-      const e = i === CHOISI ? 1 - 0.07 * appui + 0.02 * choisi : 1 - 0.03 * choisi;
-      t.style.transform = `scale(${e.toFixed(4)})`;
-      t.style.opacity = String(i === CHOISI ? 1 : 1 - 0.35 * choisi);
+    // Le doigt appuie sur la carte (scaleEffect 0,95 de ProfileCard).
+    const appui = phase(p, 0.38, 0.43) - phase(p, 0.45, 0.5);
+    cartes.current.forEach((c, i) => {
+      if (c) c.style.transform = i === CHOISI ? `scale(${(1 - 0.05 * appui).toFixed(4)})` : "";
     });
-    if (anneau.current) anneau.current.style.opacity = String(choisi);
 
-    // Les résultats se remplissent, comme VoteResultFillView.
-    const remplir = phase(p, 0.5, 0.68);
-    barres.current.forEach((b, i) => {
-      if (b) b.style.transform = `scaleY(${((POTES[i].pct / 100) * remplir).toFixed(4)})`;
-    });
-    pcts.current.forEach((n, i) => {
-      if (n) {
-        n.textContent = `${Math.round(POTES[i].pct * remplir)} %`;
-        n.style.opacity = String(remplir);
-      }
-    });
+    // Les vagues ne montent qu'une fois, puis repartent si on remonte.
+    const montre = p > 0.5;
+    if (montre !== etat.current) {
+      etat.current = montre;
+      setResultat(montre);
+    }
 
     legendes.current.forEach((l, i) => {
       if (!l) return;
       const { a, b } = LEGENDES[i];
-      const vis = phase(p, a, a + 0.06) * (1 - phase(p, b - 0.06, b));
+      const vis = (i === 0 ? 1 : phase(p, a, a + 0.06)) * (1 - phase(p, b - 0.06, b));
       l.style.opacity = String(vis);
       l.style.transform = `translate3d(0, ${(1 - vis) * 18}px, 0)`;
     });
@@ -84,8 +210,7 @@ export function SceneQuestion() {
   return (
     <section ref={ref} className="relative h-[340svh]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
-        {/* Légendes : en haut sur téléphone, à gauche au bureau */}
-        <div className="absolute inset-x-0 top-[13svh] z-10 px-6 text-center lg:inset-x-auto lg:top-1/2 lg:left-[8vw] lg:h-[15rem] lg:w-[40vw] lg:-translate-y-1/2 lg:text-left">
+        <div className="absolute inset-x-0 top-[12svh] z-10 px-6 text-center lg:inset-x-auto lg:top-1/2 lg:left-[8vw] lg:h-[15rem] lg:w-[40vw] lg:-translate-y-1/2 lg:text-left">
           {LEGENDES.map((l, i) => (
             <div
               key={i}
@@ -101,80 +226,81 @@ export function SceneQuestion() {
           ))}
         </div>
 
-        {/* L'écran de vote de l'app */}
+        {/* Le téléphone : châssis graphite, puis l'écran de l'app */}
         <div
-          ref={carte}
-          className="absolute bottom-[3svh] left-1/2 origin-bottom lg:top-[54%] lg:bottom-auto lg:left-[68vw] lg:origin-center lg:!-translate-y-1/2"
-          style={{ width: W, height: H, transform: "translate3d(-50%, 9vh, 0) scale(0.6)" }}
+          ref={tel}
+          className="absolute bottom-[3svh] left-1/2 origin-bottom rounded-[64px] p-[11px] lg:top-[52%] lg:bottom-auto lg:left-[68vw] lg:origin-center lg:!-translate-y-1/2"
+          style={{
+            transform: "translate3d(-50%, 9vh, 0) scale(0.6)",
+            opacity: 0.3,
+            background: "linear-gradient(150deg,#3a3550,#1c1830 22%,#0f0c1c 50%,#1c1830 78%,#45405c)",
+            boxShadow:
+              "inset 0 0 0 1.5px rgba(255,255,255,0.16), 0 60px 120px -40px rgba(0,0,0,0.95), 0 0 90px -30px rgba(96,1,255,0.5)",
+          }}
         >
           <div
-            className="relative flex h-full w-full flex-col items-center overflow-hidden rounded-[56px] px-6 pt-[70px]"
+            className="relative overflow-hidden rounded-[54px]"
             style={{
-              background: "linear-gradient(180deg,#6001FF,#4B01FF 30%,#3501FF 60%,#1501FF)",
-              boxShadow:
-                "0 0 0 1.5px rgba(255,255,255,0.12), 0 60px 120px -40px rgba(0,0,0,0.95), 0 0 120px -30px rgba(96,1,255,0.6)",
+              width: W,
+              height: H,
+              background: "linear-gradient(180deg,#6001FF,#5601FF,#4B01FF,#4001FF,#3501FF,#2A01FF,#1F01FF,#1501FF)",
             }}
           >
-            <p className="text-[18px] font-semibold text-white">1 sur 3</p>
-            <div className="mt-2 flex gap-1">
-              <span className="h-[3px] w-6 rounded bg-[linear-gradient(90deg,#ff8ad8,#ffe68a,#8cffcf,#8ad8ff)]" />
-              <span className="h-[3px] w-6 rounded bg-white/35" />
-              <span className="h-[3px] w-6 rounded bg-white/35" />
-            </div>
-            {/* eslint-disable-next-line @next/next/no-img-element -- site statique */}
-            <img src="/animes/halloween.webp" alt="" className="mt-10 h-[150px] w-auto rounded-[20px] object-cover" />
-            <p className="mt-6 px-4 text-center text-[23px] leading-snug font-semibold text-white">
-              Qui survivrait dans un film d&apos;horreur&nbsp;?
-            </p>
+            <BarreEtat />
+            <BarreOnglets />
 
-            <div className="mt-auto mb-[54px] grid grid-cols-2 gap-[10px]">
-              {POTES.map((pote, i) => (
-                <div
-                  key={pote.photo}
-                  ref={(el) => {
-                    tuiles.current[i] = el;
-                  }}
-                  className="relative flex h-[147px] w-[147px] flex-col items-center justify-center overflow-hidden rounded-[16px]"
-                  style={{
-                    background:
-                      "radial-gradient(circle at 42% 28%, rgba(255,255,255,0.98), rgba(255,255,255,0.34) 52%, rgba(255,255,255,0) 76%), linear-gradient(160deg,#fff,#fefcff 46%,#f9f2fd)",
-                    boxShadow: "0 8px 11px rgba(91,33,182,0.42), 0 4px 5px rgba(0,0,0,0.15)",
-                  }}
-                >
-                  {/* Le remplissage du résultat */}
-                  <div
-                    ref={(el) => {
-                      barres.current[i] = el;
-                    }}
-                    className="absolute inset-0 origin-bottom bg-[linear-gradient(180deg,rgba(167,139,250,0.55),rgba(124,58,237,0.6))]"
-                    style={{ transform: "scaleY(0)" }}
-                  />
-                  {/* eslint-disable-next-line @next/next/no-img-element -- site statique */}
-                  <img src={pote.photo} alt="" className="relative h-[64px] w-[64px] rounded-full object-cover" />
-                  <p className="relative mt-1.5 text-center text-[17px] leading-tight font-semibold text-black">
-                    {pote.nom[0]}
-                    <br />
-                    {pote.nom[1]}
-                  </p>
-                  <span
-                    ref={(el) => {
-                      pcts.current[i] = el;
-                    }}
-                    className="absolute top-2 right-2.5 text-[13px] font-black text-[#3b0aa8]"
-                    style={{ opacity: 0 }}
-                  >
-                    0 %
-                  </span>
-                  {i === CHOISI ? (
-                    <div
-                      ref={anneau}
-                      className="pointer-events-none absolute inset-0 rounded-[16px] shadow-[inset_0_0_0_3px_#ff2d9a]"
-                      style={{ opacity: 0 }}
+            <div className="absolute inset-0 flex flex-col items-center" style={{ paddingTop: BARRE + ONGLETS }}>
+              {/* « 1 sur 12 » + HolographicPageControlView */}
+              <div className="flex flex-col items-center gap-2 pt-[22px]">
+                <p className="text-[18px] leading-none font-semibold text-white">1 sur {SERIE}</p>
+                <div className="flex gap-1">
+                  {Array.from({ length: SERIE }, (_, i) => (
+                    <span
+                      key={i}
+                      className="h-[3.2px] w-[23.52px] rounded-full"
+                      style={{
+                        background:
+                          i === 0
+                            ? "linear-gradient(90deg,#ff8ad8,#ffe68a,#8cffcf,#8ad8ff)"
+                            : "rgba(142,142,147,0.85)",
+                        boxShadow: i === 0 ? "0 0 2px rgba(204,72,255,0.45)" : undefined,
+                      }}
                     />
-                  ) : null}
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              {/* PollView */}
+              <div className="mt-[14px] flex flex-1 flex-col items-center">
+                <div className="mt-[6px] flex h-[98px] w-[132px] items-center justify-center">
+                  <GifQuestion src="/animes/halloween.webp" ratio={245 / 140} klipy={false} />
+                </div>
+                <p className="mt-[20px] px-5 text-center text-[18px] leading-[1.25] font-semibold text-white">
+                  Qui survivrait dans un film d&apos;horreur&nbsp;?
+                </p>
+                <div className="flex-1" />
+                <div className="grid grid-cols-2 gap-[10px]">
+                  {POTES.map((pote, i) => (
+                    <Carte
+                      key={pote.photo}
+                      pote={pote}
+                      resultat={resultat}
+                      refCarte={(el) => {
+                        cartes.current[i] = el;
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="flex-1" />
+                <div className="flex items-center gap-[30px]">
+                  <Image src="/shuffle.png" alt="" width={121} height={60} className="h-[60px] w-auto" />
+                  <Image src="/skip.png" alt="" width={121} height={60} className="h-[60px] w-auto" />
+                </div>
+                <div className="flex-1" />
+              </div>
             </div>
+
+            <span className="absolute bottom-[14px] left-1/2 h-[5px] w-[130px] -translate-x-1/2 rounded-full bg-white/70" />
           </div>
         </div>
       </div>

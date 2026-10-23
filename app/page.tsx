@@ -6,7 +6,6 @@ import { EcranVerrouille } from "@/components/b/EcranVerrouille";
 import { MurVisages } from "@/components/b/MurVisages";
 import { SceneQuestion } from "@/components/b/SceneQuestion";
 import { SceneQuestions } from "@/components/b/SceneQuestions";
-import { SceneReveal } from "@/components/b/SceneReveal";
 
 // Balisage Schema.org : ce que Google affiche quand on cherche « Stan app ».
 const JSON_LD = {
@@ -26,7 +25,7 @@ const JSON_LD = {
 
 /*
  * TEST B : le site raconté comme une soirée sur Stan. Écran verrouillé et
- * notifications, la question, les questions, le reveal, puis tout le monde.
+ * notifications, la question, les questions, puis tous les visages.
  */
 export default function Home() {
   return (
@@ -39,7 +38,6 @@ export default function Home() {
         <EcranVerrouille />
         <SceneQuestion />
         <SceneQuestions />
-        <SceneReveal />
         <MurVisages />
       </main>
       <Footer />
