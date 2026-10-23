@@ -26,9 +26,13 @@ const INTENSITE = 1.55;
 //   élargies : les rubans brillants de l'app, en plus fondus ;
 // - le pigment de la carte (#241547) est éclairci en violet clair, pour que
 //   les lettres restent lisibles sur la nuit ;
-// - les reflets gardent leur éclat : la luminosité n'est plafonnée que tout
-//   en haut, et seuls les reflets vraiment blancs virent au lilas (au
-//   rose-violet sur un bouton), pour ne pas se confondre avec le texte blanc ;
+// - sur un texte, les reflets gardent leur éclat : la luminosité n'est
+//   plafonnée que tout en haut, et seuls les reflets vraiment blancs virent au
+//   lilas, pour ne pas se confondre avec le texte blanc autour ;
+// - sur un bouton, c'est le métal de la carte : les blancs du reflet sont
+//   tassés en douceur, canal par canal, vers un argent lavande (jamais de
+//   blanc éblouissant), puis le contraste est creusé pour que le chrome
+//   ressorte entre les bandes de couleur ;
 // - un masque découpe le résultat (les lettres), ou rien pour un fond plein.
 const FRAGMENTS_SITE = FRAGMENTS.replace(
   "vec2 plane = vec2(uv.x, uv.y * aspect);",
@@ -44,6 +48,11 @@ const FRAGMENTS_SITE = FRAGMENTS.replace(
   )
   .replace("vec3 raw = spectrum(order, 2.4);", "vec3 raw = spectrum(order, 2.0);")
   .replace(
+    "+ white * vec3(1.0, 0.98, 0.95) * 0.5;",
+    "+ white * vec3(1.0, 0.98, 0.95) * 0.5 * mix(1.0, 0.85, plein);",
+  )
+  .replace("* pool * amount * 0.32;", "* pool * amount * 0.32 * mix(1.0, 0.55, plein);")
+  .replace(
     "vec3 base = mix(vec3(0.141, 0.082, 0.278), vec3(0.082, 0.047, 0.169)",
     // Texte : pigment éclairci. Fond de bouton (plein) : le violet profond
     // d'origine de la carte, pour que le texte blanc ressorte.
@@ -55,13 +64,22 @@ const FRAGMENTS_SITE = FRAGMENTS.replace(
   )
   .replace(
     "gl_FragColor = vec4(min(c, vec3(1.0)), 1.0);",
-    "c = min(c, vec3(1.0));\n" +
-      "  float lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
-      "  c = clamp(mix(vec3(lu), c, saturation), 0.0, 1.0);\n" +
-      "  float sat = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));\n" +
-      "  c = mix(mix(vec3(0.82, 0.52, 1.0), vec3(0.86, 0.32, 1.0), plein) * max(lu, 0.6), c, smoothstep(0.0, mix(0.12, 0.34, plein), sat));\n" +
-      "  lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
-      "  c *= min(1.0, plafond / max(lu, 0.001));\n" +
+    "if (plein > 0.5) {\n" +
+      "    float lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
+      "    c = max(mix(vec3(lu), c, saturation), 0.0);\n" +
+      "    vec3 argent = plafond * vec3(0.93, 0.91, 1.0);\n" +
+      "    vec3 g = argent * 0.5;\n" +
+      "    c = mix(c, g + (argent - g) * (1.0 - exp(-(c - g) / (argent - g))), step(g, c));\n" +
+      "    c = argent * pow(clamp(c / argent, 0.0, 1.0), vec3(1.4));\n" +
+      "  } else {\n" +
+      "    c = min(c, vec3(1.0));\n" +
+      "    float lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
+      "    c = clamp(mix(vec3(lu), c, saturation), 0.0, 1.0);\n" +
+      "    float sat = max(c.r, max(c.g, c.b)) - min(c.r, min(c.g, c.b));\n" +
+      "    c = mix(vec3(0.82, 0.52, 1.0) * max(lu, 0.6), c, smoothstep(0.0, 0.12, sat));\n" +
+      "    lu = dot(c, vec3(0.2126, 0.7152, 0.0722));\n" +
+      "    c *= min(1.0, plafond / max(lu, 0.001));\n" +
+      "  }\n" +
       "  float a = mix(texture2D(masque, uv).a, 1.0, plein);\n" +
       "  gl_FragColor = vec4(c * a, a);",
   );
@@ -74,7 +92,13 @@ type Moteur = {
 };
 
 /** Compile le shader sur un canevas ; null si WebGL manque. */
-function moteur(canvas: HTMLCanvasElement, plein: boolean, plafond: number, saturation: number): Moteur | null {
+function moteur(
+  canvas: HTMLCanvasElement,
+  plein: boolean,
+  plafond: number,
+  saturation: number,
+  intensite = INTENSITE,
+): Moteur | null {
   const gl = canvas.getContext("webgl", { premultipliedAlpha: true, alpha: true, antialias: false });
   if (!gl) return null;
   const shader = (type: number, src: string) => {
@@ -97,7 +121,7 @@ function moteur(canvas: HTMLCanvasElement, plein: boolean, plafond: number, satu
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const u = (n: string) => gl.getUniformLocation(prog, n);
   const uSize = u("size"), uTx = u("tiltX"), uTy = u("tiltY"), uTime = u("time");
-  gl.uniform1f(u("intensity"), INTENSITE);
+  gl.uniform1f(u("intensity"), intensite);
   gl.uniform1f(u("plein"), plein ? 1 : 0);
   gl.uniform1f(u("plafond"), plafond);
   gl.uniform1f(u("saturation"), saturation);
@@ -302,10 +326,10 @@ export function HoloFond() {
     const creer = () => {
       const canvas = nouveauCanevas();
       Object.assign(canvas.style, { inset: "0", width: "100%", height: "100%" });
-      // Sur le violet profond de la carte, reflets vifs mais jamais blancs :
-      // les zones pâles virent au rose-violet et la luminosité est un peu
-      // plafonnée, pour que le texte blanc du bouton ressorte partout.
-      const m = moteur(canvas, true, 0.62, 1.6);
+      // Le métal de la carte, sur son violet profond : chrome nacré et
+      // bandes de couleur, l'argent plafonné pour que le texte blanc reste
+      // lisible partout.
+      const m = moteur(canvas, true, 0.88, 1.25, 1.2);
       if (!m) return null;
       place.appendChild(canvas);
       return { canvas, m };

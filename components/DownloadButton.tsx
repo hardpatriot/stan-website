@@ -208,7 +208,7 @@ export function DownloadButton({
             titres par-dessus, calculé en direct */}
         <span className="absolute inset-0 bg-[linear-gradient(105deg,#d91cbd_0%,#e6006e_58%,#ff7a3d_120%)]" />
         <HoloFond />
-        <span className="relative flex items-center gap-3 [text-shadow:0_1px_3px_rgba(0,0,0,0.35)]">
+        <span className="relative flex items-center gap-3 [text-shadow:0_1px_3px_rgba(0,0,0,0.45)]">
           {iOS ? (
             <AppleGlyph className="h-5 w-5" />
           ) : plateforme === "android" ? (
