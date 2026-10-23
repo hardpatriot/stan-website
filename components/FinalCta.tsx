@@ -33,7 +33,7 @@ export function FinalCta() {
         <Reveal delay={90}>
           <h2 className="display mt-10 text-[clamp(2.4rem,7vw,4.4rem)] text-white text-balance">
             Stan, c&apos;est toi{" "}
-            <Holo>{"vu par tes potes ou ton Crush\u00a0?"}</Holo>
+            <Holo>vu par tes potes ou ton Crush</Holo>
           </h2>
         </Reveal>
 
