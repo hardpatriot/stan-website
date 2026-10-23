@@ -201,8 +201,9 @@ export function SceneQuestion() {
     legendes.current.forEach((l, i) => {
       if (!l) return;
       const { a, b } = LEGENDES[i];
-      // Le fondu enchaîné se chevauche : jamais d'instant sans légende.
-      const vis = (i === 0 ? 1 : phase(p, a - 0.03, a + 0.05)) * (i === LEGENDES.length - 1 ? 1 : 1 - phase(p, b - 0.05, b + 0.03));
+      // L'une s'efface juste avant la frontière, la suivante apparaît juste
+      // après : jamais deux légendes l'une sur l'autre, jamais de long vide.
+      const vis = (i === 0 ? 1 : phase(p, a, a + 0.045)) * (i === LEGENDES.length - 1 ? 1 : 1 - phase(p, b - 0.045, b));
       l.style.opacity = String(vis);
       l.style.transform = `translate3d(0, ${(1 - vis) * 18}px, 0)`;
     });
