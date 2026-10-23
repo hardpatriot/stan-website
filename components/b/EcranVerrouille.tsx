@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { useScene } from "./useScene";
 
 /**
  * Scène 1 : l'écran verrouillé. La page s'ouvre sur ce que l'élève voit
@@ -26,21 +25,60 @@ function heureLocale() {
 }
 
 export function EcranVerrouille() {
-  // L'écran reste fixe pendant qu'on défile, et chaque notification surgit à
-  // son tour, à un palier du défilement : on les voit arriver une à une,
-  // quelle que soit la hauteur de l'écran. En remontant, elles repartent.
+  // Rien ne bouge tant que la pile de notifications n'est pas à moitié à
+  // l'écran : l'heure surgit, puis les notifications tombent une à une, au
+  // rythme du temps et non du défilement. Elles restent un moment, s'effacent
+  // et retombent, en boucle. Si la scène sort de l'écran, tout est remis à
+  // zéro : en revenant, on revoit l'animation depuis le début.
   // Une classe posée ou retirée par carte : l'animation est en CSS, sur la
   // transformation et l'opacité.
   const notifs = useRef<(HTMLDivElement | null)[]>([]);
   const heure = useRef<HTMLDivElement>(null);
-  const ref = useScene<HTMLElement>((p) => {
-    heure.current?.classList.add("b-pop");
-    notifs.current.forEach((n, i) => {
-      if (!n) return;
-      const visible = p > 0.08 + (i * 0.8) / NOTIFS.length;
-      if (visible !== n.classList.contains("b-pop")) n.classList.toggle("b-pop", visible);
-    });
-  }, 1);
+  const pile = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = pile.current;
+    // Moins d'animations demandées : tout est affiché d'emblée (en CSS).
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const minuteurs: ReturnType<typeof setTimeout>[] = [];
+    const plus = (ms: number, f: () => void) => minuteurs.push(setTimeout(f, ms));
+    const cartes = () => notifs.current.filter((n): n is HTMLDivElement => !!n);
+    const vider = () => cartes().forEach((n) => n.classList.remove("b-pop", "b-part"));
+    const arreter = () => {
+      minuteurs.forEach(clearTimeout);
+      minuteurs.length = 0;
+    };
+    // Un tour : 0,9 s entre deux notifications, 3,5 s pour les lire toutes,
+    // puis elles s'effacent et le tour suivant commence.
+    const tour = () => {
+      vider();
+      cartes().forEach((n, i) => plus(250 + i * 900, () => n.classList.add("b-pop")));
+      const fin = 250 + (NOTIFS.length - 1) * 900 + 700 + 3500;
+      plus(fin, () => cartes().forEach((n) => n.classList.add("b-part")));
+      plus(fin + 600, tour);
+    };
+    let enCours = false;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.intersectionRatio >= 0.5 && !enCours) {
+          enCours = true;
+          heure.current?.classList.add("b-pop");
+          tour();
+        } else if (!e.isIntersecting && enCours) {
+          enCours = false;
+          arreter();
+          vider();
+          heure.current?.classList.remove("b-pop");
+        }
+      },
+      { threshold: [0, 0.5] },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      arreter();
+    };
+  }, []);
 
   // L'heure du visiteur, posée après le premier rendu (la page est statique).
   const [t, setT] = useState({ heure: "21:47", jour: "jeudi 23 octobre" });
@@ -55,8 +93,8 @@ export function EcranVerrouille() {
   }, []);
 
   return (
-    <section ref={ref} className="relative h-[200svh]">
-      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center overflow-hidden px-5">
+    <section className="relative">
+      <div className="flex min-h-[100svh] flex-col items-center justify-center px-5 py-16">
       {/* L'heure, comme un écran verrouillé */}
       <div ref={heure} className="b-attend flex flex-col items-center">
         <p className="text-center text-[15px] font-semibold tracking-wide text-white/55 capitalize">{t.jour}</p>
@@ -66,7 +104,7 @@ export function EcranVerrouille() {
       </div>
 
       {/* Les notifications, empilées comme dans le centre de notifications */}
-      <div className="relative mt-7 flex w-full max-w-[420px] flex-col gap-2.5">
+      <div ref={pile} className="relative mt-7 flex w-full max-w-[420px] flex-col gap-2.5">
         {NOTIFS.map((n, i) => (
           <div
             key={i}

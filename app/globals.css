@@ -127,6 +127,15 @@ body {
   color: transparent;
 }
 
+/* Secours des titres holographiques (avant le shader, ou sans WebGL) : les
+   teintes moyennes du reflet, lilas, rose et bleu nacrés. */
+.text-holo {
+  background: linear-gradient(115deg, #b9a2ff 0%, #f2a8ff 38%, #9cc2ff 68%, #c9b6ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 .text-aura {
   background: linear-gradient(120deg, #c4b5fd 0%, #818cf8 60%, #47dbff 100%);
   -webkit-background-clip: text;
@@ -526,6 +535,13 @@ html {
 }
 .b-attend.b-pop {
   animation: b-pop 0.7s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+/* Fin d'un tour : les notifications s'effacent avant de retomber. */
+.b-attend.b-pop.b-part {
+  animation: none;
+  opacity: 0;
+  transform: translate3d(0, -10px, 0) scale(0.97);
+  transition: opacity 0.5s ease-in, transform 0.5s ease-in;
 }
 @media (prefers-reduced-motion: reduce) {
   .b-attend { opacity: 1; }

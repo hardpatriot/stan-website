@@ -11,8 +11,8 @@ import { FRAGMENTS, SOMMETS } from "./FoilQR";
  *   lettres, partout où il y avait le dégradé rose du vote ;
  * - `<HoloFond />` : en fond d'un bouton, sous son texte blanc.
  *
- * Sans WebGL (ou avant le chargement), le dégradé rose d'origine reste en
- * place : rien n'est jamais illisible. Chaque contexte WebGL n'existe que
+ * Sans WebGL (ou avant le chargement), un dégradé nacré aux couleurs du
+ * reflet reste en place : rien n'est jamais illisible. Chaque contexte WebGL n'existe que
  * quand son élément est près de l'écran, puis il est rendu : la page ne garde
  * jamais plus de deux ou trois shaders en vie.
  */
@@ -293,10 +293,17 @@ export function Holo({ children, className = "" }: { children: string; className
       const canvas = nouveauCanevas();
       const m = moteur(canvas, false, 0.9, 1.35);
       if (!m) return null;
+      // Le shader apparaît en fondu par-dessus le dégradé nacré de secours,
+      // qui ne s'efface qu'une fois recouvert : aucun flash de couleur.
+      canvas.style.opacity = "0";
+      canvas.style.transition = "opacity 0.45s ease-out";
       hote.appendChild(canvas);
-      // Le dégradé de secours s'efface, le shader prend le relais.
-      span.style.backgroundImage = "none";
-      span.style.color = "transparent";
+      requestAnimationFrame(() => requestAnimationFrame(() => (canvas.style.opacity = "1")));
+      setTimeout(() => {
+        if (!canvas.isConnected) return;
+        span.style.backgroundImage = "none";
+        span.style.color = "transparent";
+      }, 500);
       return { canvas, m };
     };
 
@@ -305,7 +312,7 @@ export function Holo({ children, className = "" }: { children: string; className
   }, []);
 
   return (
-    <span ref={ref} className={`text-vote ${className}`}>
+    <span ref={ref} className={`text-holo ${className}`}>
       {children}
     </span>
   );
