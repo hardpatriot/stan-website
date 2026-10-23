@@ -56,7 +56,7 @@ export function BanniereAndroid() {
 
   return (
     <div
-      className="flex items-center gap-3 border-b border-white/[0.08] bg-[#0e0933] px-3"
+      className="flex items-center gap-3 border-b border-white/[0.08] bg-[#0b0818] px-3"
       style={{ height: HAUTEUR }}
     >
       <button

@@ -44,7 +44,7 @@ function Card({ children }: { children: React.ReactNode }) {
       {/* La lueur néon qui décolle le téléphone du fond */}
       <div
         aria-hidden
-        className="animate-pulse-glow pointer-events-none absolute -inset-x-16 -inset-y-12 -z-10 bg-[radial-gradient(closest-side_at_32%_40%,rgba(255,40,200,0.42),rgba(255,40,200,0.12)_55%,transparent),radial-gradient(closest-side_at_70%_64%,rgba(60,110,255,0.38),rgba(60,110,255,0.1)_55%,transparent)]"
+        className="animate-pulse-glow pointer-events-none absolute -inset-x-16 -inset-y-12 -z-10 bg-[radial-gradient(closest-side_at_32%_40%,rgba(255,40,200,0.22),rgba(255,40,200,0.06)_55%,transparent),radial-gradient(closest-side_at_70%_64%,rgba(60,110,255,0.18),rgba(60,110,255,0.05)_55%,transparent)]"
       />
 
       {/* Le châssis */}
@@ -54,9 +54,9 @@ function Card({ children }: { children: React.ReactNode }) {
           padding: pt(BORD),
           borderRadius: pt(64),
           background:
-            "linear-gradient(150deg, #8a5cff 0%, #4b2bb8 22%, #261566 50%, #3a1f96 78%, #9a6bff 100%)",
+            "linear-gradient(150deg, #3a3550 0%, #1c1830 25%, #0f0c1c 50%, #1c1830 75%, #45405c 100%)",
           boxShadow:
-            "inset 0 0 0 1.5px rgba(255,255,255,0.28), inset 0 0 18px rgba(255,255,255,0.12), 0 0 34px rgba(255,50,200,0.45), 0 0 70px -10px rgba(70,110,255,0.55), 0 40px 80px -30px rgba(0,0,0,0.9)",
+            "inset 0 0 0 1.5px rgba(255,255,255,0.16), inset 0 0 14px rgba(255,255,255,0.06), 0 0 40px -12px rgba(140,90,255,0.35), 0 40px 80px -30px rgba(0,0,0,0.95)",
         }}
       >
         {/* Les boutons sur la tranche */}
@@ -69,7 +69,7 @@ function Card({ children }: { children: React.ReactNode }) {
           <span
             key={i}
             aria-hidden
-            className="absolute rounded-full bg-[linear-gradient(180deg,#9a6bff,#4b2bb8)]"
+            className="absolute rounded-full bg-[linear-gradient(180deg,#4a4560,#1c1830)]"
             style={{
               [b.cote]: pt(-3),
               top: pt(b.haut),

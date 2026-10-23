@@ -72,7 +72,7 @@ export const metadata: Metadata = {
 // sombres en haut et en bas, et le fond violet s'arrêtait entre les deux.
 export const viewport: Viewport = {
   viewportFit: "cover",
-  themeColor: "#0e0933",
+  themeColor: "#0b0818",
   colorScheme: "dark",
 };
 
