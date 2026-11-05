@@ -15,8 +15,9 @@ import { phase, useScene } from "./useScene";
  * d'onglets qui défile (Stan au centre, choisi), fond plein écran au dégradé
  * violet de la série, « 1 sur 12 » et ses 12 segments, le GIF de la question
  * dans son écrin métal, la question en 18 semibold, les quatre cartes satin
- * blanc 147 × 147 de ProfileCard, Shuffle et Skip en relief (les images de
- * l'app), et la poignée de la palette de fond au bord droit. En défilant,
+ * blanc 147 × 147 de ProfileCard, Shuffle et Skip en relief (les calques
+ * droits de l'app : socle, dessus, flèches lumineuses). La poignée de la
+ * palette de fond est laissée de côté : sans intérêt sur le site. En défilant,
  * une carte s'enfonce sous le doigt, puis les vagues de résultat montent.
  *
  * Le seul ajout par rapport à l'app : « Mets les prénoms de tes potes ». Un
@@ -422,20 +423,6 @@ export function SceneQuestion() {
                 <div className="flex-1" />
               </div>
             </div>
-
-            {/* La poignée de la palette de fond, à moitié sortie du bord droit */}
-            <span
-              aria-hidden
-              className="absolute top-1/2 right-[-6px] flex h-[70px] w-[22px] -translate-y-1/2 items-center justify-center overflow-hidden rounded-full"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(134,13,255,0.55), rgba(122,13,89,0.55)), rgba(255,255,255,0.12)",
-                boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,0.45), inset 0 0 0 1px rgba(255,255,255,0.22), -2px 3px 16px rgba(0,0,0,0.22)",
-              }}
-            >
-              <span className="h-[26px] w-[3.5px] rounded-full bg-white/90 shadow-[0_0_3px_rgba(0,0,0,0.25)]" />
-            </span>
 
             <span className="absolute bottom-[14px] left-1/2 h-[5px] w-[130px] -translate-x-1/2 rounded-full bg-white/70" />
           </div>
