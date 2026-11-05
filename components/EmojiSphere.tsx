@@ -478,8 +478,11 @@ export function EmojiSphere() {
     // Sur téléphone, la scène laisse dépasser le haut de la section suivante
     // (l'heure de l'écran verrouillé) : on voit qu'il y a une suite.
     <section ref={section} className="relative h-[85svh] sm:h-[125svh]">
+      {/* Le cadre collé est invisible et laisse passer le toucher, seul son
+          contenu se voit : sinon Safari 26 sur iPhone le prend pour une barre
+          collée en haut et peint un aplat opaque sous la barre d'état. */}
       <div
-        className="sticky top-0 flex h-[85svh] flex-col overflow-hidden [--taille-emoji:50px] sm:h-[100svh] sm:[--taille-emoji:96px]"
+        className="invisible pointer-events-none sticky top-0 flex h-[85svh] flex-col overflow-hidden [--taille-emoji:50px] *:visible *:pointer-events-auto sm:h-[100svh] sm:[--taille-emoji:96px]"
       >
         {/* La sphère occupe tout l'espace restant : son centre se place donc
             naturellement sous le texte, quelle que soit la hauteur d'écran. */}

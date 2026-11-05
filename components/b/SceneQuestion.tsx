@@ -282,7 +282,11 @@ export function SceneQuestion() {
 
   return (
     <section ref={ref} className="relative h-[230svh]">
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+      {/* Coupé sur les côtés seulement : en bas, le téléphone et son halo
+          débordent librement. Le cadre collé est invisible et laisse passer
+          le toucher, seul son contenu se voit : sinon Safari 26 sur iPhone le
+          prend pour une barre collée et peint un aplat opaque en haut. */}
+      <div className="invisible pointer-events-none sticky top-0 h-[100svh] overflow-x-clip *:visible *:pointer-events-auto">
         <div className="absolute inset-x-0 top-[12svh] z-10 px-6 text-center lg:inset-x-auto lg:top-1/2 lg:left-[8vw] lg:h-[15rem] lg:w-[40vw] lg:-translate-y-1/2 lg:text-left">
           {LEGENDES.map((l, i) => (
             <div

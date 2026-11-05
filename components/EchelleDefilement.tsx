@@ -75,11 +75,15 @@ export function EchelleDefilement() {
     };
   }, []);
 
+  // Seulement avec une souris (ordinateur). Sur iPhone, Safari 26 traite un
+  // élément fixé, même court et loin du bord, comme une barre collée en bas :
+  // il arrête la page au-dessus de sa barre d'adresse et peint un aplat
+  // opaque dessous. Vérifié dans le simulateur le 05/11/2026.
   return (
     <div
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+var(--banniere,0px)+84px)] right-[5px] bottom-[calc(env(safe-area-inset-bottom)+28px)] z-[60] flex flex-col items-end justify-between opacity-70 transition-opacity duration-500 data-[actif]:opacity-100 sm:top-[calc(var(--banniere,0px)+96px)] sm:bottom-8"
+      className="pointer-events-none fixed top-[calc(env(safe-area-inset-top)+var(--banniere,0px)+84px)] right-[5px] bottom-[calc(env(safe-area-inset-bottom)+28px)] z-[60] hidden flex-col [@media(hover:hover)_and_(pointer:fine)]:flex items-end justify-between opacity-70 transition-opacity duration-500 data-[actif]:opacity-100 sm:top-[calc(var(--banniere,0px)+96px)] sm:bottom-8"
     >
       {Array.from({ length: CRANS }, (_, i) => (
         <span

@@ -1,40 +1,16 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { BanniereAndroid } from "./BanniereAndroid";
 
+/**
+ * L'en-tête défile avec la page : il n'est JAMAIS fixé. Safari 26 sur iPhone
+ * repère un en-tête fixé en haut de l'écran et peint sa couleur, en aplat
+ * opaque, sous la barre d'état : une bande qui coupe la page (vérifié dans le
+ * simulateur le 05/11/2026). Sans élément fixé, la page passe sous la barre.
+ */
 export function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <header className="fixed inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)]">
-      {/* Le bord de défilement d'iOS 26 (scroll edge effect) : un voile de
-          verre qui s'efface progressivement vers le bas, sans aucune ligne.
-          On voit le contenu passer dessous, flouté puis net. Le flou est fixe,
-          seule l'opacité du calque change au défilement. */}
-      <span
-        aria-hidden
-        className={`pointer-events-none absolute inset-x-0 top-0 -bottom-7 transition-opacity duration-500 ${
-          scrolled ? "opacity-100" : "opacity-0"
-        }`}
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(18,13,38,0.62) 0%, rgba(18,13,38,0.42) 55%, rgba(18,13,38,0) 100%)",
-          backdropFilter: "blur(14px) saturate(1.4)",
-          WebkitBackdropFilter: "blur(14px) saturate(1.4)",
-          maskImage: "linear-gradient(180deg, #000 0%, #000 52%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(180deg, #000 0%, #000 52%, transparent 100%)",
-        }}
-      />
+    <header className="absolute inset-x-0 top-0 z-50 pt-[env(safe-area-inset-top)]">
       <div className="relative">
         <BanniereAndroid />
       </div>
