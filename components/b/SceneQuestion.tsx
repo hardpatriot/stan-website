@@ -11,10 +11,12 @@ import { phase, useScene } from "./useScene";
 /**
  * Scène 2 : l'écran de vote, recopié du code de l'app.
  *
- * Barre d'état, barre d'onglets (Votes · Stan · Profil), carte plein écran
- * au dégradé violet de la série, « 1 sur 12 » et ses 12 segments, le GIF de
- * la question dans son écrin métal, la question en 18 semibold, les quatre
- * cartes de verre blanc-lilas 147 × 147, puis Shuffle et Skip. En défilant,
+ * Recopié de la version 1.59 (étiquette stan-1.59-522) : barre d'état, bande
+ * d'onglets qui défile (Stan au centre, choisi), fond plein écran au dégradé
+ * violet de la série, « 1 sur 12 » et ses 12 segments, le GIF de la question
+ * dans son écrin métal, la question en 18 semibold, les quatre cartes satin
+ * blanc 147 × 147 de ProfileCard, Shuffle et Skip en relief (les images de
+ * l'app), et la poignée de la palette de fond au bord droit. En défilant,
  * une carte s'enfonce sous le doigt, puis les vagues de résultat montent.
  *
  * Le seul ajout par rapport à l'app : « Mets les prénoms de tes potes ». Un
@@ -49,6 +51,14 @@ function initiales(nom: string) {
 }
 
 const CHOISI = 1;
+
+/** Le contour ivoire des prénoms (pollNameOutline, rayon 2,6), puis l'ombre. */
+const CONTOUR_NOM = [
+  [2.6, 0], [-2.6, 0], [0, 2.6], [0, -2.6], [1.85, 1.85], [-1.85, 1.85], [1.85, -1.85], [-1.85, -1.85],
+]
+  .map(([x, y]) => `${x}px ${y}px 0.6px rgba(255,251,242,0.8)`)
+  .concat("0 1.5px 2.4px rgba(0,0,0,0.18)")
+  .join(", ");
 
 const LEGENDES = [
   { a: 0.0, b: 0.34, haut: "Chaque jour,", bas: "des questions sur tes potes." },
@@ -87,40 +97,54 @@ function BarreEtat() {
   );
 }
 
-/** TabBarView : l'onglet choisi au centre, blanc à texte rose, cerclé d'un halo. */
+/**
+ * TabBarView : une bande de pilules qui défile, l'onglet choisi (Stan) au
+ * centre. Pilules de 110 × 42 (texte 17 semibold), en verre sur iOS 26 ;
+ * la choisie est blanche, agrandie à 1,1, cerclée d'un anneau blanc à 20 %,
+ * son texte dans la vague rose du shader stanNavigationProfileNeon. 16 pt
+ * autour d'elle, 4 pt entre les autres ; les voisines sont coupées au bord.
+ */
+const ONGLETS_VUS = [
+  { t: "Activité" },
+  { t: "Votes", badge: 2 },
+  { t: "Stan", actif: true },
+  { t: "Profil" },
+  { t: "Amis" },
+];
 function BarreOnglets() {
   return (
     <div
       aria-hidden
-      className="absolute inset-x-0 z-10 flex items-center justify-center gap-5"
+      className="absolute inset-x-0 z-10 flex items-center justify-center gap-[10px]"
       style={{ top: BARRE, height: ONGLETS }}
     >
-      {[{ t: "Votes", badge: 2 }, { t: "Stan", actif: true }, { t: "Profil" }].map((o) => (
+      {ONGLETS_VUS.map((o) => (
         <span
           key={o.t}
-          className="relative flex shrink-0 items-center justify-center rounded-full font-semibold"
+          className="relative flex h-[42px] w-[110px] shrink-0 items-center justify-center rounded-full text-[17px] font-semibold"
           style={
             o.actif
               ? {
-                  width: 122,
-                  height: 46,
-                  fontSize: 18.5,
+                  margin: "0 12px",
+                  transform: "scale(1.1)",
                   background: "#fff",
-                  color: "#ff2d55",
-                  boxShadow: "0 0 0 5px rgba(255,255,255,0.22)",
+                  boxShadow: "0 0 0 3px rgba(255,255,255,0.2)",
                 }
               : {
-                  width: 110,
-                  height: 42,
-                  fontSize: 17,
                   color: "#fff",
-                  background: "linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.14))",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0.1))",
                   boxShadow:
-                    "inset 0 1px 0 rgba(255,255,255,0.55), inset 0 0 0 1px rgba(255,255,255,0.25), 0 4px 12px rgba(0,0,0,0.12)",
+                    "inset 0 1px 0 rgba(255,255,255,0.5), inset 0 0 0 1px rgba(255,255,255,0.2), 0 4px 12px rgba(0,0,0,0.1)",
                 }
           }
         >
-          {o.t}
+          {o.actif ? (
+            <span className="bg-[linear-gradient(100deg,#e00b59,#ff3b6e_50%,#e00b59)] bg-clip-text text-transparent">
+              {o.t}
+            </span>
+          ) : (
+            o.t
+          )}
           {o.badge ? (
             <span
               className="absolute -top-[6px] -right-[4px] flex min-w-[20px] items-center justify-center rounded-[7px] px-[6px] py-[3px] text-[12px] font-bold text-white"
@@ -138,7 +162,12 @@ function BarreOnglets() {
   );
 }
 
-/** PollChoiceLightGlassCard + ProfileCard, à l'identique. */
+/**
+ * ProfileCard de la 1.59 : la face satin blanc (PollCardWhiteSatin, éclaircie
+ * de 22 %), coins de 16, ombre noire à 22 % ; la photo ronde de 67 ; prénom
+ * et nom sur deux lignes en 18 bold #21182F, cernés d'ivoire comme un
+ * autocollant (shader pollNameOutline).
+ */
 function Carte({
   nom,
   part,
@@ -156,38 +185,31 @@ function Carte({
       className="relative flex h-[147px] w-[147px] flex-col items-center justify-center overflow-hidden rounded-[16px]"
       style={{
         background:
-          "radial-gradient(circle at 42% 28%, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.34) 52%, rgba(255,255,255,0) 76%), linear-gradient(160deg, #ffffff 0%, #fefcff 46%, #f9f2fd 100%)",
-        boxShadow:
-          "0 8px 11px rgba(91,33,182,0.42), 0 4px 5px rgba(0,0,0,0.15), inset 0 0 0 1.55px rgba(255,255,255,0.92)",
+          "linear-gradient(rgba(255,255,255,0.22), rgba(255,255,255,0.22)), url(/app/carte-satin.webp) center / 110% no-repeat",
+        boxShadow: "0 9px 18px rgba(0,0,0,0.22)",
       }}
     >
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-[3.2px] rounded-[13px]"
-        style={{
-          border: "0.85px solid rgba(255,255,255,0.6)",
-          background:
-            "linear-gradient(135deg, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 46%, rgba(184,155,209,0.18) 100%)",
-        }}
-      />
       {PHOTOS[nom] ? (
         // eslint-disable-next-line @next/next/no-img-element -- site statique
         <img
           src={PHOTOS[nom]}
           alt=""
           className="relative h-[67px] w-[67px] rounded-full object-cover"
-          style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.25)" }}
+          style={{ boxShadow: "0 0 8px rgba(0,0,0,0.25)" }}
         />
       ) : (
         // InitialsView, quand un pote n'a pas de photo
         <span
-          className="relative flex h-[67px] w-[67px] items-center justify-center rounded-full bg-[#8E8E93] text-[17px] font-semibold text-white"
-          style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.25)" }}
+          className="relative flex h-[67px] w-[67px] items-center justify-center rounded-full bg-[#8E8E93] text-[17px] text-[#21182F]"
+          style={{ boxShadow: "0 0 8px rgba(0,0,0,0.25)" }}
         >
           {initiales(nom)}
         </span>
       )}
-      <span className="relative mt-[8px] px-2 text-center text-[18px] leading-[1.15] font-semibold text-black">
+      <span
+        className="relative mt-[10px] max-w-[141px] px-[5px] text-center text-[18px] leading-[1.15] font-bold text-[#21182F]"
+        style={{ textShadow: CONTOUR_NOM }}
+      >
         {decouper(nom)[0]}
         <br />
         {decouper(nom)[1]}
@@ -301,20 +323,24 @@ export function SceneQuestion() {
             <BarreEtat />
             <BarreOnglets />
 
-            <div className="absolute inset-0 flex flex-col items-center" style={{ paddingTop: BARRE + ONGLETS }}>
+            {/* En bas, la zone de la barre d'accueil (34 pt) reste libre. */}
+            <div className="absolute inset-0 flex flex-col items-center pb-[34px]" style={{ paddingTop: BARRE + ONGLETS }}>
+              {/* Comme dans l'app, l'espace libre se partage : moitié au-dessus
+                  de l'en-tête, moitié entre les blocs de PollView. */}
+              <div className="flex-1" />
               {/* « 1 sur 12 » + HolographicPageControlView */}
-              <div className="flex flex-col items-center gap-2 pt-[22px]">
+              <div className="flex flex-col items-center gap-2">
                 <p className="text-[18px] leading-none font-semibold text-white">1 sur {SERIE}</p>
                 <div className="flex gap-1">
                   {Array.from({ length: SERIE }, (_, i) => (
                     <span
                       key={i}
-                      className="h-[3.2px] w-[23.52px] rounded-full"
+                      className="h-[4px] w-[23.52px] rounded-full"
                       style={{
                         background:
                           i === 0
                             ? "linear-gradient(90deg,#ff8ad8,#ffe68a,#8cffcf,#8ad8ff)"
-                            : "rgba(142,142,147,0.85)",
+                            : "#8E8E93",
                         boxShadow: i === 0 ? "0 0 2px rgba(204,72,255,0.45)" : undefined,
                       }}
                     />
@@ -323,7 +349,7 @@ export function SceneQuestion() {
               </div>
 
               {/* PollView */}
-              <div className="mt-[14px] flex flex-1 flex-col items-center">
+              <div className="mt-[8px] flex flex-[1_1_auto] flex-col items-center">
                 <div className="mt-[6px] flex h-[98px] w-[132px] items-center justify-center">
                   <GifQuestion src="/animes/halloween.webp" ratio={245 / 140} klipy={false} />
                 </div>
@@ -388,13 +414,28 @@ export function SceneQuestion() {
                   ))}
                 </div>
                 <div className="flex-1" />
-                <div className="flex items-center gap-[30px]">
-                  <Image src="/shuffle.png" alt="" width={121} height={60} className="h-[60px] w-auto" />
-                  <Image src="/skip.png" alt="" width={121} height={60} className="h-[60px] w-auto" />
+                {/* ShuffleButtonView et SkipButtonView, en relief (Blender) */}
+                <div className="flex h-[60px] items-center gap-[30px]">
+                  <Image src="/app/shuffle.webp" alt="" width={141} height={70} className="h-[69.54px] w-[140.54px] max-w-none" />
+                  <Image src="/app/skip.webp" alt="" width={141} height={70} className="h-[69.54px] w-[140.54px] max-w-none" />
                 </div>
                 <div className="flex-1" />
               </div>
             </div>
+
+            {/* La poignée de la palette de fond, à moitié sortie du bord droit */}
+            <span
+              aria-hidden
+              className="absolute top-1/2 right-[-6px] flex h-[70px] w-[22px] -translate-y-1/2 items-center justify-center overflow-hidden rounded-full"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(134,13,255,0.55), rgba(122,13,89,0.55)), rgba(255,255,255,0.12)",
+                boxShadow:
+                  "inset 0 1px 0 rgba(255,255,255,0.45), inset 0 0 0 1px rgba(255,255,255,0.22), -2px 3px 16px rgba(0,0,0,0.22)",
+              }}
+            >
+              <span className="h-[26px] w-[3.5px] rounded-full bg-white/90 shadow-[0_0_3px_rgba(0,0,0,0.25)]" />
+            </span>
 
             <span className="absolute bottom-[14px] left-1/2 h-[5px] w-[130px] -translate-x-1/2 rounded-full bg-white/70" />
           </div>
