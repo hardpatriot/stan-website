@@ -28,7 +28,7 @@ export function Nav() {
         }`}
         style={{
           background:
-            "linear-gradient(180deg, rgba(11,8,24,0.62) 0%, rgba(11,8,24,0.42) 55%, rgba(11,8,24,0) 100%)",
+            "linear-gradient(180deg, rgba(18,13,38,0.62) 0%, rgba(18,13,38,0.42) 55%, rgba(18,13,38,0) 100%)",
           backdropFilter: "blur(14px) saturate(1.4)",
           WebkitBackdropFilter: "blur(14px) saturate(1.4)",
           maskImage: "linear-gradient(180deg, #000 0%, #000 52%, transparent 100%)",

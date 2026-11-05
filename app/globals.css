@@ -96,7 +96,7 @@ html {
    un noir qui découperait l'écran en trois bandes. Posée sur `html` SEULEMENT :
    un fond sur `body` en plus passerait par-dessus le fond animé (-z-10). */
 html {
-  background-color: #0b0818;
+  background-color: #120d26;
   /* La barre de défilement native laisse la place à l'échelle crantée
      (EchelleDefilement), comme sur le Wall des Memories. */
   scrollbar-width: none;
@@ -456,7 +456,7 @@ body {
    néon réservé aux accents (casquettes, bouton rose, cran actif).
    ================================================================== */
 html {
-  background-color: #0b0818;
+  background-color: #120d26;
 }
 
 /* Verre sombre de l'app : fond presque noir, liseré clair très fin, arête
